@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CreatePage from '../components/create/CreatePage.svelte';
+---
+
+<Layout>
+  <CreatePage client:only="svelte" />
+</Layout>

@@ -1,20 +1,31 @@
 {
-  "name": "",
+  "name": "unzip-files-online",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --background",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.2.10"
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.1.0",
+    "@astrojs/svelte": "^5.7.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "@zip.js/zip.js": "^2.7.46",
+    "astro": "^4.16.0",
+    "idb": "^8.0.0",
+    "lucide-svelte": "^0.469.0",
+    "pdfjs-dist": "^4.8.69",
+    "svelte": "^4.2.0",
+    "tailwindcss": "^3.4.0"
   },
-  "allowScripts": {
-    "esbuild": true
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
   }
 }
