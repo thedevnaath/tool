@@ -2,10 +2,10 @@
   import type { FileTreeNode } from '../../lib/file-utils';
   import FileTreeNode from './FileTreeNode.svelte';
   
-  export let node: FileTreeNode = $props();
-  export let selectedIndex: number | null = $props();
+  export let node: FileTreeNode;
+  export let selectedIndex: number | null;
   export let onselect: (index: number) => void = () => {};
-  export let depth: number = $props(0);
+  export let depth: number = 0;
 
   function toggleExpanded(node: FileTreeNode) {
     node.expanded = !node.expanded;

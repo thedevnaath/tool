@@ -1,5 +1,5 @@
 // Web Worker for ZIP extraction using zip.js
-import { configure, ZipReader, BlobReader, BlobWriter, TextWriter, Data64URIWriter } from '@zip.js/zip.js';
+import { configure, ZipReader, ZipWriter, BlobReader, BlobWriter, TextWriter, Data64URIWriter } from '@zip.js/zip.js';
 
 configure({
   workerScripts: {
@@ -85,6 +85,7 @@ self.onmessage = async (event) => {
             lastModDate: entry.lastModDate,
             path,
             depth,
+            index: i,
           });
 
           totalSize += entry.uncompressedSize;

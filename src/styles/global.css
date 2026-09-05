@@ -4,32 +4,52 @@
 
 @layer base {
   :root {
-    --font-sans: 'Geist', 'Inter', system-ui, sans-serif;
-    --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    --font-sans: 'Manrope', 'Avenir Next', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
   }
 
   * {
-    @apply border-hairline;
+    @apply border-hairline dark:border-dark-hairline;
   }
 
   html {
-    @apply scroll-smooth;
+    @apply scroll-smooth dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-canvas text-body font-sans text-body-md antialiased;
+    @apply bg-canvas text-body font-sans text-body-md antialiased dark:bg-dark-canvas dark:text-dark-body;
     margin: 0;
     min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(190, 243, 217, 0.13), transparent 28rem),
+      radial-gradient(circle at 92% 68%, rgba(77, 142, 135, 0.14), transparent 32rem);
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+  }
+
+  body > * {
+    position: relative;
+    z-index: 1;
   }
 
   ::selection {
-    @apply bg-link-soft text-link;
+    @apply bg-link-soft text-link dark:bg-dark-link-soft dark:text-dark-link;
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-link ring-offset-2 ring-offset-canvas-elevated;
+    @apply outline-none ring-2 ring-link ring-offset-2 ring-offset-canvas-elevated dark:ring-dark-link dark:ring-offset-dark-canvas-elevated;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -50,11 +70,11 @@
   }
 
   .btn-primary {
-    @apply btn bg-ink text-on-primary rounded-pill px-[14px] py-2.5 text-button-lg;
+    @apply btn bg-ink text-on-primary rounded-pill px-[14px] py-2.5 text-button-lg dark:bg-dark-ink dark:text-dark-on-primary;
   }
 
   .btn-primary:hover:not(:disabled) {
-    @apply bg-black;
+    @apply bg-black dark:bg-white;
   }
 
   .btn-primary:active:not(:disabled) {
@@ -62,55 +82,55 @@
   }
 
   .btn-secondary {
-    @apply btn bg-canvas-elevated text-ink rounded-pill px-[14px] py-2.5 text-button-lg border border-hairline;
+    @apply btn bg-canvas-elevated text-ink rounded-pill px-[14px] py-2.5 text-button-lg border border-hairline dark:bg-dark-canvas-elevated dark:text-dark-ink dark:border-dark-hairline;
   }
 
   .btn-secondary:hover:not(:disabled) {
-    @apply bg-hairline-soft;
+    @apply bg-hairline-soft dark:bg-dark-hairline-soft;
   }
 
   .btn-square {
-    @apply btn bg-ink text-on-primary rounded-sm px-3 py-1.5 text-button-md;
+    @apply btn bg-ink text-on-primary rounded-sm px-3 py-1.5 text-button-md dark:bg-dark-ink dark:text-dark-on-primary;
   }
 
   .btn-square:hover:not(:disabled) {
-    @apply bg-black;
+    @apply bg-black dark:bg-white;
   }
 
   .btn-ghost {
-    @apply btn bg-transparent text-ink rounded-sm px-3 py-1.5 text-button-md border border-hairline;
+    @apply btn bg-transparent text-ink rounded-sm px-3 py-1.5 text-button-md border border-hairline dark:text-dark-ink dark:border-dark-hairline;
   }
 
   .btn-ghost:hover:not(:disabled) {
-    @apply bg-hairline-soft;
+    @apply bg-hairline-soft dark:bg-dark-hairline-soft;
   }
 
   .btn-icon {
-    @apply btn bg-canvas-elevated text-ink rounded-full p-2 text-body-lg border border-hairline;
+    @apply btn bg-canvas-elevated text-ink rounded-full p-2 text-body-lg border border-hairline dark:bg-dark-canvas-elevated dark:text-dark-ink dark:border-dark-hairline;
   }
 
   .btn-icon:hover:not(:disabled) {
-    @apply bg-hairline-soft;
+    @apply bg-hairline-soft dark:bg-dark-hairline-soft;
   }
 
   .input {
-    @apply w-full bg-canvas-elevated text-ink border border-hairline rounded-sm px-3 py-2 text-body-md placeholder-faint transition-colors duration-fast;
+    @apply w-full bg-canvas-elevated text-ink border border-hairline rounded-sm px-3 py-2 text-body-md placeholder-faint transition-colors duration-fast dark:bg-dark-canvas-elevated dark:text-dark-ink dark:border-dark-hairline dark:placeholder-dark-faint;
   }
 
   .input:focus {
-    @apply outline-none ring-2 ring-link ring-offset-0 border-link;
+    @apply outline-none ring-2 ring-link ring-offset-0 border-link dark:ring-dark-link dark:border-dark-link;
   }
 
   .card {
-    @apply bg-canvas-elevated border border-hairline rounded-md;
+    @apply bg-canvas-elevated border border-hairline rounded-md dark:bg-dark-canvas-elevated dark:border-dark-hairline;
   }
 
   .card-elevated {
-    @apply card shadow-floating;
+    @apply card shadow-floating dark:shadow-dark-floating;
   }
 
   .card-hover {
-    @apply card transition-shadow duration-fast hover:shadow-whisper;
+    @apply card transition-shadow duration-fast hover:shadow-whisper dark:hover:shadow-dark-whisper;
   }
 
   .dropdown {
@@ -118,7 +138,7 @@
   }
 
   .dropdown-item {
-    @apply flex items-center gap-2 w-full px-3 py-2 text-body-md text-ink hover:bg-hairline-soft transition-colors duration-fast;
+    @apply flex items-center gap-2 w-full px-3 py-2 text-body-md text-ink hover:bg-hairline-soft transition-colors duration-fast dark:text-dark-ink dark:hover:bg-dark-hairline-soft;
   }
 
   .toast {
@@ -136,6 +156,10 @@
     scrollbar-color: theme('colors.hairline') transparent;
   }
 
+  .dark .scrollbar-thin {
+    scrollbar-color: theme('colors.dark-hairline') transparent;
+  }
+
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -150,8 +174,16 @@
     border-radius: 9999px;
   }
 
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: theme('colors.dark-hairline');
+  }
+
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background-color: theme('colors.mute');
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.dark-mute');
   }
 
   .animate-slide-in {
@@ -195,10 +227,17 @@
 
   .gradient-mesh {
     background:
-      radial-gradient(ellipse 80% 50% at 50% -20%, theme('colors.cyan-soft'), transparent),
-      radial-gradient(ellipse 60% 40% at 80% 0%, theme('colors.violet-soft'), transparent),
-      radial-gradient(ellipse 50% 30% at 100% 50%, theme('colors.pink'), transparent),
-      radial-gradient(ellipse 70% 60% at 0% 100%, theme('colors.magenta'), transparent);
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(190,243,217,.3), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 0%, rgba(77,142,135,.24), transparent),
+      radial-gradient(ellipse 70% 60% at 0% 100%, rgba(10,48,61,.7), transparent);
+  }
+
+  .dark .gradient-mesh {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, theme('colors.dark-cyan-soft'), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 0%, theme('colors.dark-violet-soft'), transparent),
+      radial-gradient(ellipse 50% 30% at 100% 50%, theme('colors.dark-pink'), transparent),
+      radial-gradient(ellipse 70% 60% at 0% 100%, theme('colors.dark-magenta'), transparent);
   }
 
   .truncate-multiline-2 {

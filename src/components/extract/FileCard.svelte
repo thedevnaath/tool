@@ -8,9 +8,9 @@
   import { downloadUrl, downloadDataUrl, downloadText, downloadArrayBuffer } from '../../lib/download';
   import FilePreview from './FilePreview.svelte';
 
-  export let file: FileEntry = $props();
-  export let index: number = $props();
-  export let isSelected: boolean = $props(false);
+  export let file: FileEntry;
+  export let index: number;
+  export let isSelected: boolean = false;
   export let onSelect: (index: number) => void = () => {};
 
   let isExpanded = false;
@@ -18,6 +18,7 @@
   let previewMimeType = '';
   let previewError: string | null = null;
   let isLoadingPreview = false;
+  let downloadAfterLoad = false;
 
   const fileType = getFileType(file.filename);
   const mimeType = getMimeType(file.filename);
@@ -57,11 +58,16 @@
         previewContent = content;
         previewMimeType = mt;
         isLoadingPreview = false;
+        if (downloadAfterLoad) {
+          downloadAfterLoad = false;
+          downloadContent(content, mt);
+        }
         window.removeEventListener('file-content', handleContent as EventListener);
       }
     };
     
     window.addEventListener('file-content', handleContent as EventListener);
+    window.dispatchEvent(new CustomEvent('request-file-content', { detail: { fileIndex: index } }));
     
     setTimeout(() => {
       if (isLoadingPreview) {
@@ -74,17 +80,22 @@
 
   function handleDownload() {
     if (previewContent) {
-      if (typeof previewContent === 'string') {
-        if (previewContent.startsWith('data:')) {
-          downloadDataUrl(previewContent, file.filename);
-        } else {
-          downloadText(previewContent, file.filename);
-        }
+      downloadContent(previewContent, previewMimeType || mimeType);
+    } else {
+      downloadAfterLoad = true;
+      window.dispatchEvent(new CustomEvent('request-download', { detail: { fileIndex: index } }));
+    }
+  }
+
+  function downloadContent(content: string | ArrayBuffer, contentMimeType: string) {
+    if (typeof content === 'string') {
+      if (content.startsWith('data:')) {
+        downloadDataUrl(content, file.filename);
       } else {
-        downloadArrayBuffer(previewContent, file.filename, previewMimeType || mimeType);
+        downloadText(content, file.filename);
       }
     } else {
-      window.dispatchEvent(new CustomEvent('request-download', { detail: { fileIndex: index } }));
+      downloadArrayBuffer(content, file.filename, contentMimeType);
     }
   }
 </script>

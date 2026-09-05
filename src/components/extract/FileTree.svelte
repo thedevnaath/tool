@@ -2,9 +2,9 @@
   import type { FileTreeNode } from '../../lib/file-utils';
   import FileTreeNode from './FileTreeNode.svelte';
   
-  export let tree: FileTreeNode[] = $props();
-  export let selectedIndex: number | null = $props();
-  export let showHiddenFiles: boolean = $props(false);
+  export let tree: FileTreeNode[];
+  export let selectedIndex: number | null;
+  export let showHiddenFiles: boolean = false;
   export let onselect: (index: number) => void = () => {};
   export let onToggleHidden: (value: boolean) => void = () => {};
 

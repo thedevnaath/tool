@@ -61,16 +61,12 @@
 
   function handleAddFiles(newFiles: File[]) {
     files = [...files, ...newFiles];
-    if (worker) {
-      worker.postMessage({ type: 'addFiles', data: { files } });
-    }
+    syncWorkerFiles(files);
   }
 
   function handleRemoveFile(index: number) {
     files = files.filter((_, i) => i !== index);
-    if (worker) {
-      worker.postMessage({ type: 'addFiles', data: { files } });
-    }
+    syncWorkerFiles(files);
   }
 
   function handleClearAll() {
@@ -87,6 +83,7 @@
     }
 
     initWorker();
+    syncWorkerFiles(files);
     isCreating = true;
     createProgress = { loaded: 0, total: 0, currentFile: '', fileIndex: 0, totalFiles: files.length };
     downloadUrl_ = null;
@@ -95,6 +92,12 @@
       type: 'create', 
       data: { archiveName, compressionLevel } 
     });
+  }
+
+  function syncWorkerFiles(nextFiles: File[]) {
+    if (worker) {
+      worker.postMessage({ type: 'addFiles', data: { files: nextFiles } });
+    }
   }
 
   function formatFileSize(bytes: number): string {
@@ -119,10 +122,13 @@
   <title>Create ZIP - Unzip Files Online</title>
 </svelte:head>
 
-<div class="w-full max-w-4xl mx-auto space-y-6">
-  <header class="space-y-2">
-    <h1 class="text-display-xl font-semibold text-ink tracking-tight">Create ZIP Archive</h1>
-    <p class="text-body-lg text-body">Add files and folders, configure options, and create a ZIP archive entirely in your browser.</p>
+<div class="w-full max-w-4xl mx-auto space-y-8">
+  <header class="gradient-mesh relative overflow-hidden rounded-lg border border-hairline px-6 py-10 sm:px-12 sm:py-14">
+    <div class="relative max-w-2xl space-y-4">
+      <p class="text-mono-eyebrow font-mono text-cyan uppercase tracking-[0.18em]">Private file utility / 02</p>
+      <h1 class="text-display-xl font-semibold text-ink tracking-tight sm:text-[56px] sm:leading-[1.02]">Make a ZIP that stays yours.</h1>
+      <p class="text-body-lg text-body max-w-xl">Gather files, set the compression you need, and create a portable archive without sending anything to a server.</p>
+    </div>
   </header>
 
   <FileCollector 

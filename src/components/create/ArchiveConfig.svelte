@@ -1,7 +1,7 @@
 <script lang="ts">
   export let archiveName: string = 'archive.zip';
   export let compressionLevel: number = 6;
-  export let disabled: boolean = $props(false);
+  export let disabled: boolean = false;
 </script>
 
 <div class="card p-6">

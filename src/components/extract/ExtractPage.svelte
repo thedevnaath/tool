@@ -51,7 +51,6 @@
         case 'complete':
           files = data.files;
           fileTree = buildFileTree(data.files);
-          assignIndices(fileTree);
           isExtracting = false;
           showToast(`Extracted ${data.files.length} files (${formatFileSize(data.totalSize)})`, 'success');
           break;
@@ -68,17 +67,6 @@
           break;
       }
     };
-  }
-
-  function assignIndices(nodes: FileTreeNode[], baseIndex = 0): number {
-    let index = baseIndex;
-    for (const node of nodes) {
-      node.index = index++;
-      if (node.children.length > 0) {
-        index = assignIndices(node.children, index);
-      }
-    }
-    return index;
   }
 
   async function handleExtract(file: File) {
@@ -116,6 +104,27 @@
       worker.postMessage({ type: 'getContent', data: { fileIndex: index } });
     }
   }
+
+  function handleFileDownload(index: number) {
+    if (worker) {
+      worker.postMessage({ type: 'getContent', data: { fileIndex: index } });
+    }
+  }
+
+  onMount(() => {
+    const handleContentRequest = (event: Event) => {
+      handleFileSelect((event as CustomEvent).detail.fileIndex);
+    };
+    const handleDownloadRequest = (event: Event) => {
+      handleFileDownload((event as CustomEvent).detail.fileIndex);
+    };
+    window.addEventListener('request-file-content', handleContentRequest);
+    window.addEventListener('request-download', handleDownloadRequest);
+    return () => {
+      window.removeEventListener('request-file-content', handleContentRequest);
+      window.removeEventListener('request-download', handleDownloadRequest);
+    };
+  });
 
   function handleToggleHidden(value: boolean) {
     showHiddenFiles = value;
@@ -158,6 +167,7 @@
     get showHiddenFiles() { return showHiddenFiles; },
     set showHiddenFiles(value: boolean) { showHiddenFiles = value; },
     handleFileSelect,
+    handleFileDownload,
     handleDownloadAll,
     handleClear,
   };
@@ -169,10 +179,13 @@
   <title>Extract ZIP - Unzip Files Online</title>
 </svelte:head>
 
-<div class="w-full max-w-7xl mx-auto space-y-6">
-  <header class="space-y-2">
-    <h1 class="text-display-xl font-semibold text-ink tracking-tight">Extract ZIP Archive</h1>
-    <p class="text-body-lg text-body">Drag and drop a ZIP file, or click to select. All extraction happens in your browser — no uploads, complete privacy.</p>
+<div class="w-full max-w-7xl mx-auto space-y-8">
+  <header class="gradient-mesh relative overflow-hidden rounded-lg border border-hairline px-6 py-10 sm:px-12 sm:py-16">
+    <div class="relative max-w-2xl space-y-4">
+      <p class="text-mono-eyebrow font-mono text-cyan uppercase tracking-[0.18em]">Private file utility / 01</p>
+      <h1 class="text-display-xl font-semibold text-ink tracking-tight sm:text-[56px] sm:leading-[1.02]">Unpack without leaving a trace.</h1>
+      <p class="text-body-lg text-body max-w-xl">Drop a ZIP and turn it into something usable. Everything stays in this browser, with a quiet interface that gets out of your way.</p>
+    </div>
   </header>
 
   <FileDropZone on:extract={handleExtract} {isExtracting} />

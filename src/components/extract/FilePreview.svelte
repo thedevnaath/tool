@@ -2,10 +2,10 @@
   import { onMount, onDestroy } from 'svelte';
   import { X, Maximize2, Download, ChevronLeft, ChevronRight } from 'lucide-svelte';
   
-  export let content: string | ArrayBuffer = $props();
-  export let mimeType: string = $props();
-  export let filename: string = $props();
-  export let fileType: 'image' | 'video' | 'audio' | 'text' | 'code' | 'pdf' = $props();
+  export let content: string | ArrayBuffer;
+  export let mimeType: string;
+  export let filename: string;
+  export let fileType: 'image' | 'video' | 'audio' | 'text' | 'code' | 'pdf';
 
   let pdfInstance: any = null;
   let currentPage = $state(1);

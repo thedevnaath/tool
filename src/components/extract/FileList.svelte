@@ -2,10 +2,10 @@
   import FileCard from './FileCard.svelte';
   import type { FileEntry } from '../../lib/file-utils';
   
-  export let files: FileEntry[] = $props();
-  export let selectedIndex: number | null = $props();
+  export let files: FileEntry[];
+  export let selectedIndex: number | null;
   export let onSelect: (index: number) => void = () => {};
-  export let showHiddenFiles: boolean = $props(false);
+  export let showHiddenFiles: boolean = false;
 
   $: visibleFiles = files.filter(f => !f.isDirectory && (showHiddenFiles || !f.filename.startsWith('.')));
 </script>

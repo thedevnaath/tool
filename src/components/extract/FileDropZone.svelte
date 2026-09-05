@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let isExtracting = $props(false);
+  export let isExtracting = false;
   export let onExtract: (file: File) => void = () => {};
 
   let isDragOver = false;
@@ -69,7 +69,7 @@
 </script>
 
 <div 
-  class="relative card p-8 sm:p-12 text-center transition-all duration-fast
+  class="relative card overflow-hidden p-8 sm:p-12 text-center transition-all duration-fast
     {isDragOver ? 'border-link bg-link-soft' : 'border-hairline hover:border-mute'}
     {isExtracting ? 'opacity-50 pointer-events-none' : ''}"
   on:dragover={handleDragOver}
@@ -91,7 +91,7 @@
   />
 
   <div class="flex flex-col items-center gap-4">
-    <div class="flex items-center justify-center w-16 h-16 rounded-full bg-hairline-soft text-ink
+    <div class="flex items-center justify-center w-16 h-16 rounded-full bg-cyan text-[#071c2f]
       {isDragOver ? 'bg-link-soft text-link' : ''} transition-colors">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />

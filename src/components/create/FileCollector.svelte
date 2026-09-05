@@ -1,9 +1,9 @@
 <script lang="ts">
-  export let files: File[] = $props();
+  export let files: File[];
   export let onAddFiles: (files: File[]) => void = () => {};
   export let onRemoveFile: (index: number) => void = () => {};
   export let onClearAll: () => void = () => {};
-  export let disabled: boolean = $props(false);
+  export let disabled: boolean = false;
 
   let isDragOver = false;
   let fileInput: HTMLInputElement | null = null;
@@ -93,7 +93,7 @@
 
       const promises: Promise<void>[] = [];
       for (const item of items) {
-        if (item.kind === 'file') {
+        if (item.kind === 'file' && !item.webkitGetAsEntry) {
           const file = item.getAsFile();
           if (file) newFiles.push(file);
         } else if (item.webkitGetAsEntry) {
