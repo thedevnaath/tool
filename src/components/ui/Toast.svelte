@@ -5,19 +5,19 @@
   export let onDismiss: (id: number) => void = () => {};
 
   let typeClass = '';
-  if (type === 'success') typeClass = 'border-l-4 border-green-500 bg-green-50 text-green-900';
-  else if (type === 'error') typeClass = 'border-l-4 border-red-500 bg-red-50 text-red-900';
-  else typeClass = 'border-l-4 border-blue-500 bg-blue-50 text-blue-900';
+  if (type === 'success') typeClass = 'toast-success';
+  else if (type === 'error') typeClass = 'toast-error';
+  else typeClass = 'toast-info';
 </script>
 
 <div 
-  class="flex items-start gap-3 px-4 py-3 rounded-md shadow-floating min-w-[300px] max-w-md {typeClass}"
+  class="{typeClass}"
   role="alert"
   aria-live="polite"
 >
   <span class="flex-1 text-body-md">{message}</span>
   <button
-    class="p-1 rounded-sm hover:bg-black/10 transition-colors text-current opacity-60 hover:opacity-100"
+    class="p-1 rounded-sm hover:bg-hairline-soft transition-colors text-ink opacity-60 hover:opacity-100"
     on:click={() => onDismiss(id)}
     aria-label="Dismiss"
   >

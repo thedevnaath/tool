@@ -1,195 +1,186 @@
-<script lang="ts">
-  import { 
-    File, Image, Video, Music, FileText, Code, Download, 
-    ChevronDown, ChevronUp, X, ExternalLink, Eye, EyeOff 
-  } from 'lucide-svelte';
+﻿<script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
   import type { FileEntry } from '../../lib/file-utils';
-  import { getFileType, getMimeType, canPreview, formatFileSize, formatDate } from '../../lib/file-utils';
-  import { downloadUrl, downloadDataUrl, downloadText, downloadArrayBuffer } from '../../lib/download';
-  import FilePreview from './FilePreview.svelte';
 
   export let file: FileEntry;
   export let index: number;
   export let isSelected: boolean = false;
   export let onSelect: (index: number) => void = () => {};
 
+  const MAX_TEXT_PREVIEW_BYTES = 1024 * 256;
+
   let isExpanded = false;
-  let previewContent: string | ArrayBuffer | null = null;
-  let previewMimeType = '';
-  let previewError: string | null = null;
-  let isLoadingPreview = false;
-  let downloadAfterLoad = false;
+  let previewContent: string | null = null;
+  let previewObjectUrl: string | null = null;
+  let previewMimeType: string = '';
+  let previewLoading = false;
 
-  const fileType = getFileType(file.filename);
-  const mimeType = getMimeType(file.filename);
-  const previewable = canPreview(file.filename);
+  $: ext = (file.filename.split('.').pop() ?? '').toLowerCase();
+  $: basename = file.filename.split('/').pop() || file.filename;
+  $: dirname = file.filename.includes('/') ? file.filename.split('/').slice(0, -1).join('/') + '/' : '';
+  $: mimeType = file.mimeType || '';
+  $: isImageFile = mimeType.startsWith('image/');
+  $: isTextFile = ['text/', 'application/json', 'application/xml', 'application/javascript', 'application/typescript'].some(t => mimeType.startsWith(t));
+  $: isPreviewable = (isImageFile || isTextFile) && file.uncompressedSize < 10 * 1024 * 1024;
 
-  function getFileIcon() {
-    switch (fileType) {
-      case 'image': return Image;
-      case 'video': return Video;
-      case 'audio': return Music;
-      case 'pdf': return FileText;
-      case 'code': return Code;
-      case 'text': return FileText;
-      default: return File;
-    }
+  const IMAGE_EXTS = ['jpg','jpeg','png','gif','svg','webp','ico','bmp','avif'];
+  const VIDEO_EXTS = ['mp4','mov','avi','webm','mkv'];
+  const CODE_EXTS = ['js','ts','jsx','tsx','py','rb','go','rs','java','php','sh','swift','kt','dart'];
+  const DATA_EXTS = ['json','yaml','yml','toml','csv','sql','graphql'];
+  const DOC_EXTS = ['md','txt','rst'];
+
+  function iconColor(e: string): string {
+    if (IMAGE_EXTS.includes(e)) return 'text-violet';
+    if (VIDEO_EXTS.includes(e)) return 'text-pink';
+    if (CODE_EXTS.includes(e)) return 'text-cyan';
+    if (DATA_EXTS.includes(e)) return 'text-success';
+    if (DOC_EXTS.includes(e)) return 'text-link';
+    if (e === 'zip' || e === 'gz' || e === 'tar') return 'text-error';
+    return 'text-faint';
+  }
+  function iconBg(e: string): string {
+    if (IMAGE_EXTS.includes(e)) return 'bg-violet-soft';
+    if (VIDEO_EXTS.includes(e)) return 'bg-error-soft';
+    if (CODE_EXTS.includes(e)) return 'bg-cyan-soft';
+    if (DATA_EXTS.includes(e)) return 'bg-success-soft';
+    return 'bg-hairline-soft';
   }
 
-  function handleClick(event: MouseEvent) {
-    if ((event.target as HTMLElement).closest('button')) return;
-    onSelect(index);
-  }
-
-  function toggleExpanded() {
-    isExpanded = !isExpanded;
-    if (isExpanded && previewable && !previewContent) {
-      loadPreview();
-    }
-  }
-
-  async function loadPreview() {
-    isLoadingPreview = true;
-    previewError = null;
-    
-    const handleContent = (event: CustomEvent) => {
-      const { fileIndex, content, mimeType: mt, filename } = event.detail;
-      if (fileIndex === index) {
-        previewContent = content;
-        previewMimeType = mt;
-        isLoadingPreview = false;
-        if (downloadAfterLoad) {
-          downloadAfterLoad = false;
-          downloadContent(content, mt);
-        }
-        window.removeEventListener('file-content', handleContent as EventListener);
-      }
-    };
-    
-    window.addEventListener('file-content', handleContent as EventListener);
-    window.dispatchEvent(new CustomEvent('request-file-content', { detail: { fileIndex: index } }));
-    
-    setTimeout(() => {
-      if (isLoadingPreview) {
-        isLoadingPreview = false;
-        previewError = 'Preview timed out';
-        window.removeEventListener('file-content', handleContent as EventListener);
-      }
-    }, 10000);
+  function formatSize(bytes: number): string {
+    if (!bytes || bytes === 0) return '0 B';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1073741824) return `${(bytes / 1048576).toFixed(1)} MB`;
+    return `${(bytes / 1073741824).toFixed(1)} GB`;
   }
 
   function handleDownload() {
-    if (previewContent) {
-      downloadContent(previewContent, previewMimeType || mimeType);
-    } else {
-      downloadAfterLoad = true;
-      window.dispatchEvent(new CustomEvent('request-download', { detail: { fileIndex: index } }));
+    window.dispatchEvent(new CustomEvent('request-download', { detail: { fileIndex: index } }));
+  }
+
+  async function toggleExpand() {
+    isExpanded = !isExpanded;
+    if (isExpanded && isPreviewable && previewContent === null && previewObjectUrl === null) {
+      previewLoading = true;
+      onSelect(index);
     }
   }
 
-  function downloadContent(content: string | ArrayBuffer, contentMimeType: string) {
-    if (typeof content === 'string') {
-      if (content.startsWith('data:')) {
-        downloadDataUrl(content, file.filename);
+  function handleFileContent(e: Event) {
+    const detail = (e as CustomEvent).detail;
+    if (detail.fileIndex !== index) return;
+    previewMimeType = detail.mimeType || '';
+    previewLoading = false;
+    if (detail.content instanceof ArrayBuffer) {
+      if (previewMimeType.startsWith('image/')) {
+        if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+        const blob = new Blob([detail.content], { type: previewMimeType });
+        previewObjectUrl = URL.createObjectURL(blob);
+        previewContent = previewObjectUrl;
       } else {
-        downloadText(content, file.filename);
+        const bytes = new Uint8Array(detail.content);
+        previewContent = new TextDecoder('utf-8', { fatal: false }).decode(bytes.slice(0, MAX_TEXT_PREVIEW_BYTES));
       }
-    } else {
-      downloadArrayBuffer(content, file.filename, contentMimeType);
     }
   }
+
+  onMount(() => { window.addEventListener('file-content', handleFileContent); });
+  onDestroy(() => {
+    window.removeEventListener('file-content', handleFileContent);
+    if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+  });
 </script>
 
-<div 
-  class="card overflow-hidden transition-all duration-fast
-    {isSelected ? 'border-link shadow-whisper' : 'border-hairline hover:border-mute'}"
-  on:click={handleClick}
+<div
+  class="group card overflow-hidden transition-all duration-fast
+    {isSelected ? 'border-link/40 shadow-glow' : 'hover:border-hairline/80'}"
   role="listitem"
 >
-  <div class="p-4 flex items-center gap-3">
-    <div class="flex items-center justify-center w-10 h-10 rounded-md bg-hairline-soft text-ink flex-shrink-0">
-      <svelte:component this={getFileIcon()} class="w-5 h-5" aria-hidden="true" />
+  <!-- Header row -->
+  <div class="flex items-center gap-3 px-4 py-3">
+    <!-- File type icon -->
+    <div class="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-lg {iconBg(ext)}">
+      {#if IMAGE_EXTS.includes(ext)}
+        <svg class="w-4 h-4 {iconColor(ext)}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      {:else if VIDEO_EXTS.includes(ext)}
+        <svg class="w-4 h-4 {iconColor(ext)}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+      {:else}
+        <svg class="w-4 h-4 {iconColor(ext)}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+      {/if}
     </div>
 
+    <!-- Filename + path -->
     <div class="flex-1 min-w-0">
-      <div class="flex items-center gap-2">
-        <h4 class="text-body-md font-medium text-ink truncate">{file.filename}</h4>
-        {#if file.isDirectory}
-          <span class="px-2 py-0.5 text-body-sm bg-hairline-soft text-mute rounded-sm">Folder</span>
-        {/if}
-      </div>
-      <div class="flex items-center gap-3 text-body-sm text-mute mt-0.5">
-        <span class="font-mono">{formatFileSize(file.uncompressedSize)}</span>
-        <span>{formatDate(file.lastModDate)}</span>
-        {#if file.compressedSize > 0 && file.uncompressedSize > 0}
-          <span class="text-green-600">
-            {Math.round((1 - file.compressedSize / file.uncompressedSize) * 100)}% saved
-          </span>
-        {/if}
-      </div>
+      <p class="text-body-md font-medium text-ink truncate leading-tight">{basename}</p>
+      {#if dirname}
+        <p class="text-body-sm text-faint font-mono truncate mt-0.5">{dirname}</p>
+      {/if}
     </div>
 
-    <div class="flex items-center gap-1">
-      {#if previewable}
+    <!-- Right: meta + actions -->
+    <div class="flex-shrink-0 flex items-center gap-2">
+      <span class="font-mono text-body-sm text-mute hidden sm:block">{formatSize(file.uncompressedSize)}</span>
+      {#if ext}
+        <span class="badge-default hidden md:inline-flex uppercase font-mono">.{ext}</span>
+      {/if}
+      {#if isPreviewable}
         <button
-          class="btn-icon p-1.5"
-          on:click={(e) => { e.stopPropagation(); toggleExpanded(); }}
+          class="btn-icon"
+          on:click={toggleExpand}
           aria-label={isExpanded ? 'Collapse preview' : 'Expand preview'}
           aria-expanded={isExpanded}
         >
-          {#if isExpanded}
-            <ChevronUp class="w-4 h-4" aria-hidden="true" />
-          {:else}
-            <ChevronDown class="w-4 h-4" aria-hidden="true" />
-          {/if}
+          <svg class="w-3.5 h-3.5 transition-transform duration-fast {isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
         </button>
       {/if}
-      
       <button
-        class="btn-icon p-1.5"
-        on:click={(e) => { e.stopPropagation(); handleDownload(); }}
-        aria-label="Download {file.filename}"
+        class="btn-square"
+        on:click={handleDownload}
+        aria-label="Download {basename}"
       >
-        <Download class="w-4 h-4" aria-hidden="true" />
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        <span class="hidden sm:inline">Download</span>
       </button>
     </div>
   </div>
 
+  <!-- Preview -->
   {#if isExpanded}
-    <div class="border-t border-hairline bg-hairline-soft animate-expand" role="region" aria-label="File preview">
-      <div class="p-4">
-        {#if isLoadingPreview}
-          <div class="flex items-center justify-center py-8">
-            <div class="w-8 h-8 border-2 border-hairline border-t-ink rounded-full animate-spin" aria-hidden="true"></div>
-            <span class="ml-3 text-body-md text-body">Loading preview...</span>
+    <div class="border-t border-hairline animate-expand-down">
+      {#if previewLoading}
+        <div class="flex items-center justify-center py-10">
+          <div class="w-5 h-5 border-2 border-hairline border-t-ink rounded-full animate-spin" aria-hidden="true"></div>
+        </div>
+      {:else if previewContent !== null}
+        {#if isImageFile}
+          <div class="p-4 flex items-center justify-center bg-hairline-soft/30 min-h-32">
+            <img src={previewContent} alt={basename} class="max-h-80 max-w-full rounded-lg object-contain" />
           </div>
-        {:else if previewError}
-          <div class="flex flex-col items-center gap-3 py-8 text-center">
-            <X class="w-12 h-12 text-error" aria-hidden="true" />
-            <p class="text-body-md text-body">{previewError}</p>
-            <button class="btn-secondary" on:click={loadPreview}>Retry</button>
-          </div>
-        {:else if previewContent}
-          <FilePreview
-            content={previewContent}
-            mimeType={previewMimeType}
-            filename={file.filename}
-            fileType={fileType}
-          />
-        {:else if previewable}
-          <button class="btn-secondary w-full" on:click={loadPreview}>
-            Load Preview
-          </button>
         {:else}
-          <div class="flex flex-col items-center gap-3 py-8 text-center text-mute">
-            <File class="w-12 h-12 opacity-50" aria-hidden="true" />
-            <p class="text-body-md">Preview not available for this file type</p>
-            <button class="btn-secondary" on:click={handleDownload}>
-              Download to view
-            </button>
+          <div class="relative">
+            {#if ext}
+              <div class="absolute top-2.5 right-3 z-10">
+                <span class="badge-default font-mono text-body-sm uppercase">{ext}</span>
+              </div>
+            {/if}
+            <pre class="p-4 overflow-x-auto max-h-64 scrollbar-thin text-code font-mono text-body leading-relaxed text-body-sm bg-hairline-soft/20"><code>{previewContent}{file.uncompressedSize > MAX_TEXT_PREVIEW_BYTES ? '\n\n... (truncated — file too large to fully preview)' : ''}</code></pre>
           </div>
         {/if}
-      </div>
+      {:else}
+        <div class="flex items-center justify-center py-8 text-faint text-body-sm">
+          Preview loading...
+        </div>
+      {/if}
     </div>
   {/if}
 </div>

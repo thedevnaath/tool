@@ -1,5 +1,6 @@
 ---
 import ModeToggle from '../components/ui/ModeToggle.svelte';
+import '../styles/global.css';
 ---
 
 <!doctype html>
@@ -9,74 +10,59 @@ import ModeToggle from '../components/ui/ModeToggle.svelte';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>Unzip Files Online - Extract & Create ZIP Archives in Your Browser</title>
-    <meta name="description" content="Extract ZIP files or create new ZIP archives entirely in your browser. No uploads, no server, complete privacy. Supports large files, previews, and batch operations." />
-    <meta name="theme-color" content="#171717" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <title>Unzip Files Online - Extract and Create ZIP Files in Your Browser</title>
+    <meta name="description" content="Unzip any ZIP file instantly in your browser. No uploads, no server, 100% private. Preview images, videos, text files and download individually or all at once." />
+    <meta name="theme-color" content="#202B22" />
+    <meta property="og:title" content="Unzip Files Online" />
+    <meta property="og:description" content="Extract ZIP files entirely in your browser. No uploads. Complete privacy." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://unzipfilesonline.com" />
+    <link rel="canonical" href="https://unzipfilesonline.com" />
     <script is:inline>
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'light') document.documentElement.classList.remove('dark');
-      else document.documentElement.classList.add('dark');
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light') { document.documentElement.classList.remove('dark'); }
+      else { document.documentElement.classList.add('dark'); }
     </script>
-    
-    <link rel="preconnect" href="https://cdn.umami.is" />
-    <script defer src="https://cdn.umami.is/script.js" data-website-id={import.meta.env.PUBLIC_UMAMI_WEBSITE_ID || ''}></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <noscript>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.0/index.css" />
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5.0.0/index.css" />
-    </noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://cdn.umami.is" />
+    <script defer src="https://cdn.umami.is/script.js" data-website-id={import.meta.env.PUBLIC_UMAMI_WEBSITE_ID || ''}></script>
   </head>
   <body class="min-h-screen flex flex-col">
-    <header class="border-b border-hairline bg-canvas/80 backdrop-blur-sm sticky top-0 z-40">
-      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex items-center gap-6">
-            <a href="/" class="flex items-center gap-3 text-dark-ink hover:opacity-80 transition-opacity" aria-label="Unzip Files Online Home">
-              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-[#071c2f] shadow-whisper">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <header class="sticky top-0 z-50 border-b border-hairline bg-canvas/80 backdrop-blur-xl">
+      <nav class="max-w-5xl mx-auto px-4 sm:px-6" aria-label="Main navigation">
+        <div class="flex items-center justify-between h-14">
+          <a href="/" class="flex items-center gap-2.5 group" aria-label="Unzip Files Online Home">
+            <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-hairline-soft border border-hairline group-hover:border-mute/50 transition-colors">
+              <svg class="w-4 h-4 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              </span>
-              <span class="font-sans font-bold text-heading-md tracking-tight hidden sm:block">Unzip Files Online</span>
-            </a>
-          </div>
-
-          <div class="flex items-center gap-4">
+            </div>
+            <span class="font-sans font-semibold text-heading-sm text-ink tracking-tight hidden sm:block">Unzip Files Online</span>
+          </a>
+          <div class="flex items-center gap-3">
             <ModeToggle client:only="svelte" />
           </div>
         </div>
       </nav>
     </header>
-
-    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <main class="flex-1 w-full">
       <slot />
     </main>
-
-    <footer class="border-t border-hairline bg-canvas/70 py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-body-sm text-mute">
-          <p>All processing happens in your browser. No files are uploaded to any server.</p>
-          <div class="flex items-center gap-6">
+    <footer class="border-t border-hairline mt-16">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <p class="text-body-sm text-mute">All processing happens locally in your browser. No files are ever uploaded to any server.</p>
+          <nav class="flex items-center gap-5 text-body-sm text-mute" aria-label="Footer">
             <a href="/privacy" class="hover:text-ink transition-colors">Privacy</a>
             <a href="/about" class="hover:text-ink transition-colors">About</a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="hover:text-ink transition-colors" aria-label="GitHub">
-              <span>GitHub</span>
-            </a>
-          </div>
+          </nav>
+        </div>
+        <div class="mt-6 pt-6 border-t border-hairline">
+          <p class="text-body-sm text-faint">2026 Unzip Files Online. Free, private, browser-based.</p>
         </div>
       </div>
     </footer>
-
-    <script is:inline>
-      if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
-        });
-      }
-    </script>
   </body>
 </html>
