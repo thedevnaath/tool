@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { onMount } from 'svelte';
   import FileDropZone from './FileDropZone.svelte';
   import FileTree from './FileTree.svelte';
@@ -94,7 +94,7 @@
   }
 
   function handleFileDownload(index: number) {
-    if (worker) worker.postMessage({ type: 'getContent', data: { fileIndex: index } });
+    if (worker) worker.postMessage({ type: 'downloadFile', data: { fileIndex: index } });
   }
 
   function handleDownloadAll() {
@@ -124,14 +124,28 @@
     return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
   }
 
+  function handleFileRename(e: Event) {
+    const { fileIndex, newName } = (e as CustomEvent).detail;
+    if (fileIndex >= 0 && fileIndex < files.length) {
+      const newFiles = [...files];
+      newFiles[fileIndex] = { ...newFiles[fileIndex], filename: newName };
+      files = newFiles;
+      fileTree = buildFileTree(files);
+      showToast('File renamed for this session', 'success');
+    }
+  }
+
   onMount(() => {
     const handleContentRequest = (e: Event) => handleFileSelect((e as CustomEvent).detail.fileIndex);
     const handleDownloadRequest = (e: Event) => handleFileDownload((e as CustomEvent).detail.fileIndex);
+    const handleRenameRequest = (e: Event) => handleFileRename(e);
     window.addEventListener('request-file-content', handleContentRequest);
     window.addEventListener('request-download', handleDownloadRequest);
+    window.addEventListener('rename-file', handleRenameRequest);
     return () => {
       window.removeEventListener('request-file-content', handleContentRequest);
       window.removeEventListener('request-download', handleDownloadRequest);
+      window.removeEventListener('rename-file', handleRenameRequest);
     };
   });
 

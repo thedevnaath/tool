@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   export let isExtracting = false;
 
@@ -49,10 +49,10 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-  class="relative rounded-xl border-2 border-dashed transition-all duration-normal
+  class="relative card overflow-hidden transition-all duration-normal
     {isDragOver
       ? 'border-link bg-link-soft scale-[1.01]'
-      : 'border-hairline hover:border-mute/60 bg-canvas-elevated/30'
+      : 'border-hairline hover:border-mute'
     }
     {isExtracting ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}"
   on:dragover={handleDragOver}

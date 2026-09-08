@@ -145,27 +145,56 @@ self.onmessage = async (event) => {
         break;
       }
 
+      case 'downloadFile': {
+        const { fileIndex } = data;
+        if (!zipReader || fileIndex >= entries.length) {
+          throw new Error('Invalid file index');
+        }
+
+        const entry = entries[fileIndex];
+        if (entry.directory) break;
+
+        const filename = entry.filename.split('/').pop() || entry.filename;
+        const ext = filename.split('.').pop()?.toLowerCase() || '';
+        const mimeType = getMimeType(ext);
+
+        const writer = new BlobWriter(mimeType);
+        const blob = await entry.getData(writer);
+        const url = URL.createObjectURL(blob);
+
+        self.postMessage({
+          type: 'downloadReady',
+          url,
+          filename,
+        });
+        break;
+      }
+
       case 'downloadAll': {
         const { fileIndices } = data;
         if (!zipReader) throw new Error('No ZIP loaded');
 
-        const zipWriter = new ZipWriter(new BlobWriter('application/zip'));
-        
         for (const index of fileIndices) {
           const entry = entries[index];
-          const writer = new BlobWriter();
-          const blob = await entry.getData(writer);
-          await zipWriter.add(entry.filename, new BlobReader(blob));
-        }
+          if (entry.directory) continue;
 
-        const blob = await zipWriter.close();
-        const url = URL.createObjectURL(blob);
-        
-        self.postMessage({
-          type: 'downloadReady',
-          url,
-          filename: 'extracted-files.zip',
-        });
+          const filename = entry.filename.split('/').pop() || entry.filename;
+          const ext = filename.split('.').pop()?.toLowerCase() || '';
+          const mimeType = getMimeType(ext);
+
+          const writer = new BlobWriter(mimeType);
+          const blob = await entry.getData(writer);
+          const url = URL.createObjectURL(blob);
+
+          self.postMessage({
+            type: 'downloadReady',
+            url,
+            filename,
+          });
+
+          // Small delay to prevent browser from freezing or skipping downloads
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
         break;
       }
 

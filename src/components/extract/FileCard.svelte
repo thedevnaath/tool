@@ -1,6 +1,7 @@
-﻿<script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+<script lang="ts">
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import type { FileEntry } from '../../lib/file-utils';
+  import ImagePreviewEngine from './image-preview/ImagePreviewEngine.svelte';
 
   export let file: FileEntry;
   export let index: number;
@@ -12,6 +13,7 @@
   let isExpanded = false;
   let previewContent: string | null = null;
   let previewObjectUrl: string | null = null;
+  let rawContent: ArrayBuffer | null = null;
   let previewMimeType: string = '';
   let previewLoading = false;
 
@@ -19,11 +21,12 @@
   $: basename = file.filename.split('/').pop() || file.filename;
   $: dirname = file.filename.includes('/') ? file.filename.split('/').slice(0, -1).join('/') + '/' : '';
   $: mimeType = file.mimeType || '';
-  $: isImageFile = mimeType.startsWith('image/');
+  $: isPsdFile = ext === 'psd';
+  $: isImageFile = IMAGE_EXTS.includes(ext) || mimeType.startsWith('image/') || isPsdFile;
   $: isTextFile = ['text/', 'application/json', 'application/xml', 'application/javascript', 'application/typescript'].some(t => mimeType.startsWith(t));
-  $: isPreviewable = (isImageFile || isTextFile) && file.uncompressedSize < 10 * 1024 * 1024;
+  $: isPreviewable = (isImageFile || isTextFile) && file.uncompressedSize < 50 * 1024 * 1024; // Increased to 50MB to support larger PSDs
 
-  const IMAGE_EXTS = ['jpg','jpeg','png','gif','svg','webp','ico','bmp','avif'];
+  const IMAGE_EXTS = ['jpg','jpeg','png','gif','svg','webp','ico','bmp','avif','apng'];
   const VIDEO_EXTS = ['mp4','mov','avi','webm','mkv'];
   const CODE_EXTS = ['js','ts','jsx','tsx','py','rb','go','rs','java','php','sh','swift','kt','dart'];
   const DATA_EXTS = ['json','yaml','yml','toml','csv','sql','graphql'];
@@ -58,6 +61,10 @@
     window.dispatchEvent(new CustomEvent('request-download', { detail: { fileIndex: index } }));
   }
 
+  function handleRename(event: CustomEvent<string>) {
+    window.dispatchEvent(new CustomEvent('rename-file', { detail: { fileIndex: index, newName: event.detail } }));
+  }
+
   async function toggleExpand() {
     isExpanded = !isExpanded;
     if (isExpanded && isPreviewable && previewContent === null && previewObjectUrl === null) {
@@ -72,11 +79,14 @@
     previewMimeType = detail.mimeType || '';
     previewLoading = false;
     if (detail.content instanceof ArrayBuffer) {
-      if (previewMimeType.startsWith('image/')) {
+      rawContent = detail.content;
+      if (isImageFile) {
         if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
-        const blob = new Blob([detail.content], { type: previewMimeType });
-        previewObjectUrl = URL.createObjectURL(blob);
-        previewContent = previewObjectUrl;
+        if (!isPsdFile) {
+          const blob = new Blob([detail.content], { type: previewMimeType || 'image/png' });
+          previewObjectUrl = URL.createObjectURL(blob);
+        }
+        previewContent = 'image_loaded'; // non-null to indicate loaded
       } else {
         const bytes = new Uint8Array(detail.content);
         previewContent = new TextDecoder('utf-8', { fatal: false }).decode(bytes.slice(0, MAX_TEXT_PREVIEW_BYTES));
@@ -92,9 +102,11 @@
 </script>
 
 <div
-  class="group card overflow-hidden transition-all duration-fast
+  class="group card overflow-hidden transition-all duration-fast cursor-pointer
     {isSelected ? 'border-link/40 shadow-glow' : 'hover:border-hairline/80'}"
   role="listitem"
+  on:click={toggleExpand}
+  on:keydown={(e) => e.key === 'Enter' && toggleExpand()}
 >
   <!-- Header row -->
   <div class="flex items-center gap-3 px-4 py-3">
@@ -129,27 +141,25 @@
       {#if ext}
         <span class="badge-default hidden md:inline-flex uppercase font-mono">.{ext}</span>
       {/if}
-      {#if isPreviewable}
-        <button
-          class="btn-icon"
-          on:click={toggleExpand}
-          aria-label={isExpanded ? 'Collapse preview' : 'Expand preview'}
-          aria-expanded={isExpanded}
-        >
-          <svg class="w-3.5 h-3.5 transition-transform duration-fast {isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      {/if}
       <button
         class="btn-square"
-        on:click={handleDownload}
+        on:click|stopPropagation={handleDownload}
         aria-label="Download {basename}"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
         <span class="hidden sm:inline">Download</span>
+      </button>
+      <button
+        class="btn-icon ml-1"
+        on:click|stopPropagation={toggleExpand}
+        aria-label={isExpanded ? 'Collapse preview' : 'Expand preview'}
+        aria-expanded={isExpanded}
+      >
+        <svg class="w-3.5 h-3.5 transition-transform duration-fast {isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
       </button>
     </div>
   </div>
@@ -163,9 +173,13 @@
         </div>
       {:else if previewContent !== null}
         {#if isImageFile}
-          <div class="p-4 flex items-center justify-center bg-hairline-soft/30 min-h-32">
-            <img src={previewContent} alt={basename} class="max-h-80 max-w-full rounded-lg object-contain" />
-          </div>
+          <ImagePreviewEngine 
+            {file} 
+            {previewObjectUrl} 
+            content={rawContent}
+            mimeType={previewMimeType} 
+            on:rename={handleRename}
+          />
         {:else}
           <div class="relative">
             {#if ext}
@@ -178,7 +192,7 @@
         {/if}
       {:else}
         <div class="flex items-center justify-center py-8 text-faint text-body-sm">
-          Preview loading...
+          {isPreviewable ? 'Preview loading...' : 'Preview not available for this file format.'}
         </div>
       {/if}
     </div>

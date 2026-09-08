@@ -17,6 +17,7 @@
     "@astrojs/svelte": "^5.7.0",
     "@astrojs/tailwind": "^5.1.0",
     "@zip.js/zip.js": "^2.7.46",
+    "ag-psd": "^31.0.2",
     "astro": "^4.16.0",
     "idb": "^8.0.0",
     "lucide-svelte": "^0.469.0",
