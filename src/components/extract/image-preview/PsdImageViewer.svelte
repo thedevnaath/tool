@@ -32,6 +32,10 @@
     onTransform({ x: 0, y: 0, scale: 1 });
   }
 
+  export function getCanvas() {
+    return canvasElement;
+  }
+
   onMount(async () => {
     try {
       // Lazy load ag-psd
@@ -64,7 +68,7 @@
 </script>
 
 <div 
-  class="relative w-full h-[60vh] min-h-[300px] overflow-hidden bg-hairline-soft/30 flex items-center justify-center touch-none select-none"
+  class="relative w-full flex-1 h-full min-h-[300px] overflow-hidden bg-hairline-soft/30 flex items-center justify-center touch-none select-none"
   bind:this={container}
   use:zoomPan={{ transform, onTransform }}
   on:dblclick={handleDoubleClick}

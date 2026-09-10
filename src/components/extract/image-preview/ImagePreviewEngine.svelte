@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import type { FileEntry } from '../../../lib/file-utils';
   import ImageToolbar from './ImageToolbar.svelte';
   import NativeImageViewer from './NativeImageViewer.svelte';
@@ -21,6 +21,22 @@
   
   let viewerComponent: any;
   let containerRef: HTMLDivElement;
+  let isFullscreen = false;
+
+  function onFullscreenChange() {
+    isFullscreen = !!document.fullscreenElement;
+    if (isFullscreen) {
+      setTimeout(handleFit, 50);
+    }
+  }
+
+  onMount(() => {
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+  });
+
+  onDestroy(() => {
+    document.removeEventListener('fullscreenchange', onFullscreenChange);
+  });
 
   $: ext = (file.filename.split('.').pop() ?? '').toLowerCase();
   $: isPsd = ext === 'psd';
@@ -62,6 +78,44 @@
     }
   }
 
+  async function handleCopy() {
+    try {
+      if (isNative && previewObjectUrl) {
+        const response = await fetch(previewObjectUrl);
+        const blob = await response.blob();
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+        } catch (err) {
+          // Fallback for unsupported types: draw to canvas and copy as png
+          const img = new Image();
+          img.src = previewObjectUrl;
+          await new Promise((resolve) => { img.onload = resolve; });
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0);
+          canvas.toBlob(async (pngBlob) => {
+            if (pngBlob) {
+              await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+            }
+          }, 'image/png');
+        }
+      } else if (isPsd && viewerComponent && typeof viewerComponent.getCanvas === 'function') {
+        const canvas = viewerComponent.getCanvas();
+        if (canvas) {
+          canvas.toBlob(async (blob) => {
+            if (blob) {
+              await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            }
+          }, 'image/png');
+        }
+      }
+    } catch (err) {
+      console.error('Copy failed:', err);
+    }
+  }
+
   function onRename(event: CustomEvent<string>) {
     dispatch('rename', event.detail);
     viewMode = 'preview';
@@ -69,8 +123,10 @@
 </script>
 
 <div 
-  class="flex flex-col border-t border-hairline animate-expand-down bg-canvas" 
+  class="flex flex-col bg-canvas cursor-auto {isFullscreen ? 'w-full h-full' : 'border-t border-hairline animate-expand-down h-[70vh] min-h-[400px]'}" 
   bind:this={containerRef}
+  on:click|stopPropagation
+  on:keydown|stopPropagation
 >
   <ImageToolbar 
     bind:viewMode
@@ -80,6 +136,7 @@
     onFit={handleFit}
     onActualSize={handleActualSize}
     onFullscreen={handleFullscreen}
+    onCopy={handleCopy}
   />
   
   {#if viewMode === 'preview'}

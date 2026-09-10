@@ -1,5 +1,5 @@
 // Web Worker for ZIP extraction using zip.js
-import { configure, ZipReader, ZipWriter, BlobReader, BlobWriter, TextWriter, Data64URIWriter } from '@zip.js/zip.js';
+import { configure, ZipReader, ZipWriter, BlobReader, BlobWriter, TextWriter, Uint8ArrayWriter } from '@zip.js/zip.js';
 
 configure({
   workerScripts: {
@@ -127,12 +127,10 @@ self.onmessage = async (event) => {
           const writer = new TextWriter();
           content = await entry.getData(writer);
           responseMimeType = 'text/plain; charset=utf-8';
-        } else if (isImageFile(ext) || isVideoFile(ext) || isAudioFile(ext) || ext === 'pdf') {
-          const writer = new Data64URIWriter(mimeType);
-          content = await entry.getData(writer);
         } else {
-          const writer = new BlobWriter(mimeType);
-          content = await entry.getData(writer);
+          const writer = new Uint8ArrayWriter();
+          const uint8Array = await entry.getData(writer);
+          content = uint8Array.buffer;
         }
 
         self.postMessage({

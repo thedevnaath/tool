@@ -2,6 +2,7 @@
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import type { FileEntry } from '../../lib/file-utils';
   import ImagePreviewEngine from './image-preview/ImagePreviewEngine.svelte';
+  import TextPreviewEngine from './text-preview/TextPreviewEngine.svelte';
 
   export let file: FileEntry;
   export let index: number;
@@ -91,6 +92,8 @@
         const bytes = new Uint8Array(detail.content);
         previewContent = new TextDecoder('utf-8', { fatal: false }).decode(bytes.slice(0, MAX_TEXT_PREVIEW_BYTES));
       }
+    } else if (typeof detail.content === 'string') {
+      previewContent = detail.content;
     }
   }
 
@@ -181,14 +184,12 @@
             on:rename={handleRename}
           />
         {:else}
-          <div class="relative">
-            {#if ext}
-              <div class="absolute top-2.5 right-3 z-10">
-                <span class="badge-default font-mono text-body-sm uppercase">{ext}</span>
-              </div>
-            {/if}
-            <pre class="p-4 overflow-x-auto max-h-64 scrollbar-thin text-code font-mono text-body leading-relaxed text-body-sm bg-hairline-soft/20"><code>{previewContent}{file.uncompressedSize > MAX_TEXT_PREVIEW_BYTES ? '\n\n... (truncated — file too large to fully preview)' : ''}</code></pre>
-          </div>
+          <TextPreviewEngine 
+            {file} 
+            content={previewContent + (file.uncompressedSize > MAX_TEXT_PREVIEW_BYTES ? '\n\n... (truncated — file too large to fully preview)' : '')}
+            mimeType={previewMimeType}
+            on:rename={handleRename}
+          />
         {/if}
       {:else}
         <div class="flex items-center justify-center py-8 text-faint text-body-sm">
