@@ -136,7 +136,10 @@
   }
 
   onMount(() => {
-    const handleContentRequest = (e: Event) => handleFileSelect((e as CustomEvent).detail.fileIndex);
+    const handleContentRequest = (e: Event) => {
+      const index = (e as CustomEvent).detail.fileIndex;
+      if (worker) worker.postMessage({ type: 'getContent', data: { fileIndex: index } });
+    };
     const handleDownloadRequest = (e: Event) => handleFileDownload((e as CustomEvent).detail.fileIndex);
     const handleRenameRequest = (e: Event) => handleFileRename(e);
     window.addEventListener('request-file-content', handleContentRequest);

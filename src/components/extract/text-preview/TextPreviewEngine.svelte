@@ -22,13 +22,8 @@
   $: isHtml = ext === 'html' || ext === 'htm';
   $: showPreview = isMarkdown || isHtml;
   
-  // By default, open in preview if available, otherwise source.
+  // By default, open in source view for all files.
   let viewMode: 'preview' | 'source' | 'metadata' | 'rename' = 'source';
-  $: {
-    if (showPreview && viewMode === 'source' && !mounted) {
-      viewMode = 'preview';
-    }
-  }
 
   let mounted = false;
   let isWrapped = false;
@@ -41,9 +36,6 @@
 
   onMount(() => {
     mounted = true;
-    if (showPreview) {
-      viewMode = 'preview';
-    }
     document.addEventListener('fullscreenchange', onFullscreenChange);
   });
 

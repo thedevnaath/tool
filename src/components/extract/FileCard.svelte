@@ -18,20 +18,20 @@
   let previewMimeType: string = '';
   let previewLoading = false;
 
+  const IMAGE_EXTS = ['jpg','jpeg','png','gif','svg','webp','ico','bmp','avif','apng'];
+  const VIDEO_EXTS = ['mp4','mov','avi','webm','mkv'];
+  const CODE_EXTS = ['js','ts','jsx','tsx','py','rb','go','rs','java','php','sh','swift','kt','dart','html','htm','css','scss','xml','vue','svelte','astro'];
+  const DATA_EXTS = ['json','yaml','yml','toml','csv','sql','graphql'];
+  const DOC_EXTS = ['md','txt','rst'];
+
   $: ext = (file.filename.split('.').pop() ?? '').toLowerCase();
   $: basename = file.filename.split('/').pop() || file.filename;
   $: dirname = file.filename.includes('/') ? file.filename.split('/').slice(0, -1).join('/') + '/' : '';
   $: mimeType = file.mimeType || '';
   $: isPsdFile = ext === 'psd';
   $: isImageFile = IMAGE_EXTS.includes(ext) || mimeType.startsWith('image/') || isPsdFile;
-  $: isTextFile = ['text/', 'application/json', 'application/xml', 'application/javascript', 'application/typescript'].some(t => mimeType.startsWith(t));
+  $: isTextFile = CODE_EXTS.includes(ext) || DOC_EXTS.includes(ext) || DATA_EXTS.includes(ext) || ['text/', 'application/json', 'application/xml', 'application/javascript', 'application/typescript'].some(t => mimeType.startsWith(t));
   $: isPreviewable = (isImageFile || isTextFile) && file.uncompressedSize < 50 * 1024 * 1024; // Increased to 50MB to support larger PSDs
-
-  const IMAGE_EXTS = ['jpg','jpeg','png','gif','svg','webp','ico','bmp','avif','apng'];
-  const VIDEO_EXTS = ['mp4','mov','avi','webm','mkv'];
-  const CODE_EXTS = ['js','ts','jsx','tsx','py','rb','go','rs','java','php','sh','swift','kt','dart'];
-  const DATA_EXTS = ['json','yaml','yml','toml','csv','sql','graphql'];
-  const DOC_EXTS = ['md','txt','rst'];
 
   function iconColor(e: string): string {
     if (IMAGE_EXTS.includes(e)) return 'text-violet';
@@ -70,7 +70,7 @@
     isExpanded = !isExpanded;
     if (isExpanded && isPreviewable && previewContent === null && previewObjectUrl === null) {
       previewLoading = true;
-      onSelect(index);
+      window.dispatchEvent(new CustomEvent('request-file-content', { detail: { fileIndex: index } }));
     }
   }
 
