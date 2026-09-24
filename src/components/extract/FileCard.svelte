@@ -3,6 +3,7 @@
   import type { FileEntry } from '../../lib/file-utils';
   import ImagePreviewEngine from './image-preview/ImagePreviewEngine.svelte';
   import TextPreviewEngine from './text-preview/TextPreviewEngine.svelte';
+  import FilePreview from './FilePreview.svelte';
 
   export let file: FileEntry;
   export let index: number;
@@ -20,6 +21,7 @@
 
   const IMAGE_EXTS = ['jpg','jpeg','png','gif','svg','webp','ico','bmp','avif','apng'];
   const VIDEO_EXTS = ['mp4','mov','avi','webm','mkv'];
+  const AUDIO_EXTS = ['mp3','wav','ogg','aac','flac','m4a'];
   const CODE_EXTS = ['js','ts','jsx','tsx','py','rb','go','rs','java','php','sh','swift','kt','dart','html','htm','css','scss','xml','vue','svelte','astro'];
   const DATA_EXTS = ['json','yaml','yml','toml','csv','sql','graphql'];
   const DOC_EXTS = ['md','txt','rst'];
@@ -30,8 +32,11 @@
   $: mimeType = file.mimeType || '';
   $: isPsdFile = ext === 'psd';
   $: isImageFile = IMAGE_EXTS.includes(ext) || mimeType.startsWith('image/') || isPsdFile;
+  $: isPdfFile = ext === 'pdf' || mimeType === 'application/pdf';
+  $: isVideoFile = VIDEO_EXTS.includes(ext) || mimeType.startsWith('video/');
+  $: isAudioFile = AUDIO_EXTS.includes(ext) || mimeType.startsWith('audio/');
   $: isTextFile = CODE_EXTS.includes(ext) || DOC_EXTS.includes(ext) || DATA_EXTS.includes(ext) || ['text/', 'application/json', 'application/xml', 'application/javascript', 'application/typescript'].some(t => mimeType.startsWith(t));
-  $: isPreviewable = (isImageFile || isTextFile) && file.uncompressedSize < 50 * 1024 * 1024; // Increased to 50MB to support larger PSDs
+  $: isPreviewable = (isImageFile || isTextFile || isPdfFile || isVideoFile || isAudioFile) && file.uncompressedSize < 500 * 1024 * 1024; // Allowed up to 500MB
 
   function iconColor(e: string): string {
     if (IMAGE_EXTS.includes(e)) return 'text-violet';
@@ -88,6 +93,8 @@
           previewObjectUrl = URL.createObjectURL(blob);
         }
         previewContent = 'image_loaded'; // non-null to indicate loaded
+      } else if (isPdfFile || isVideoFile || isAudioFile) {
+        previewContent = 'media_loaded';
       } else {
         const bytes = new Uint8Array(detail.content);
         previewContent = new TextDecoder('utf-8', { fatal: false }).decode(bytes.slice(0, MAX_TEXT_PREVIEW_BYTES));
@@ -182,6 +189,13 @@
             content={rawContent}
             mimeType={previewMimeType} 
             on:rename={handleRename}
+          />
+        {:else if isPdfFile || isVideoFile || isAudioFile}
+          <FilePreview
+            content={rawContent}
+            mimeType={previewMimeType}
+            filename={basename}
+            fileType={isPdfFile ? 'pdf' : isVideoFile ? 'video' : 'audio'}
           />
         {:else}
           <TextPreviewEngine 

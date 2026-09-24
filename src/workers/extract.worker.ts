@@ -52,7 +52,11 @@ interface FileContentResponse {
   filename: string;
 }
 
-type WorkerMessage = ExtractProgress | ExtractComplete | ExtractError | FileContentResponse;
+interface PasswordRequired {
+  type: 'passwordRequired';
+}
+
+type WorkerMessage = ExtractProgress | ExtractComplete | ExtractError | FileContentResponse | PasswordRequired;
 
 let zipReader: ZipReader<BlobReader> | null = null;
 let entries: any[] = [];
@@ -63,10 +67,30 @@ self.onmessage = async (event) => {
   try {
     switch (type) {
       case 'extract': {
-        const { file } = data;
+        const { file, password } = data;
         const blobReader = new BlobReader(file);
-        zipReader = new ZipReader(blobReader);
-        entries = await zipReader.getEntries();
+        zipReader = new ZipReader(blobReader, { password });
+        
+        try {
+          entries = await zipReader.getEntries();
+        } catch (e: any) {
+          if (e.message && e.message.toLowerCase().includes('password')) {
+            self.postMessage({ type: 'passwordRequired' } as PasswordRequired);
+            return;
+          }
+          throw e;
+        }
+
+        const encryptedEntries = entries.filter((e: any) => e.encrypted && !e.directory);
+        if (encryptedEntries.length > 0) {
+          const testEntry = encryptedEntries.reduce((min: any, e: any) => e.compressedSize < min.compressedSize ? e : min);
+          try {
+            await testEntry.getData(new Uint8ArrayWriter(), { password });
+          } catch (e: any) {
+            self.postMessage({ type: 'passwordRequired' } as PasswordRequired);
+            return;
+          }
+        }
 
         const fileEntries: FileEntry[] = [];
         let totalSize = 0;

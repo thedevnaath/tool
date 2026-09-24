@@ -47,13 +47,16 @@
       const lang = langMap[extension] || extension;
       
       const highlighter = await createHighlighter({
-        themes: ['vitesse-dark'],
+        themes: ['vitesse-light', 'vitesse-dark'],
         langs: [lang]
       });
       
       highlightedHtml = highlighter.codeToHtml(content, {
         lang,
-        theme: 'vitesse-dark'
+        themes: {
+          light: 'vitesse-light',
+          dark: 'vitesse-dark'
+        }
       });
       
       highlighter.dispose();

@@ -8,8 +8,8 @@
   export let fileType: 'image' | 'video' | 'audio' | 'text' | 'code' | 'pdf';
 
   let pdfInstance: any = null;
-  let currentPage = $state(1);
-  let totalPages = $state(0);
+  let currentPage = 1;
+  let totalPages = 0;
   let videoElement: HTMLVideoElement | null = null;
   let audioElement: HTMLAudioElement | null = null;
   let objectUrl: string | null = null;
@@ -62,19 +62,9 @@
       const pdfjsLib = await import('pdfjs-dist');
       pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
       
-      let data: Uint8Array;
-      if (typeof content === 'string') {
-        if (content.startsWith('data:')) {
-          const base64 = content.split(',')[1];
-          data = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-        } else {
-          data = new TextEncoder().encode(content);
-        }
-      } else {
-        data = new Uint8Array(content);
-      }
-      
-      pdfInstance = await pdfjsLib.getDocument({ data }).promise;
+      // Load from URL instead of ArrayBuffer so PDF.js can stream pages lazily
+      const url = getObjectUrl();
+      pdfInstance = await pdfjsLib.getDocument(url).promise;
       totalPages = pdfInstance.numPages;
       renderPage(currentPage);
     } catch (error) {
@@ -117,16 +107,37 @@
   }
 </script>
 
-<div class="w-full" role="region" aria-label="File preview">
+<div class="w-full" role="region" aria-label="File preview" on:click|stopPropagation>
   <div class="flex items-center justify-between p-3 border-b border-hairline bg-canvas-elevated">
     <div class="flex items-center gap-2">
-      <span class="text-body-sm text-body font-mono truncate max-w-[200px]">{filename}</span>
-      <span class="px-2 py-0.5 text-body-sm bg-hairline-soft text-mute rounded-sm font-mono">{mimeType}</span>
+      {#if fileType === 'pdf' && totalPages > 1}
+        <div class="flex items-center gap-1">
+          <button 
+            class="btn-icon p-1.5" 
+            on:click={() => goToPage(currentPage - 1)} 
+            disabled={currentPage === 1}
+            aria-label="Previous page"
+          >
+            <ChevronLeft class="w-4 h-4" aria-hidden="true" />
+          </button>
+          <span class="text-body-sm font-mono text-ink px-2">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button 
+            class="btn-icon p-1.5" 
+            on:click={() => goToPage(currentPage + 1)} 
+            disabled={currentPage === totalPages}
+            aria-label="Next page"
+          >
+            <ChevronRight class="w-4 h-4" aria-hidden="true" />
+          </button>
+        </div>
+      {:else}
+        <!-- Spacer if not a PDF to keep layout intact -->
+        <span class="w-2"></span>
+      {/if}
     </div>
     <div class="flex items-center gap-1">
-      <button class="btn-icon p-1.5" on:click={handleDownload} aria-label="Download">
-        <Download class="w-4 h-4" aria-hidden="true" />
-      </button>
       <button class="btn-icon p-1.5" on:click={openInNewTab} aria-label="Open in new tab">
         <Maximize2 class="w-4 h-4" aria-hidden="true" />
       </button>
@@ -153,7 +164,9 @@
           class="max-w-full max-h-[60vh] rounded-md shadow-sm"
           preload="metadata"
           playsinline
-        ></video>
+        >
+          <track kind="captions" />
+        </video>
       </div>
 
     {:else if fileType === 'audio'}
@@ -173,30 +186,6 @@
           <div class="w-full max-w-2xl">
             <canvas id="pdf-canvas-{currentPage}" class="w-full shadow-sm bg-white rounded-md"></canvas>
           </div>
-          
-          {#if totalPages > 1}
-            <div class="flex items-center gap-2">
-              <button 
-                class="btn-icon p-1.5" 
-                on:click={() => goToPage(currentPage - 1)} 
-                disabled={currentPage === 1}
-                aria-label="Previous page"
-              >
-                <ChevronLeft class="w-4 h-4" aria-hidden="true" />
-              </button>
-              <span class="text-body-md font-mono text-ink px-3">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button 
-                class="btn-icon p-1.5" 
-                on:click={() => goToPage(currentPage + 1)} 
-                disabled={currentPage === totalPages}
-                aria-label="Next page"
-              >
-                <ChevronRight class="w-4 h-4" aria-hidden="true" />
-              </button>
-            </div>
-          {/if}
         {:else}
           <div class="flex items-center justify-center py-12 text-mute">
             Loading PDF...

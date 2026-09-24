@@ -18,6 +18,10 @@
   let worker: Worker | null = null;
   let treeCollapsed = false;
   let toastId = 0;
+  
+  let currentFile: File | null = null;
+  let needsPassword = false;
+  let passwordInput = '';
 
   // Detect current mode from URL
   const currentMode = typeof window !== 'undefined' && window.location.pathname === '/create' ? 'create' : 'extract';
@@ -45,13 +49,20 @@
       const { type, ...data } = event.data;
       switch (type) {
         case 'progress':
+          isExtracting = true;
+          needsPassword = false;
           extractProgress = data;
           break;
         case 'complete':
           files = data.files;
           fileTree = buildFileTree(data.files);
           isExtracting = false;
+          needsPassword = false;
           showToast(`Extracted ${data.files.length} files successfully`, 'success');
+          break;
+        case 'passwordRequired':
+          isExtracting = false;
+          needsPassword = true;
           break;
         case 'fileContent':
           handleFileContent(data);
@@ -62,6 +73,7 @@
           break;
         case 'error':
           isExtracting = false;
+          needsPassword = false;
           showToast(data.message, 'error');
           break;
       }
@@ -74,12 +86,21 @@
       return;
     }
     initWorker();
+    currentFile = file;
     isExtracting = true;
+    needsPassword = false;
+    passwordInput = '';
     extractProgress = { loaded: 0, total: 0, currentFile: '', fileIndex: 0, totalFiles: 0 };
     files = [];
     fileTree = [];
     selectedFileIndex = null;
     worker!.postMessage({ type: 'extract', data: { file } });
+  }
+
+  function handlePasswordInput() {
+    if (currentFile && worker) {
+      worker.postMessage({ type: 'extract', data: { file: currentFile, password: passwordInput } });
+    }
   }
 
   function handleFileContent(data: any) {
@@ -212,6 +233,26 @@
 
   <!-- DROP ZONE -->
   <FileDropZone on:extract={(e) => handleExtract(e.detail)} {isExtracting} />
+
+  <!-- PASSWORD PROMPT -->
+  {#if needsPassword}
+    <div class="card p-5 animate-slide-up space-y-3">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+        <span class="text-body-md text-ink font-medium">Password Protected ZIP</span>
+      </div>
+      <input 
+        type="password" 
+        bind:value={passwordInput} 
+        on:input={handlePasswordInput}
+        placeholder="Enter password..." 
+        class="input font-mono w-full max-w-sm"
+        autofocus
+      />
+    </div>
+  {/if}
 
   <!-- EXTRACTION PROGRESS -->
   {#if isExtracting}
