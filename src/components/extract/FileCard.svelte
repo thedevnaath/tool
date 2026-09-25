@@ -1,14 +1,16 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import type { FileEntry } from '../../lib/file-utils';
-  import ImagePreviewEngine from './image-preview/ImagePreviewEngine.svelte';
-  import TextPreviewEngine from './text-preview/TextPreviewEngine.svelte';
-  import FilePreview from './FilePreview.svelte';
+  import ImagePreviewEngine from '../shared/preview/image-preview/ImagePreviewEngine.svelte';
+  import TextPreviewEngine from '../shared/preview/text-preview/TextPreviewEngine.svelte';
+  import FilePreview from '../shared/preview/FilePreview.svelte';
+  import GenericPreviewEngine from '../shared/preview/GenericPreviewEngine.svelte';
 
   export let file: FileEntry;
   export let index: number;
   export let isSelected: boolean = false;
   export let onSelect: (index: number) => void = () => {};
+  export let hideDownload: boolean = false;
 
   const MAX_TEXT_PREVIEW_BYTES = 1024 * 256;
 
@@ -36,7 +38,8 @@
   $: isVideoFile = VIDEO_EXTS.includes(ext) || mimeType.startsWith('video/');
   $: isAudioFile = AUDIO_EXTS.includes(ext) || mimeType.startsWith('audio/');
   $: isTextFile = CODE_EXTS.includes(ext) || DOC_EXTS.includes(ext) || DATA_EXTS.includes(ext) || ['text/', 'application/json', 'application/xml', 'application/javascript', 'application/typescript'].some(t => mimeType.startsWith(t));
-  $: isPreviewable = (isImageFile || isTextFile || isPdfFile || isVideoFile || isAudioFile) && file.uncompressedSize < 500 * 1024 * 1024; // Allowed up to 500MB
+  $: isKnownType = isImageFile || isTextFile || isPdfFile || isVideoFile || isAudioFile;
+  $: isPreviewable = true;
 
   function iconColor(e: string): string {
     if (IMAGE_EXTS.includes(e)) return 'text-violet';
@@ -74,8 +77,13 @@
   async function toggleExpand() {
     isExpanded = !isExpanded;
     if (isExpanded && isPreviewable && previewContent === null && previewObjectUrl === null) {
-      previewLoading = true;
-      window.dispatchEvent(new CustomEvent('request-file-content', { detail: { fileIndex: index } }));
+      if (isKnownType && file.uncompressedSize < 500 * 1024 * 1024) {
+        previewLoading = true;
+        window.dispatchEvent(new CustomEvent('request-file-content', { detail: { fileIndex: index } }));
+      } else {
+        previewContent = 'unsupported';
+        previewLoading = false;
+      }
     }
   }
 
@@ -151,16 +159,18 @@
       {#if ext}
         <span class="badge-default hidden md:inline-flex uppercase font-mono">.{ext}</span>
       {/if}
-      <button
-        class="btn-square"
-        on:click|stopPropagation={handleDownload}
-        aria-label="Download {basename}"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-        </svg>
-        <span class="hidden sm:inline">Download</span>
-      </button>
+      {#if !hideDownload}
+        <button
+          class="btn-square"
+          on:click|stopPropagation={handleDownload}
+          aria-label="Download {basename}"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          <span class="hidden sm:inline">Download</span>
+        </button>
+      {/if}
       <button
         class="btn-icon ml-1"
         on:click|stopPropagation={toggleExpand}
@@ -182,7 +192,7 @@
           <div class="w-5 h-5 border-2 border-hairline border-t-ink rounded-full animate-spin" aria-hidden="true"></div>
         </div>
       {:else if previewContent !== null}
-        {#if isImageFile}
+        {#if isImageFile && isKnownType}
           <ImagePreviewEngine 
             {file} 
             {previewObjectUrl} 
@@ -190,18 +200,24 @@
             mimeType={previewMimeType} 
             on:rename={handleRename}
           />
-        {:else if isPdfFile || isVideoFile || isAudioFile}
+        {:else if (isPdfFile || isVideoFile || isAudioFile) && isKnownType}
           <FilePreview
             content={rawContent}
             mimeType={previewMimeType}
             filename={basename}
             fileType={isPdfFile ? 'pdf' : isVideoFile ? 'video' : 'audio'}
           />
-        {:else}
+        {:else if isTextFile && isKnownType}
           <TextPreviewEngine 
             {file} 
             content={previewContent + (file.uncompressedSize > MAX_TEXT_PREVIEW_BYTES ? '\n\n... (truncated — file too large to fully preview)' : '')}
             mimeType={previewMimeType}
+            on:rename={handleRename}
+          />
+        {:else}
+          <GenericPreviewEngine
+            {file}
+            mimeType={mimeType}
             on:rename={handleRename}
           />
         {/if}

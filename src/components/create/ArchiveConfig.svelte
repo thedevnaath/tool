@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   export let archiveName: string = 'archive.zip';
   export let compressionLevel: number = 6;
   export let disabled: boolean = false;
@@ -19,23 +19,7 @@
   </h3>
 
   <div class="space-y-4">
-    <!-- Archive name -->
-    <div>
-      <label for="archive-name" class="block text-body-sm font-medium text-body mb-1.5">Archive name</label>
-      <div class="flex items-center gap-2">
-        <input
-          bind:value={archiveName}
-          id="archive-name"
-          type="text"
-          class="input flex-1"
-          placeholder="archive"
-          disabled={disabled}
-          aria-describedby="archive-name-hint"
-        />
-        <span class="text-body-sm text-faint font-mono whitespace-nowrap">.zip</span>
-      </div>
-      <p id="archive-name-hint" class="text-body-sm text-faint mt-1">The file will download with this name</p>
-    </div>
+
 
     <!-- Compression level -->
     <div>

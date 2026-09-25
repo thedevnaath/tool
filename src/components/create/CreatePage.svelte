@@ -1,12 +1,13 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import FileCollector from './FileCollector.svelte';
   import ArchiveConfig from './ArchiveConfig.svelte';
   import CreateProgress from './CreateProgress.svelte';
   import { downloadUrl } from '../../lib/download';
+  import FileCard from '../extract/FileCard.svelte';
 
   let files: File[] = [];
-  let archiveName = 'archive.zip';
+  let archiveName = 'Archive';
   let compressionLevel = 6;
   let isCreating = false;
   let createProgress = { loaded: 0, total: 0, currentFile: '', fileIndex: 0, totalFiles: 0 };
@@ -14,6 +15,8 @@
   let worker: Worker | null = null;
   let downloadUrl_: string | null = null;
   let toastId = 0;
+  let zipPassword = '';
+  let selectedFileIndex: number | null = null;
   const currentMode = 'create';
 
   function showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
@@ -58,13 +61,74 @@
     isCreating = true;
     downloadUrl_ = null;
     createProgress = { loaded: 0, total: 0, currentFile: '', fileIndex: 0, totalFiles: files.length };
-    const name = archiveName.endsWith('.zip') ? archiveName : `${archiveName}.zip`;
-    worker!.postMessage({ type: 'create', data: { files, archiveName: name, compressionLevel } });
+    const finalName = archiveName.trim() === '' ? 'Archive.zip' : (archiveName.trim().endsWith('.zip') ? archiveName.trim() : `${archiveName.trim()}.zip`);
+    worker!.postMessage({ type: 'create', data: { files, archiveName: finalName, compressionLevel, password: zipPassword } });
   }
 
   function handleAddFiles(newFiles: File[]) { files = [...files, ...newFiles]; }
   function handleRemoveFile(index: number) { files = files.filter((_, i) => i !== index); }
   function handleClearAll() { files = []; }
+
+  function toFileEntry(file: File, index: number): any {
+    const filename = (file as any).webkitRelativePath || file.name;
+    const parts = filename.split('/');
+    return {
+      filename,
+      isDirectory: false,
+      uncompressedSize: file.size,
+      compressedSize: file.size,
+      lastModDate: new Date(file.lastModified),
+      path: parts,
+      depth: parts.length - 1,
+      index,
+      mimeType: file.type || ''
+    };
+  }
+
+  async function handleFileSelect(index: number) {
+    selectedFileIndex = index === selectedFileIndex ? null : index;
+  }
+
+  function handleFileRename(e: Event) {
+    const { fileIndex, newName } = (e as CustomEvent).detail;
+    if (fileIndex >= 0 && fileIndex < files.length) {
+      const file = files[fileIndex];
+      const newFile = new File([file], newName.split('/').pop() || newName, {
+        type: file.type,
+        lastModified: file.lastModified
+      });
+      Object.defineProperty(newFile, 'webkitRelativePath', { value: newName, writable: true, configurable: true });
+      files[fileIndex] = newFile;
+      files = [...files];
+      showToast('File renamed for this session', 'success');
+    }
+  }
+
+  onMount(() => {
+    const handleContentRequest = async (e: Event) => {
+      const index = (e as CustomEvent).detail.fileIndex;
+      const file = files[index];
+      if (file) {
+        const buffer = await file.arrayBuffer();
+        window.dispatchEvent(new CustomEvent('file-content', {
+          detail: {
+            fileIndex: index,
+            content: buffer,
+            mimeType: file.type || 'application/octet-stream',
+            filename: (file as any).webkitRelativePath || file.name
+          }
+        }));
+      }
+    };
+    const handleRenameRequest = (e: Event) => handleFileRename(e);
+    
+    window.addEventListener('request-file-content', handleContentRequest);
+    window.addEventListener('rename-file', handleRenameRequest);
+    return () => {
+      window.removeEventListener('request-file-content', handleContentRequest);
+      window.removeEventListener('rename-file', handleRenameRequest);
+    };
+  });
 
   onDestroy(() => { if (worker) { worker.terminate(); worker = null; } });
 
@@ -118,33 +182,91 @@
 
   <!-- File Collector -->
   <FileCollector
-    files={files}
     onAddFiles={handleAddFiles}
-    onRemoveFile={handleRemoveFile}
-    onClearAll={handleClearAll}
     disabled={isCreating}
   />
 
   <!-- Archive config + create button -->
   {#if files.length > 0 && !isCreating}
     <div class="space-y-4 animate-slide-up">
+      <!-- File List Header -->
+      <div class="flex items-center justify-between">
+        <h3 class="text-heading-md font-semibold text-ink">{files.length} file{files.length !== 1 ? 's' : ''} ready</h3>
+        <button
+          class="btn-ghost text-body-sm"
+          on:click={handleClearAll}
+          disabled={isCreating}
+          aria-label="Clear all files"
+        >
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Clear all
+        </button>
+      </div>
+
+      <!-- File List -->
+      <div class="space-y-2.5" role="list" aria-label="Files to archive">
+        {#each files as file, index}
+          <FileCard
+            file={toFileEntry(file, index)}
+            index={index}
+            isSelected={selectedFileIndex === index}
+            onSelect={handleFileSelect}
+            hideDownload={true}
+          />
+        {/each}
+      </div>
+
+      <!-- Password Prompt -->
+      <div class="card p-5 space-y-3">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          <span class="text-body-md text-ink font-medium">Protect ZIP with password</span>
+        </div>
+        <input 
+          type="password" 
+          bind:value={zipPassword} 
+          placeholder="Optional password..." 
+          class="input font-mono w-full max-w-sm"
+          disabled={isCreating}
+        />
+      </div>
+
       <ArchiveConfig bind:archiveName bind:compressionLevel disabled={isCreating} />
 
-      <div class="flex items-center justify-between gap-4 pt-1">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
         <p class="text-body-sm text-mute">
           <span class="text-ink font-medium">{files.length}</span> files,
           <span class="text-ink font-medium">{(totalSize / (1024 * 1024)).toFixed(1)} MB</span> total
         </p>
-        <button
-          class="btn-primary flex items-center gap-2"
-          on:click={handleCreateZip}
-          aria-label="Create ZIP archive"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          Create ZIP
-        </button>
+        
+        <div class="flex items-center w-full sm:w-auto min-w-[300px] max-w-sm rounded-lg border border-hairline overflow-hidden focus-within:border-link bg-canvas shadow-sm transition-colors">
+          <input
+            bind:value={archiveName}
+            type="text"
+            class="input flex-1 border-none focus:ring-0 bg-transparent py-2.5 min-w-0 !shadow-none"
+            placeholder="Archive"
+            disabled={isCreating}
+            aria-label="Archive name"
+          />
+          <div class="px-2 text-faint font-mono text-body-sm bg-transparent flex items-center h-full whitespace-nowrap select-none">
+            .zip
+          </div>
+          <button
+            class="btn-primary rounded-none h-full px-5 py-2.5 flex items-center gap-2 border-l border-hairline whitespace-nowrap hover:bg-link-soft hover:text-link transition-colors"
+            on:click={handleCreateZip}
+            disabled={isCreating}
+            aria-label="Download ZIP archive"
+          >
+            <svg class="w-4 h-4 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download
+          </button>
+        </div>
       </div>
     </div>
   {/if}

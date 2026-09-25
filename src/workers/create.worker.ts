@@ -47,13 +47,14 @@ self.onmessage = async (event) => {
       }
 
       case 'create': {
-        const { archiveName, compressionLevel } = data;
+        const { archiveName, compressionLevel, password, files: dataFiles } = data;
+        const targetFiles = dataFiles || files;
         
         const zipWriter = new ZipWriter(new BlobWriter('application/zip'));
         let totalSize = 0;
 
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
+        for (let i = 0; i < targetFiles.length; i++) {
+          const file = targetFiles[i];
           totalSize += file.size;
 
           self.postMessage({
@@ -65,8 +66,9 @@ self.onmessage = async (event) => {
             totalFiles: files.length,
           } as CreateProgress);
 
-          await zipWriter.add(file.name, new BlobReader(file), {
+          await zipWriter.add((file as any).webkitRelativePath || file.name, new BlobReader(file), {
             level: compressionLevel || 6,
+            password: password || undefined,
           });
         }
 
