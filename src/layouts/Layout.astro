@@ -1,5 +1,6 @@
 ---
 import ModeToggle from '../components/ui/ModeToggle.svelte';
+import Logo from '../components/ui/Logo.svelte';
 import '../styles/global.css';
 ---
 
@@ -39,11 +40,7 @@ import '../styles/global.css';
       <nav class="max-w-5xl mx-auto px-4 sm:px-6" aria-label="Main navigation">
         <div class="flex items-center justify-between h-14">
           <a href="/" class="flex items-center gap-2.5 group" aria-label="Unzip Files Online Home">
-            <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-hairline-soft border border-hairline group-hover:border-mute/50 transition-colors">
-              <svg class="w-4 h-4 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-            </div>
+            <Logo />
             <span class="font-sans font-semibold text-heading-sm text-ink tracking-tight hidden sm:block">Unzip Files Online</span>
           </a>
           <div class="flex items-center gap-3">
