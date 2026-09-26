@@ -2,6 +2,20 @@
 import ModeToggle from '../components/ui/ModeToggle.svelte';
 import Logo from '../components/ui/Logo.svelte';
 import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+}
+
+const {
+  title = "Unzip Files Online - Extract and Create ZIP Files in Your Browser",
+  description = "Unzip any ZIP file instantly in your browser. No uploads, no server, 100% private. Preview images, videos, text files and download individually or all at once.",
+  ogTitle = "Unzip Files Online",
+  ogDescription = "Extract ZIP files entirely in your browser. No uploads. Complete privacy."
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -16,11 +30,11 @@ import '../styles/global.css';
     <meta name="apple-mobile-web-app-title" content="UnZip" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
-    <title>Unzip Files Online - Extract and Create ZIP Files in Your Browser</title>
-    <meta name="description" content="Unzip any ZIP file instantly in your browser. No uploads, no server, 100% private. Preview images, videos, text files and download individually or all at once." />
+    <title>{title}</title>
+    <meta name="description" content={description} />
     <meta name="theme-color" content="#202B22" />
-    <meta property="og:title" content="Unzip Files Online" />
-    <meta property="og:description" content="Extract ZIP files entirely in your browser. No uploads. Complete privacy." />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://unzipfilesonline.com" />
     <link rel="canonical" href="https://unzipfilesonline.com" />

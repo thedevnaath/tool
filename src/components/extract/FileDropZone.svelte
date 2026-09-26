@@ -1,10 +1,15 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   export let isExtracting = false;
 
   const dispatch = createEventDispatcher();
   let isDragOver = false;
   let fileInput: HTMLInputElement | null = null;
+  let isMac = false;
+
+  onMount(() => {
+    isMac = typeof navigator !== 'undefined' && (/Mac|iPod|iPhone|iPad/.test(navigator.platform) || /Mac/.test(navigator.userAgent));
+  });
 
   function handleDragOver(event: DragEvent) {
     event.preventDefault();
@@ -35,6 +40,8 @@
   }
   function handlePaste(event: ClipboardEvent) {
     if (isExtracting) return;
+    const target = event.target as HTMLElement;
+    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
     const items = event.clipboardData?.items;
     if (items) {
       for (const item of items) {
@@ -47,6 +54,8 @@
   }
 </script>
 
+<svelte:window on:paste={handlePaste} />
+
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   class="relative card overflow-hidden transition-all duration-normal
@@ -58,7 +67,6 @@
   on:dragover={handleDragOver}
   on:dragleave={handleDragLeave}
   on:drop={handleDrop}
-  on:paste={handlePaste}
   tabindex={isExtracting ? -1 : 0}
   role="button"
   aria-label="Drop zone for ZIP files — click or drag to upload"
@@ -101,7 +109,7 @@
 
     <!-- Feature pills -->
     <div class="flex flex-wrap items-center justify-center gap-2">
-      {#each ['.zip only', 'No size limit', 'Client-side only', 'Ctrl+V to paste'] as feat}
+      {#each ['.zip only', 'No size limit', 'Client-side only', isMac ? '⌘+V to paste' : 'Ctrl+V to paste'] as feat}
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-hairline bg-hairline-soft text-body-sm text-mute font-mono">
           {feat}
         </span>

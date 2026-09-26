@@ -1,9 +1,15 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   export let onAddFiles: (files: File[]) => void = () => {};
   export let disabled: boolean = false;
 
   let isDragOver = false;
   let fileInput: HTMLInputElement | null = null;
+  let isMac = false;
+
+  onMount(() => {
+    isMac = typeof navigator !== 'undefined' && (/Mac|iPod|iPhone|iPad/.test(navigator.platform) || /Mac/.test(navigator.userAgent));
+  });
 
   function handleDragOver(event: DragEvent) {
     event.preventDefault();
@@ -135,6 +141,9 @@
   function handlePaste(event: ClipboardEvent) {
     if (disabled) return;
     
+    const target = event.target as HTMLElement;
+    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+    
     const items = event.clipboardData?.items;
     if (items) {
       const newFiles: File[] = [];
@@ -175,13 +184,14 @@
   }
 </script>
 
+<svelte:window on:paste={handlePaste} />
+
 <div 
   class="relative card overflow-hidden transition-all duration-fast
     {isDragOver ? 'border-link bg-link-soft' : 'border-hairline hover:border-mute'}"
   on:dragover={handleDragOver}
   on:dragleave={handleDragLeave}
   on:drop={handleDrop}
-  on:paste={handlePaste}
   tabindex="0"
   role="button"
   aria-label="Drop zone for files and folders"
@@ -211,7 +221,7 @@
       </div>
 
       <p class="text-body-sm text-mute flex items-center justify-center gap-1.5 mt-4">
-        <kbd class="px-2 py-0.5 bg-hairline-soft rounded-sm text-body-sm font-mono text-body">Ctrl</kbd>
+        <kbd class="px-2 py-0.5 bg-hairline-soft rounded-sm text-body-sm font-mono text-body">{isMac ? '⌘' : 'Ctrl'}</kbd>
         <span>+</span>
         <kbd class="px-2 py-0.5 bg-hairline-soft rounded-sm text-body-sm font-mono text-body">V</kbd>
         <span>to paste from clipboard</span>
