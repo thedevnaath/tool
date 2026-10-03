@@ -25,11 +25,15 @@
   }
 
   function handleRename() {
-    if (!newName.trim() || newName.trim() === baseName) {
+    let finalName = newName.trim();
+    if (extension && finalName.endsWith(extension)) {
+      finalName = finalName.substring(0, finalName.length - extension.length);
+    }
+    if (!finalName || finalName === baseName) {
       onCancel();
       return;
     }
-    const fullNewName = dirname + newName.trim() + extension;
+    const fullNewName = dirname + finalName + extension;
     dispatch('rename', fullNewName);
   }
 </script>

@@ -25,7 +25,7 @@
   const VIDEO_EXTS = ['mp4','mov','avi','webm','mkv'];
   const AUDIO_EXTS = ['mp3','wav','ogg','aac','flac','m4a'];
   const CODE_EXTS = ['js','ts','jsx','tsx','py','rb','go','rs','java','php','sh','swift','kt','dart','html','htm','css','scss','xml','vue','svelte','astro'];
-  const DATA_EXTS = ['json','yaml','yml','toml','csv','sql','graphql'];
+  const DATA_EXTS = ['json','yaml','yml','toml','csv','sql','graphql','webmanifest'];
   const DOC_EXTS = ['md','txt','rst'];
 
   $: ext = (file.filename.split('.').pop() ?? '').toLowerCase();

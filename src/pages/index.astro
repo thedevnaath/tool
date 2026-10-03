@@ -4,10 +4,74 @@ import ExtractPage from '../components/extract/ExtractPage.svelte';
 
 const title = "Unzip Files Online Free | Fast & Secure ZIP Viewer";
 const description = "Unzip files online for free. Open zip files, use our secure zip viewer, and extract zip files online without uploading data to servers. Supports password protected zip files.";
+
+const faqs = [
+  {
+    question: "how to unzip a file?",
+    answer: "To unzip a file, simply drag and drop your ZIP archive into our web tool or click the selection area to choose your file. Our tool will instantly extract the contents locally in your browser, allowing you to preview or download the extracted files."
+  },
+  {
+    question: "how to open zip files on iPhone?",
+    answer: "You can open ZIP files on your iPhone without installing any additional apps. Just open our website in your Safari or Chrome browser, tap to select the ZIP file from your Files app, and we will extract it instantly on your device."
+  },
+  {
+    question: "how to unzip password protected or encrypted zip file?",
+    answer: "When you select a password-protected or encrypted ZIP file, our tool will automatically detect it and prompt you to enter the password. The decryption happens entirely locally within your browser, ensuring your files and password remain private."
+  },
+  {
+    question: "how to find hidden files in zip file?",
+    answer: "Our ZIP extractor automatically displays all contents of the archive, including hidden files or folders (such as those starting with a dot like .git or .env), so you can view or extract everything contained within the archive."
+  },
+  {
+    question: "how to preview zip file before download?",
+    answer: "After you select your ZIP file, our tool processes it locally and presents a file tree. You can click on text documents, images, code files, and PDFs to preview their contents directly in your browser before deciding to download them."
+  },
+  {
+    question: "how to extract images from a zip file?",
+    answer: "Once the ZIP file is loaded into our tool, you can navigate through the extracted folders. You can either use the image viewer to preview the images or click the download button next to each image to save them individually to your device."
+  },
+  {
+    question: "How to view source code inside a ZIP?",
+    answer: "Our built-in viewer supports syntax highlighting for most programming languages. Simply open the ZIP file using our tool and click on any source code file to view its contents directly in the browser without extracting it to your hard drive first."
+  },
+  {
+    question: "How do I open a PDF in a zip file?",
+    answer: "Loading your ZIP archive into our tool will display all its contents. If there is a PDF document, you can click on it, and our viewer will render the PDF right in your web browser, allowing you to read it before downloading."
+  },
+  {
+    question: "How to copy data from a ZIP file?",
+    answer: "You can open the ZIP file using our viewer, navigate to the specific file containing the data you need (like a text or code file), click it to open the preview, and then highlight and copy the text directly to your clipboard."
+  },
+  {
+    question: "is extracting zip files safe?",
+    answer: "Yes, it is 100% safe when using our tool because all extraction processes are performed locally in your browser. Your files are never uploaded to any remote servers, eliminating the risk of data interception or unauthorized access."
+  },
+  {
+    question: "can I open, preview and download zip files for free online?",
+    answer: "Absolutely. Our tool is completely free to use. There are no hidden fees, subscriptions, or limits. You can open, preview, and download as many ZIP files as you need, all directly from your web browser."
+  },
+  {
+    question: "is there any file size limit?",
+    answer: "Because our tool processes files locally using your device's resources, there is no strict file size limit imposed by a server. You can extract very large ZIP files (multiple gigabytes), limited only by your browser's memory and your computer's processing power."
+  }
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+};
 ---
 
 <Layout title={title} description={description} ogTitle={title} ogDescription={description}>
-  <ExtractPage client:only="svelte" />
+  <ExtractPage client:load />
   
   <article class="max-w-4xl mx-auto px-4 py-16 prose prose-neutral dark:prose-invert">
     <h1>Free Unzip Files Online: The Ultimate Tool to Open and Extract ZIP Files Instantly</h1>
@@ -61,6 +125,26 @@ const description = "Unzip files online for free. Open zip files, use our secure
 
     <p>When you choose to <strong>unzip zip file online</strong> using our advanced platform, you are choosing the most efficient, secure, and user-friendly method available today. The era of downloading cumbersome desktop software to perform simple, everyday tasks like file extraction is officially over. With the power of modern web technologies, you can now <strong>unzip online</strong> seamlessly and safely.</p>
 
-    <p>Whether you are a professional handling dozens of archives a day, or a casual user who just needs to open a single email attachment, our platform is built for you. So go ahead, drop a file into the dropzone at the top of the page, and experience the absolute best way to <strong>free unzip files online</strong>. We have meticulously built this tool to ensure that whenever you need to <strong>unzip files</strong>, you have a fast, private, and incredibly capable solution ready to go at a moment's notice.</p>
+    <h2>Frequently Asked Questions (FAQ)</h2>
+
+    <div class="not-prose mt-8 space-y-4">
+      {faqs.map(faq => (
+        <details class="card group cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between p-5 font-semibold text-ink text-body-lg list-none hover:bg-hairline-soft transition-colors duration-fast">
+            <span>{faq.question}</span>
+            <span class="text-mute transition-transform duration-normal group-open:rotate-180">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <div class="px-5 pb-5 text-mute text-body-md animate-slide-down">
+            {faq.answer}
+          </div>
+        </details>
+      ))}
+    </div>
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
   </article>
 </Layout>
