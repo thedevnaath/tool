@@ -133,10 +133,9 @@
     setViewMode={(m) => viewMode = m}
     onZoomIn={handleZoomIn}
     onZoomOut={handleZoomOut}
-    onFit={handleFit}
-    onActualSize={handleActualSize}
     onFullscreen={handleFullscreen}
     onCopy={handleCopy}
+    {isFullscreen}
   />
   
   {#if viewMode === 'preview'}

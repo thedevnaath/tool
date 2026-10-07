@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface Props {
+  error?: unknown;
+}
+---
+
+<Layout title="500 - Server Error">
+  <section class="mx-auto max-w-2xl space-y-5 pt-16 pb-12">
+    <p class="text-mono-eyebrow font-mono text-cyan uppercase tracking-[0.18em]">500</p>
+    <h1 class="text-heading-lg font-semibold text-ink">Internal Error.</h1>
+    <div class="space-y-4 text-body-lg text-body">
+      <p>Something went wrong. Please try again later.</p>
+      <p><a href="/" class="text-cyan hover:underline">Go back to homepage</a></p>
+    </div>
+  </section>
+</Layout>

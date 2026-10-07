@@ -3,9 +3,13 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <section class="mx-auto max-w-2xl space-y-5">
+  <section class="mx-auto max-w-2xl space-y-5 pt-16 pb-12">
     <p class="text-mono-eyebrow font-mono text-cyan uppercase tracking-[0.18em]">Privacy</p>
     <h1 class="text-heading-lg font-semibold text-ink">Your files stay in your browser.</h1>
-    <p class="text-body-lg text-body">Unzip Files Online processes archives locally with browser APIs. Files are not uploaded to a server or stored by this application.</p>
+    <div class="space-y-4 text-body-lg text-body">
+      <p>Unzip Files Online processes archives locally using browser APIs. Your files are never uploaded to a server or stored by this application.</p>
+      <p>However, we do use Google Analytics to understand how our tool is being used and to improve the user experience. Google Analytics may collect standard information such as your IP address, browser type, and interactions with the site using cookies.</p>
+      <p>By using this tool, you consent to this basic analytics tracking. We do not collect or track any personal information or file contents.</p>
+    </div>
   </section>
 </Layout>

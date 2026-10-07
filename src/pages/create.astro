@@ -4,6 +4,70 @@ import CreatePage from '../components/create/CreatePage.svelte';
 
 const title = "Create ZIP File Online Free | Fast & Secure ZIP Generator";
 const description = "Create zip file online easily. Make zip files with passwords, generate secure archives, and compress files online without uploading data to servers.";
+
+const faqs = [
+  {
+    question: "how to create a zip file?",
+    answer: "To create a ZIP file, simply select your files or drag and drop them into our web tool. Our platform, UnZipFilesOnline, works directly in your web browser and can be used on Mac, Windows, iPhone, and Android devices to instantly compress your files without any software installation."
+  },
+  {
+    question: "how to create a zip file and share it online?",
+    answer: "Once you create a ZIP file using our online tool, it will be downloaded directly to your device. From there, you can easily share the compressed archive online via email, cloud storage services, or any file-sharing platform."
+  },
+  {
+    question: "how to create password protected zip file?",
+    answer: "When configuring your archive in our tool, simply enter a strong password in the encryption field. We will securely encrypt your files using AES encryption before bundling them into the ZIP file, ensuring your data remains completely private."
+  },
+  {
+    question: "Does creating a ZIP file reduce file size and quality?",
+    answer: "ZIP files use a method called lossless compression. This means your files are packed tightly to save space, but when you unzip (extract) them, they return to their exact original state down to the very last bit of data. No information, clarity, or quality is ever lost."
+  },
+  {
+    question: "Can I put different file types in the same ZIP file?",
+    answer: "Yes, absolutely! You can bundle any combination of file types into a single ZIP file. Whether you have photos, documents, videos, or code files, our tool will seamlessly compress them all together into one organized archive."
+  },
+  {
+    question: "Can I use a ZIP file to send multiple files at once?",
+    answer: "Yes, using a ZIP file is the most efficient way to send multiple files at once. By bundling dozens or hundreds of individual files into a single compressed archive, you can easily attach it to an email or upload it to a file-sharing service."
+  },
+  {
+    question: "can I create a zip file for free online?",
+    answer: "Yes, our web application allows you to create ZIP files completely for free. There are no hidden fees, no subscriptions, and no limits on how many times you can use our secure online compression tool."
+  },
+  {
+    question: "How do I rename a file into a zip?",
+    answer: "While you can't simply rename a file extension to '.zip' to compress it, our tool does the hard work for you. Just select your file, use our platform to properly compress it into a ZIP format, and then you can name the resulting archive whatever you like."
+  },
+  {
+    question: "how to compress a zip file?",
+    answer: "To compress files into a ZIP archive, simply upload them to our secure online tool, adjust the compression settings if needed, and click generate. Our browser-based engine will instantly compress your files to save storage space."
+  },
+  {
+    question: "how to zip a file instantly?",
+    answer: "You can zip a file instantly by dragging and dropping it into our web interface. Because our tool uses your browser's local processing power instead of uploading to a server, the compression process happens in seconds."
+  },
+  {
+    question: "what is a zip file?",
+    answer: "A ZIP file is a common archive format used to compress one or more files and folders into a single, smaller file. This makes it easier to store data efficiently and share multiple files quickly over the internet."
+  },
+  {
+    question: "How do I send multiple documents as a ZIP file?",
+    answer: "First, use our free online tool to select all the documents you want to send and compress them into a single ZIP archive. Once generated and downloaded to your device, you can attach this single ZIP file to an email or message instead of attaching each document individually."
+  }
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+};
 ---
 
 <Layout title={title} description={description} ogTitle={title} ogDescription={description}>
@@ -63,5 +127,27 @@ const description = "Create zip file online easily. Make zip files with password
     <p>When you choose to use our platform to <strong>create zip file</strong>, you are choosing a faster, safer, and much more efficient workflow. The days of relying on bloated desktop software for simple file compression tasks are over. The modern web provides all the power you need, packaged in a highly accessible and secure interface.</p>
 
     <p>Whether you are a developer looking to bundle code, a photographer archiving high-resolution images, or a casual user trying to email multiple documents at once, our tool is built for you. Experience the sheer convenience of being able to <strong>create zip online free</strong> instantly, with zero risk to your data privacy. Drop your files into the interface above and see just how easy it is to <strong>generate zip file</strong> archives directly in your browser. We are committed to providing the best, most reliable <strong>zip file online</strong> utilities available anywhere on the web.</p>
+    
+    <h2 class="mt-12 text-xl">Frequently Asked Questions (FAQ)</h2>
+
+    <div class="not-prose mt-8 space-y-4">
+      {faqs.map(faq => (
+        <details class="card group cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between p-5 font-semibold text-ink text-body-lg list-none hover:bg-hairline-soft transition-colors duration-fast">
+            <span>{faq.question}</span>
+            <span class="text-mute transition-transform duration-normal group-open:rotate-180">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <div class="px-5 pb-5 text-mute text-body-md animate-slide-down">
+            {faq.answer}
+          </div>
+        </details>
+      ))}
+    </div>
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
   </article>
 </Layout>

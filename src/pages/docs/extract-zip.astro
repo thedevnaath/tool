@@ -1,0 +1,290 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout 
+  title="How to Extract ZIP Files Online — Documentation" 
+  description="Step-by-step documentation for extracting ZIP files online. Covers drag-and-drop loading, file preview, selective extraction, privacy architecture, and supported formats."
+>
+  <article class="mx-auto max-w-2xl px-4 sm:px-6 pt-16 pb-24">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
+      <a href="/docs" class="underline underline-offset-4 hover:text-ink transition-colors">Docs</a>
+      <span class="text-faint">/</span>
+      <span class="text-ink">Extract ZIP</span>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="space-y-5 mb-[100px]">
+      <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">Documentation</p>
+      <h1 class="text-heading-lg font-semibold text-ink tracking-tight">Extract ZIP Files Online</h1>
+      <p class="text-body-lg text-body leading-relaxed">
+        This page documents the extraction workflow for <a href="/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Unzip Files Online</a> — a browser-based ZIP extractor that processes archives locally on your device. No files are uploaded to any server. Below you'll find feature descriptions, interface terminology, supported formats, real-world workflows, and tips for getting the most out of the tool.
+      </p>
+    </header>
+
+    <!-- Table of Contents -->
+    <nav class="mb-[100px] py-6 border-y border-hairline">
+      <p class="text-heading-sm font-semibold text-ink mb-4">Contents</p>
+      <ol class="space-y-2 text-body-md text-body list-decimal list-inside">
+        <li><a href="#how-it-works" class="underline underline-offset-4 hover:text-ink transition-colors">How It Works</a></li>
+        <li><a href="#loading-a-file" class="underline underline-offset-4 hover:text-ink transition-colors">Loading a ZIP File</a></li>
+        <li><a href="#file-tree" class="underline underline-offset-4 hover:text-ink transition-colors">Navigating the File Tree</a></li>
+        <li><a href="#previewing-files" class="underline underline-offset-4 hover:text-ink transition-colors">Previewing Files Before Download</a></li>
+        <li><a href="#selective-extraction" class="underline underline-offset-4 hover:text-ink transition-colors">Selective Extraction</a></li>
+        <li><a href="#password-protected" class="underline underline-offset-4 hover:text-ink transition-colors">Password-Protected Archives</a></li>
+        <li><a href="#supported-formats" class="underline underline-offset-4 hover:text-ink transition-colors">Supported Preview Formats</a></li>
+        <li><a href="#interface-glossary" class="underline underline-offset-4 hover:text-ink transition-colors">Interface Glossary</a></li>
+        <li><a href="#use-cases" class="underline underline-offset-4 hover:text-ink transition-colors">Common Use Cases</a></li>
+        <li><a href="#privacy" class="underline underline-offset-4 hover:text-ink transition-colors">Privacy & Security Architecture</a></li>
+        <li><a href="#ux-patterns" class="underline underline-offset-4 hover:text-ink transition-colors">UX Patterns & Discoverability</a></li>
+        <li><a href="#troubleshooting" class="underline underline-offset-4 hover:text-ink transition-colors">Troubleshooting</a></li>
+      </ol>
+    </nav>
+
+    <!-- Sections -->
+    <div class="space-y-[48px]">
+
+      <!-- 1. How It Works -->
+      <section id="how-it-works" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">How It Works</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          When you select or drop a ZIP file into the application, the browser reads the file from your local disk using the <strong class="text-ink font-medium">File API</strong>. The archive is never uploaded anywhere — the entire binary is held in browser memory.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          The extraction engine then parses the ZIP's central directory — the internal index that maps filenames to byte positions. This step is fast because it reads only the metadata, not the full payload. From that index, the tool constructs a navigable file tree in the sidebar. Individual files are decompressed on demand, only when you choose to preview or download them.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Because processing stays on-device, there is no file size limit imposed by the server. The practical limit is your device's available RAM. Archives several gigabytes in size work without issues on modern machines.
+        </p>
+      </section>
+
+      <!-- 2. Loading a File -->
+      <section id="loading-a-file" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Loading a ZIP File</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          There are two ways to load a file:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Drag and drop</strong> — Drag a <code class="font-mono text-body-md bg-canvas-elevated px-1.5 py-0.5 rounded">.zip</code> file from your operating system's file manager directly into the browser window. The dropzone covers the full viewport, so precision isn't required.</li>
+          <li><strong class="text-ink font-medium">Click to browse</strong> — Click the selection area in the center of the page to open your OS file picker. Select the archive and it will load immediately.</li>
+        </ul>
+        <p class="text-body-lg text-body leading-relaxed">
+          Both methods trigger the same processing pipeline. The file is read locally, the directory structure is parsed, and the file tree appears on the left side of the workspace within milliseconds.
+        </p>
+      </section>
+
+      <!-- 3. File Tree -->
+      <section id="file-tree" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Navigating the File Tree</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          After loading, the left sidebar displays the archive's internal structure. Folders are collapsible and expand on click. Files are grouped under their parent directories, preserving the exact hierarchy the archive's creator intended.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Each item in the tree shows the filename and its compressed size. Clicking a file selects it and loads a preview (if the format is supported) in the main panel. Clicking a folder expands or collapses it.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          For deeply nested structures, breadcrumb navigation appears above the preview area. Each segment of the breadcrumb is clickable, allowing you to jump directly to any parent directory without manually scrolling through the tree.
+        </p>
+      </section>
+
+      <!-- 4. Previewing Files -->
+      <section id="previewing-files" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Previewing Files Before Download</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          The preview engine is the central panel of the application. When you click a supported file in the tree, the tool decompresses just that file's byte range and renders it directly in the browser. This lets you verify contents before committing to a download — particularly useful when inspecting archives from unknown sources.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Image previews (PNG, JPEG, WebP, GIF, SVG, BMP, ICO) render at full resolution with zoom and pan controls. PDF documents are paginated and scrollable. Code and text files are displayed with syntax highlighting for readability. Even Adobe Photoshop PSD files can be previewed, rendered layer-by-layer in the browser without needing Photoshop installed.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          The preview toolbar provides controls to download the individual file, toggle fullscreen mode, and navigate between files with arrow buttons.
+        </p>
+      </section>
+
+      <!-- 5. Selective Extraction -->
+      <section id="selective-extraction" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Selective Extraction</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          You don't need to download the entire archive. Each file and folder in the tree has a download action. When you download a single file, only that specific entry is decompressed and saved to your device. When you download a folder, the tool decompresses all contained files and bundles them into a new archive for you.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          This is especially practical when working with large project bundles. A 3GB game asset archive might contain hundreds of textures, but if you only need one specific sprite sheet, you can locate it via the file tree, confirm it visually in the preview panel, and download just that file — saving storage space and time.
+        </p>
+      </section>
+
+      <!-- 6. Password Protected -->
+      <section id="password-protected" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Password-Protected Archives</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          When the tool detects an encrypted ZIP file, it displays a password prompt before extraction. Both standard ZIP encryption and AES-256 encryption are supported.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          The decryption happens entirely in your browser's memory. Your password is never transmitted over the network and is not stored after the session ends. Once the correct password is provided, the file tree populates normally and all preview and download functions work as expected.
+        </p>
+      </section>
+
+      <!-- 7. Supported Formats -->
+      <section id="supported-formats" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Supported Preview Formats</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          The preview engine handles a wide range of file types natively in the browser. Unsupported formats can still be downloaded — preview is a convenience, not a gatekeeper.
+        </p>
+
+        <div class="space-y-5 pt-2">
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">Images</h3>
+            <p class="text-body-md text-mute">PNG, JPEG, WebP, GIF (animated), SVG, BMP, ICO, Adobe PSD</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">Documents</h3>
+            <p class="text-body-md text-mute">PDF (multi-page, scrollable)</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">Code & Text</h3>
+            <p class="text-body-md text-mute">JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, YAML, XML, plain text, and 50+ other languages with syntax highlighting</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">Media</h3>
+            <p class="text-body-md text-mute">MP4, WebM, MP3, WAV, OGG (browser-native playback)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Interface Glossary -->
+      <section id="interface-glossary" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Interface Glossary</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          A quick reference for the named areas and elements of the application interface.
+        </p>
+
+        <dl class="space-y-5 pt-2">
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Dropzone</dt>
+            <dd class="text-body-md text-mute mt-1">The full-viewport landing area that accepts drag-and-drop file input. Also contains a click-to-browse button.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">File Tree</dt>
+            <dd class="text-body-md text-mute mt-1">The collapsible sidebar listing all files and directories contained in the archive. Mirrors a desktop file explorer.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Preview Canvas</dt>
+            <dd class="text-body-md text-mute mt-1">The main content area that renders the currently selected file. Adapts its renderer based on the file type (image viewer, PDF renderer, code editor, etc.).</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Preview Toolbar</dt>
+            <dd class="text-body-md text-mute mt-1">A row of action buttons above the Preview Canvas. Contains download, fullscreen toggle, navigation arrows, and file metadata.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Breadcrumbs</dt>
+            <dd class="text-body-md text-mute mt-1">A clickable path displayed above the Preview Canvas showing the current file's directory chain. Useful for navigating back up in deeply nested structures.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- 9. Use Cases -->
+      <section id="use-cases" class="scroll-mt-24 space-y-6 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Common Use Cases</h2>
+
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Inspecting code from untrusted sources</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Developers and security researchers often receive ZIP archives containing code they haven't seen before. Extracting directly to disk risks running malicious scripts inadvertently. By opening the archive in the browser first, you can read the source files with syntax highlighting, check for suspicious patterns, and extract only the files you've verified — all within a sandboxed environment.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Pulling specific assets from design packages</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Designers routinely share project bundles that can be several gigabytes. Downloading and extracting the entire thing locally takes time and storage. With our tool, you can load the archive, visually browse the images using the preview panel, and download only the specific assets you need — a particular icon, a logo variant, or a single PSD layer comp.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Working on shared or restricted machines</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              On managed corporate machines, library computers, or Chromebooks, installing extraction software is often not allowed. A browser-based tool sidesteps this entirely. Open the page, drop the file, and extract — no installation, no admin privileges required.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Compliance-sensitive file handling</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Professionals in healthcare, legal, and financial sectors face strict regulations (HIPAA, GDPR) that prohibit uploading sensitive files to third-party servers. Since our tool performs all processing locally and transmits nothing, it fits within even the most restrictive data handling policies. Review our <a href="/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Privacy Policy</a> for full details.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Mobile extraction on iPhone and Android</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Native mobile ZIP handling can be limited. Our tool is fully responsive and works in mobile Safari, Chrome, and Firefox. Tap to select a file from your phone's storage, and the same extraction interface loads — complete with file tree, preview, and individual downloads.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. Privacy -->
+      <section id="privacy" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Privacy & Security Architecture</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          The tool's security model is simple: your files stay on your device. There is no upload, no server-side processing, and no temporary cloud storage. The browser acts as the extraction engine.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Technically, the application uses the browser's File API to read your local file, zip.js (a JavaScript implementation of the ZIP spec) to parse and decompress entries, and native browser APIs (Canvas, PDF.js, Web Audio) for rendering previews. At no point does the application make a network request containing your file data.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          We use basic analytics (page views, feature usage) to understand how the tool is used. Analytics never include file contents, filenames, or any data from your archives. Full details are in our <a href="/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Privacy Policy</a> and <a href="/terms" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Terms of Service</a>.
+        </p>
+      </section>
+
+      <!-- 11. UX Patterns -->
+      <section id="ux-patterns" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">UX Patterns & Discoverability</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          The interface includes several patterns designed to reduce friction:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Hover actions</strong> — Moving your cursor over any file in the tree reveals download and preview buttons inline. This eliminates the need to right-click or navigate to a separate menu.</li>
+          <li><strong class="text-ink font-medium">Theme switching</strong> — The application ships with a dark and light mode. It defaults to your OS preference and can be toggled manually via the button in the top navigation bar. The dark theme uses low-contrast, eye-friendly tones rather than pure black-on-white.</li>
+          <li><strong class="text-ink font-medium">Responsive layout</strong> — On smaller screens, the file tree collapses into a toggleable panel, and the preview canvas takes the full width. Touch gestures are supported for zooming and panning images.</li>
+          <li><strong class="text-ink font-medium">Progressive loading</strong> — Large archives are parsed incrementally. The file tree starts populating immediately while the engine continues reading deeper entries in the background, so you can begin working before parsing is complete.</li>
+        </ul>
+      </section>
+
+      <!-- 12. Troubleshooting -->
+      <section id="troubleshooting" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Troubleshooting</h2>
+
+        <div class="space-y-5 pt-2">
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">The file tree is empty after loading</h3>
+            <p class="text-body-md text-mute">The archive may be corrupted or use an unsupported compression method. Try opening it with a desktop utility to confirm it's valid.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">Preview doesn't load for a file</h3>
+            <p class="text-body-md text-mute">The file type may not be supported for in-browser preview. You can still download the file normally — preview is optional.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">Browser becomes slow with very large archives</h3>
+            <p class="text-body-md text-mute">Archives over 2–4 GB may tax browser memory on devices with limited RAM. Close other tabs to free memory, or use a desktop machine.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">Password prompt doesn't appear</h3>
+            <p class="text-body-md text-mute">The archive may use a non-standard encryption format. Standard ZIP encryption and AES-256 are supported.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20">
+      <p class="text-body-md text-mute">
+        Need to compress files instead? Read the <a href="/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Create ZIP Archive</a> documentation. For questions not covered here, reach out via our <a href="/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Contact</a> page.
+      </p>
+    </footer>
+
+  </article>
+</Layout>

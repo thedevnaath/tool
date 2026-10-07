@@ -65,7 +65,12 @@
     worker!.postMessage({ type: 'create', data: { files, archiveName: finalName, compressionLevel, password: zipPassword } });
   }
 
-  function handleAddFiles(newFiles: File[]) { files = [...files, ...newFiles]; }
+  function handleAddFiles(newFiles: File[]) { 
+    files = [...files, ...newFiles]; 
+    if (newFiles.length > 0) {
+      showToast(`Added ${newFiles.length} file${newFiles.length !== 1 ? 's' : ''}`, 'success');
+    }
+  }
   function handleRemoveFile(index: number) { files = files.filter((_, i) => i !== index); }
   function handleClearAll() { files = []; }
 
@@ -256,7 +261,7 @@
             .zip
           </div>
           <button
-            class="btn-primary rounded-none h-full px-5 py-2.5 flex items-center gap-2 border-l border-hairline whitespace-nowrap hover:bg-link-soft hover:text-link transition-colors"
+            class="btn-primary !rounded-none self-stretch px-5 py-2.5 flex items-center gap-2 border-l border-hairline whitespace-nowrap hover:bg-link-soft hover:text-link transition-colors"
             on:click={handleCreateZip}
             disabled={isCreating}
             aria-label="Download ZIP archive"
@@ -294,13 +299,26 @@
 </div>
 
 <!-- Toasts -->
-<div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite">
+<div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite" aria-atomic="false">
   {#each toasts as toast (toast.id)}
     <div class="{toastClass(toast.type)} pointer-events-auto max-w-sm" role="alert">
       <div class="flex items-start gap-3">
+        {#if toast.type === 'success'}
+          <svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        {:else if toast.type === 'error'}
+          <svg class="w-4 h-4 text-error flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        {:else}
+          <svg class="w-4 h-4 text-link flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        {/if}
         <p class="flex-1 text-body-md text-ink">{toast.message}</p>
         <button
-          class="flex-shrink-0 text-mute hover:text-ink transition-colors"
+          class="flex-shrink-0 text-mute hover:text-ink transition-colors p-0.5"
           on:click={() => dismissToast(toast.id)}
           aria-label="Dismiss"
         >

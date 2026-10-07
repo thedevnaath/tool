@@ -22,8 +22,8 @@
 
     const scaleX = cWidth / imgWidth;
     const scaleY = cHeight / imgHeight;
-    let scale = Math.min(scaleX, scaleY);
-    if (scale > 1) scale = 1;
+    // Fit, with a small padding
+    let scale = Math.min(scaleX, scaleY) * 0.95;
 
     onTransform({ x: 0, y: 0, scale });
   }

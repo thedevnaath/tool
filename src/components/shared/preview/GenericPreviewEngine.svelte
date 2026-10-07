@@ -16,7 +16,7 @@
   }
 </script>
 
-<div class="flex flex-col bg-canvas border-t border-hairline animate-expand-down min-h-[300px]">
+<div class="flex flex-col bg-canvas cursor-auto border-t border-hairline animate-expand-down min-h-[300px]" on:click|stopPropagation on:keydown|stopPropagation>
   <div class="flex items-center gap-2 p-2 border-b border-hairline bg-canvas-elevated">
     <button class="px-3 py-1.5 rounded-md text-button-sm font-medium transition-colors {viewMode === 'metadata' ? 'bg-canvas shadow-whisper text-ink' : 'text-mute hover:text-ink hover:bg-hairline-soft'}" on:click={() => viewMode = 'metadata'}>
       Metadata
