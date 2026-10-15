@@ -5,7 +5,7 @@ import { languages } from '../../i18n/ui';
 const currentLocale = Astro.currentLocale || 'en';
 const t = useTranslations(currentLocale as keyof typeof languages);
 ---
-<section class="mx-auto max-w-2xl space-y-5 pt-16 pb-12">
+<section class="mx-auto max-w-2xl px-4 sm:px-6 space-y-5 pt-16 pb-12">
   <p class="text-mono-eyebrow font-mono text-cyan uppercase tracking-[0.18em]">{t('privacy.eyebrow')}</p>
   <h1 class="text-heading-lg font-semibold text-ink">{t('privacy.heading')}</h1>
   <div class="space-y-4 text-body-lg text-body">
