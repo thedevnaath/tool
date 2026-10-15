@@ -1,0 +1,79 @@
+---
+import CreatePage from '../create/CreatePage.svelte';
+import { useTranslations } from '../../i18n/utils';
+import { languages } from '../../i18n/ui';
+
+const currentLocale = Astro.currentLocale || 'en';
+const t = useTranslations(currentLocale as keyof typeof languages);
+
+const faqs = (t('create.faqs') as any) || [];
+
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Create ZIP - Unzip Files Online",
+  "alternateName": t('create.title'),
+  "url": Astro.url.href,
+  "description": t('create.desc'),
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "browserRequirements": "Requires JavaScript. Requires HTML5.",
+  "softwareVersion": "1.0.0",
+  "inLanguage": currentLocale,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "In-browser ZIP archive creation",
+    "Password protection and encryption",
+    "Multi-file and folder compression",
+    "Zero server uploads for complete privacy"
+  ]
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((faq: any) => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+};
+---
+<CreatePage 
+  client:load 
+  lang={currentLocale} 
+  title={t('create.hero.title')} 
+  subtitle={t('create.hero.subtitle')} 
+  eyebrow={t('create.hero.eyebrow')} 
+/>
+
+<article class="max-w-4xl mx-auto px-4 sm:px-6 py-16 prose prose-neutral dark:prose-invert prose-headings:font-semibold prose-a:text-cyan hover:prose-a:text-cyan-dark">
+  <div set:html={t('create.article')} />
+
+  <h2 class="mt-12 text-2xl font-semibold text-ink">{t('create.faq.title')}</h2>
+  <div class="not-prose mt-8 space-y-4">
+    {faqs.map((faq: any) => (
+      <details class="group border border-hairline rounded-xl bg-canvas overflow-hidden">
+        <summary class="flex items-center justify-between p-5 cursor-pointer font-medium text-ink hover:bg-hairline-soft transition-colors">
+          {faq.question}
+          <svg class="w-5 h-5 text-mute transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+        <div class="px-5 pb-5 text-body text-body-md border-t border-hairline pt-4 bg-canvas-elevated">
+          {faq.answer}
+        </div>
+      </details>
+    ))}
+  </div>
+  
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(webAppSchema)} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+</article>

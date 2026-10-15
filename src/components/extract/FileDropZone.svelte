@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   export let isExtracting = false;
+  export let t: (key: any) => string = (k: any) => k;
 
   const dispatch = createEventDispatcher();
   let isDragOver = false;
@@ -100,16 +101,16 @@
     <!-- Text -->
     <div class="text-center space-y-1.5">
       <h2 class="text-heading-sm font-semibold text-ink">
-        {isDragOver ? 'Release to extract' : 'Drop your ZIP file here'}
+        {isDragOver ? t('ui.drop_zip_extract') : t('ui.drop_zip_here')}
       </h2>
       <p class="text-body-md text-mute">
-        or <span class="text-ink underline underline-offset-2">click to browse</span>
+        {t('ui.or')} <span class="text-ink underline underline-offset-2">{t('ui.click_browse')}</span>
       </p>
     </div>
 
     <!-- Feature pills -->
     <div class="flex flex-wrap items-center justify-center gap-2">
-      {#each ['.zip only', 'No size limit', 'Client-side only', isMac ? '⌘+V to paste' : 'Ctrl+V to paste'] as feat}
+      {#each [t('ui.zip_only'), t('ui.no_size_limit'), t('ui.client_side'), isMac ? t('ui.paste_mac') : t('ui.paste_win')] as feat}
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-hairline bg-hairline-soft text-body-sm text-mute font-mono">
           {feat}
         </span>
@@ -121,7 +122,7 @@
     <div class="absolute inset-0 bg-canvas/70 backdrop-blur-sm flex items-center justify-center rounded-xl">
       <div class="text-center">
         <div class="w-8 h-8 border-2 border-hairline border-t-ink rounded-full animate-spin mx-auto mb-3" aria-hidden="true"></div>
-        <p class="text-body-md text-mute">Extracting...</p>
+        <p class="text-body-md text-mute">{t('ui.extracting')}</p>
       </div>
     </div>
   {/if}

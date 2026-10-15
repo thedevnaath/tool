@@ -1,5 +1,27 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getCreateZipHowToSchema } from '../../lib/howto-schema';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Docs",
+      "item": new URL('/docs/', Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Create ZIP",
+      "item": Astro.url.href
+    }
+  ]
+};
+
+const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'en');
 ---
 
 <Layout 
@@ -14,6 +36,8 @@ import Layout from '../../layouts/Layout.astro';
       <span class="text-faint">/</span>
       <span class="text-ink">Create ZIP</span>
     </nav>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(howToSchema)} />
 
     <!-- Page Header -->
     <header class="space-y-5 mb-[100px]">

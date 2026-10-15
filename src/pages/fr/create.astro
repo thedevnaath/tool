@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CreateContent from '../../components/pages/CreateContent.astro';
+import { useTranslations } from '../../i18n/utils';
+
+const t = useTranslations('fr');
+---
+<Layout title={t('create.title')} description={t('create.desc')}>
+  <CreateContent />
+</Layout>

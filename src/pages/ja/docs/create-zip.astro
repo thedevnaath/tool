@@ -1,0 +1,237 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCreateZipHowToSchema } from '../../../lib/howto-schema';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ドキュメント",
+      "item": new URL('/ja/docs/', Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "ZIPを作成",
+      "item": Astro.url.href
+    }
+  ]
+};
+
+const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ja');
+---
+
+<Layout 
+  title="オンラインでZIPファイルを作成する方法 — ドキュメント" 
+  description="オンラインでZIPファイルを作成するためのステップバイステップドキュメント。ファイル選択、圧縮レベル、AESパスワード暗号化、ローカル処理プライバシーアーキテクチャについて解説します。"
+>
+  <article class="mx-auto max-w-2xl px-4 sm:px-6 pt-16 pb-24">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
+      <a href="/ja/docs" class="underline underline-offset-4 hover:text-ink transition-colors">ドキュメント</a>
+      <span class="text-faint">/</span>
+      <span class="text-ink">ZIPを作成</span>
+    </nav>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(howToSchema)} />
+
+    <!-- Page Header -->
+    <header class="space-y-5 mb-[100px]">
+      <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">ドキュメント</p>
+      <h1 class="text-heading-lg font-semibold text-ink tracking-tight">オンラインでZIPファイルを作成</h1>
+      <p class="text-body-lg text-body leading-relaxed">
+        このページでは、<a href="/ja/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIPを作成</a> のアーカイブ生成ワークフローについて説明します。これはお使いのデバイス上で完全にファイルを圧縮・パッケージ化するブラウザベースの圧縮ツールです。解凍ツールと同様に、データがサーバーにアップロードされることは一切ありません。以下では、ファイルの追加、圧縮設定、パスワード設定、プライバシーアーキテクチャの解説を掲載しています。
+      </p>
+    </header>
+
+    <!-- Table of Contents -->
+    <nav class="mb-[100px] py-6 border-y border-hairline">
+      <p class="text-heading-sm font-semibold text-ink mb-4">目次</p>
+      <ol class="space-y-2 text-body-md text-body list-decimal list-inside">
+        <li><a href="#how-it-works" class="underline underline-offset-4 hover:text-ink transition-colors">動作の仕組み</a></li>
+        <li><a href="#adding-files" class="underline underline-offset-4 hover:text-ink transition-colors">ファイルとフォルダの追加</a></li>
+        <li><a href="#compression-levels" class="underline underline-offset-4 hover:text-ink transition-colors">圧縮レベルの設定</a></li>
+        <li><a href="#password-encryption" class="underline underline-offset-4 hover:text-ink transition-colors">パスワードの設定（暗号化）</a></li>
+        <li><a href="#generating" class="underline underline-offset-4 hover:text-ink transition-colors">アーカイブの生成とダウンロード</a></li>
+        <li><a href="#interface-glossary" class="underline underline-offset-4 hover:text-ink transition-colors">インターフェース用語集</a></li>
+        <li><a href="#use-cases" class="underline underline-offset-4 hover:text-ink transition-colors">主な活用事例</a></li>
+        <li><a href="#privacy" class="underline underline-offset-4 hover:text-ink transition-colors">プライバシーとセキュリティアーキテクチャ</a></li>
+        <li><a href="#ux-patterns" class="underline underline-offset-4 hover:text-ink transition-colors">UXパターンと使いやすさ</a></li>
+        <li><a href="#troubleshooting" class="underline underline-offset-4 hover:text-ink transition-colors">トラブルシューティング</a></li>
+      </ol>
+    </nav>
+
+    <!-- Sections -->
+    <div class="space-y-[48px]">
+
+      <!-- 1. How It Works -->
+      <section id="how-it-works" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">動作の仕組み</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          「ZIPを作成」ツールにファイルを追加すると、ブラウザはローカルディスクからそれらを直接読み込みます。ネットワーク経由でリモートサーバーへファイルを送信する代わりに、本アプリケーションは <strong class="text-ink font-medium">WebAssembly</strong> とJavaScriptを利用して、ブラウザのタブ内で直接ファイルを圧縮・アーカイブ化します。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          このローカルファーストのアプローチには3つの大きな利点があります: アップロードやダウンロードの待ち時間が一切ないため圧倒的に高速であること、データがデバイスから離れないため本質的に高いプライバシーが保たれること、そしてページが一度読み込まれれば不安定なネットワーク環境でも安定して動作する堅牢性です。
+        </p>
+      </section>
+
+      <!-- 2. Adding Files -->
+      <section id="adding-files" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">ファイルとフォルダの追加</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          本ツールは、任意のファイルおよびネストされたフォルダの組み合わせを自在に受け入れられるよう設計されています。圧縮対象のファイルを読み込むには複数の方法があります:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">ドラッグ＆ドロップ</strong> — デスクトップ上で複数のファイルやフォルダ全体を選択し、アプリケーションウィンドウに直接ドラッグします。ドロップゾーンがそれらを即座に認識してステージングリストに追加します。</li>
+          <li><strong class="text-ink font-medium">システムファイルピッカー</strong> — 「ファイルを選択」エリアをクリックしてOS標準のファイルダイアログを開きます。<kbd class="font-mono text-body-sm bg-canvas-elevated px-1 py-0.5 rounded border border-hairline">Ctrl</kbd> または <kbd class="font-mono text-body-sm bg-canvas-elevated px-1 py-0.5 rounded border border-hairline">Cmd</kbd> キーを押しながら複数のファイルを一度に選択することも可能です。</li>
+        </ul>
+        <p class="text-body-lg text-body leading-relaxed">
+          追加されたファイルはステージングリストに一覧表示され、圧縮前に内容を確認できます。誤って不要なファイルを追加した場合は、圧縮を開始する前にリストから個別に削除できます。
+        </p>
+      </section>
+
+      <!-- 3. Compression Levels -->
+      <section id="compression-levels" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">圧縮レベルの設定</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          当社のエンジンでは、圧縮レベルを調整することで処理速度とファイルサイズのバランスを最適化できます。ZIPファイルは可逆圧縮（ロスレス圧縮）を使用するため、どの設定を選択してもデータの内容や品質が損なわれることは決してありません。
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">無圧縮 (Store)</strong> — 最速の処理時間。ファイルサイズを縮小せず、単一のアーカイブにファイルをそのまままとめます。MP4動画やJPEG画像など、すでに高度に圧縮されているファイルに最適です。</li>
+          <li><strong class="text-ink font-medium">標準圧縮 (Standard)</strong> — デフォルトのバランス設定。高速な処理速度を維持しながら、優れたサイズ削減を実現します。文書、ソースコード、画像が混在する一般的なフォルダに最も適しています。</li>
+          <li><strong class="text-ink font-medium">最高圧縮 (Maximum)</strong> — 最も処理時間はかかりますが、最小のファイルサイズを実現します。大容量のテキストドキュメントや非圧縮形式（WAVオーディオや未加工の生データなど）を扱い、メール添付のためにアーカイブサイズを極限まで小さくしたい場合におすすめです。</li>
+        </ul>
+      </section>
+
+      <!-- 4. Password Encryption -->
+      <section id="password-encryption" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">パスワードの設定（暗号化）</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          機密データを扱う場合、アーカイブを生成する前にパスワードを設定して安全にロックできます。設定パネルでパスワード保護をオンにし、強力なパスフレーズを入力するだけです。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          本ツールは強固なAES暗号化標準を使用してアーカイブを保護します。重要なのは、すべての処理がローカルで行われるため、パスワードがネットワーク経由で送信されることはなく、暗号化前の平文ファイルがお使いのマシンから離れることもないという点です。受け取り手は標準的な解凍ユーティリティ（または当社の <a href="/ja" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">オンラインでZIPを解凍</a> ツール）と正しいパスワードを使用することで中身を展開できます。
+        </p>
+      </section>
+
+      <!-- 5. Generating -->
+      <section id="generating" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">アーカイブの生成とダウンロード</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          ファイルの配置と設定の構成が完了したら、「ZIPを生成」ボタンをクリックします。リアルタイムのプログレスバーに圧縮の進行状況が表示されます。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          処理が完了すると、完成した <code class="font-mono text-body-md bg-canvas-elevated px-1.5 py-0.5 rounded">.zip</code> ファイルのダウンロードがお使いの端末の標準ダウンロードフォルダに対して自動的に開始されます。生成前にアーカイブの名前を任意に指定することもできるため、後からファイル名を変更する手間もかかりません。
+        </p>
+      </section>
+
+      <!-- 6. Interface Glossary -->
+      <section id="interface-glossary" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">インターフェース用語集</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          ZIP作成インターフェースの主要エリアに関するクイックリファレンスです。
+        </p>
+
+        <dl class="space-y-5 pt-2">
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">ステージングエリア / ドロップゾーン</dt>
+            <dd class="text-body-md text-mute mt-1">ファイルをドロップするメインパネル。ファイルが追加されると、圧縮待ちのアイテムを一覧表示するリストに切り替わります。</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">設定パネル</dt>
+            <dd class="text-body-md text-mute mt-1">アーカイブ名、圧縮レベルの選択、パスワード暗号化の切り替えを行うサイドバーまたは設定エリアです。</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">生成ボタン</dt>
+            <dd class="text-body-md text-mute mt-1">ローカル圧縮エンジンを起動するメインのアクションボタン。処理中は進捗インジケーターが表示されます。</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- 7. Use Cases -->
+      <section id="use-cases" class="scroll-mt-24 space-y-6 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">主な活用事例</h2>
+
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">メール添付ファイルの容量制限の回避</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              ほとんどのメールプロバイダーは添付ファイルサイズを25MB程度に制限しています。当ツールの「最高圧縮」を選択することで、大容量のPDF、プレゼンテーション、大量のテキストレポートを縮小し、クラウドストレージにアップロードすることなくメール添付の制限内に収めることができます。
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">クライアント納品データのセキュリティ確保</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              フリーランスや代理店は、財務レポート、未公開メディア、独自のソースコードなどの機密データを納品する機会が多くあります。これらのファイルをAES暗号化ZIPファイルにまとめることで、万が一メールが誤送信されたり傍受されたりした場合でも、データの内容を安全に保護できます。
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">散らばったプロジェクトファイルの整理</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              50個もの画像、フォント、テキストファイルが散らばったフォルダをそのまま送る代わりに、フォルダ構造ごと当ツールにドロップできます。内部のフォルダ階層がそのまま維持され、共有に適した美しい単一の `.zip` パッケージが出力されます。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Privacy -->
+      <section id="privacy" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">プライバシーとセキュリティアーキテクチャ</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          当社のZIP作成ツールはゼロ知識アーキテクチャに基づいて構築されています。「オンラインZIPツール」という言葉はクラウドでの処理を連想させがちですが、本サイトはインターフェースを提供する手段としてWebを利用しているにすぎません。実際の重い計算処理はすべてお使いのデバイスのメモリ内だけで行われます。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          当社はファイル保管用のサーバーを一切所有・運用・レンタルしていません。そのため、データ漏洩、誤送信、当社スタッフや第三者による不正アクセスのリスクは原理的にゼロです。ファイルはあなただけのものです。詳細は <a href="/ja/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">プライバシーポリシー</a> をご覧ください。
+        </p>
+      </section>
+
+      <!-- 9. UX Patterns -->
+      <section id="ux-patterns" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">UXパターンと使いやすさ</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          ネイティブソフトウェアのように快適に操作できるよう設計されています:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">人為的な制限なし</strong> — サーバーの帯域幅を消費しないため、任意のファイルサイズ制限やファイル数制限は設けていません。唯一の制限はお使いのマシンのRAM容量です。</li>
+          <li><strong class="text-ink font-medium">モバイル完全対応</strong> — インターフェースはモバイル画面に完璧に適応します。iPhoneやAndroidの写真ギャラリーから複数の写真を選択し、ブラウザから直接ひとつのファイルに圧縮できます。</li>
+          <li><strong class="text-ink font-medium">ノンブロッキングUI</strong> — 高負荷な圧縮タスクが実行されている間もUIは応答性を保ち、ページがフリーズすることなくスクロールや閲覧を行えます。</li>
+        </ul>
+      </section>
+
+      <!-- 10. Troubleshooting -->
+      <section id="troubleshooting" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">トラブルシューティング</h2>
+
+        <div class="space-y-5 pt-2">
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">生成中にブラウザがクラッシュする</h3>
+            <p class="text-body-md text-mute">これは通常、RAM容量の少ない端末で数ギガバイトのファイルを圧縮する際に発生します。他の重いブラウザタブを閉じるか、圧縮レベルを「無圧縮（Store）」に下げることでメモリ使用量を削減してください。</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">ファイルサイズが小さくならない</h3>
+            <p class="text-body-md text-mute">MP4、JPEG、MP3などの一部のフォーマットは、すでに高度に圧縮されています。これらをZIPアーカイブにまとめても、ひとつにパッケージ化することはできますが、物理的にそれ以上サイズを縮小することはできません。</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">フォルダ構造が維持されない</h3>
+            <p class="text-body-md text-mute">フォルダを開いて中のファイルだけをドラッグするのではなく、フォルダ自体をツールにドラッグ＆ドロップしてください。ルートフォルダをドラッグすることで内部の階層構造が維持されます。</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20">
+      <p class="text-body-md text-mute">
+        ファイルの解凍が必要ですか？ <a href="/ja/docs/extract-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP解凍ガイド</a> をご覧ください。ここに記載されていないご質問がある場合は、<a href="/ja/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">お問い合わせ</a> ページからお気軽にご連絡ください。
+      </p>
+    </footer>
+
+  </article>
+</Layout>

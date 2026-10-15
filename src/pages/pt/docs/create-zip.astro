@@ -1,0 +1,237 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCreateZipHowToSchema } from '../../../lib/howto-schema';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Documentação",
+      "item": new URL('/pt/docs/', Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Criar ZIP",
+      "item": Astro.url.href
+    }
+  ]
+};
+
+const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'pt');
+---
+
+<Layout 
+  title="Como Criar Arquivos ZIP Online — Documentação" 
+  description="Documentação passo a passo para criar arquivos ZIP online. Abrange seleção de arquivos, níveis de compressão, criptografia de senhas AES e nossa arquitetura de privacidade com processamento local."
+>
+  <article class="mx-auto max-w-2xl px-4 sm:px-6 pt-16 pb-24">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
+      <a href="/pt/docs" class="underline underline-offset-4 hover:text-ink transition-colors">Documentação</a>
+      <span class="text-faint">/</span>
+      <span class="text-ink">Criar ZIP</span>
+    </nav>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(howToSchema)} />
+
+    <!-- Page Header -->
+    <header class="space-y-5 mb-[100px]">
+      <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">Documentação</p>
+      <h1 class="text-heading-lg font-semibold text-ink tracking-tight">Criar Arquivos ZIP Online</h1>
+      <p class="text-body-lg text-body leading-relaxed">
+        Esta página documenta o fluxo de trabalho de compactação do <a href="/pt/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Criar Arquivo ZIP</a> — uma ferramenta moderna baseada no navegador que empacota seus arquivos exclusivamente no seu dispositivo. Assim como em nossa ferramenta de extração, nenhum dado é enviado para servidores. A seguir, você encontra orientações sobre como adicionar arquivos, definir taxas de compressão, configurar senhas e entender nossa arquitetura de segurança.
+      </p>
+    </header>
+
+    <!-- Table of Contents -->
+    <nav class="mb-[100px] py-6 border-y border-hairline">
+      <p class="text-heading-sm font-semibold text-ink mb-4">Conteúdo</p>
+      <ol class="space-y-2 text-body-md text-body list-decimal list-inside">
+        <li><a href="#how-it-works" class="underline underline-offset-4 hover:text-ink transition-colors">Como Funciona</a></li>
+        <li><a href="#adding-files" class="underline underline-offset-4 hover:text-ink transition-colors">Adicionar Arquivos e Pastas</a></li>
+        <li><a href="#compression-levels" class="underline underline-offset-4 hover:text-ink transition-colors">Configurar Níveis de Compressão</a></li>
+        <li><a href="#password-encryption" class="underline underline-offset-4 hover:text-ink transition-colors">Definir uma Senha (Criptografia)</a></li>
+        <li><a href="#generating" class="underline underline-offset-4 hover:text-ink transition-colors">Gerar e Baixar</a></li>
+        <li><a href="#interface-glossary" class="underline underline-offset-4 hover:text-ink transition-colors">Glossário da Interface</a></li>
+        <li><a href="#use-cases" class="underline underline-offset-4 hover:text-ink transition-colors">Casos de Uso Comuns</a></li>
+        <li><a href="#privacy" class="underline underline-offset-4 hover:text-ink transition-colors">Arquitetura de Privacidade e Segurança</a></li>
+        <li><a href="#ux-patterns" class="underline underline-offset-4 hover:text-ink transition-colors">Padrões de UX e Facilidade de Descoberta</a></li>
+        <li><a href="#troubleshooting" class="underline underline-offset-4 hover:text-ink transition-colors">Solução de Problemas</a></li>
+      </ol>
+    </nav>
+
+    <!-- Sections -->
+    <div class="space-y-[48px]">
+
+      <!-- 1. How It Works -->
+      <section id="how-it-works" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Como Funciona</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Quando você adiciona arquivos à ferramenta de Criar ZIP, o navegador lê os dados diretamente do seu disco local. Em vez de enviar arquivos pela rede até um servidor distante, nossa ferramenta emprega <strong class="text-ink font-medium">WebAssembly</strong> e JavaScript moderno para compactar e agrupar os dados dentro da própria aba do navegador.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Essa arquitetura no cliente traz três grandes vantagens: velocidade muito superior sem esperas de upload, privacidade total já que seus dados nunca saem do seu computador ou celular, e confiabilidade, funcionando de forma estável mesmo com conexões lentas ou instáveis após carregar a página.
+        </p>
+      </section>
+
+      <!-- 2. Adding Files -->
+      <section id="adding-files" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Adicionar Arquivos e Pastas</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          A ferramenta aceita qualquer combinação de arquivos e estruturas de pastas com facilidade. Você pode preparar seus arquivos de várias maneiras:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Arrastar e Soltar</strong> — Selecione vários arquivos ou pastas inteiras no computador e solte-os diretamente na janela do aplicativo. A área de recebimento os detecta e organiza imediatamente.</li>
+          <li><strong class="text-ink font-medium">Seletor de Arquivos</strong> — Clique na área de seleção de arquivos para abrir a janela padrão do seu sistema operacional. Você pode segurar <kbd class="font-mono text-body-sm bg-canvas-elevated px-1 py-0.5 rounded border border-hairline">Ctrl</kbd> ou <kbd class="font-mono text-body-sm bg-canvas-elevated px-1 py-0.5 rounded border border-hairline">Cmd</kbd> para escolher múltiplos itens de uma vez só.</li>
+        </ul>
+        <p class="text-body-lg text-body leading-relaxed">
+          Ao serem adicionados, os arquivos aparecem em uma lista de preparação para sua conferência. Se você incluir algum arquivo por engano, poderá removê-lo individualmente antes de acionar a compactação.
+        </p>
+      </section>
+
+      <!-- 3. Compression Levels -->
+      <section id="compression-levels" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Configurar Níveis de Compressão</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Nosso mecanismo permite calibrar velocidade e tamanho final ajustando o nível de compressão. Como os arquivos ZIP usam compressão sem perdas (lossless), sua integridade e qualidade nunca são prejudicadas, qualquer que seja a opção escolhida.
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Armazenar (Sem Compressão)</strong> — Velocidade máxima. Os arquivos são agrupados em um único arquivo sem redução de tamanho. Ideal para formatos já compactados, como vídeos MP4 e fotos JPEG.</li>
+          <li><strong class="text-ink font-medium">Compressão Equilibrada</strong> — O equilíbrio recomendado. Reduz significativamente o espaço com ótimo tempo de execução. Excelente para o dia a dia e pastas mistas com textos, planilhas e códigos.</li>
+          <li><strong class="text-ink font-medium">Melhor Compressão</strong> — Foco no menor tamanho possível de arquivo, com tempo de processamento ligeiramente maior. Recomendado para grandes documentos de texto, bases de dados ou áudios WAV sem compressão, quando cada megabyte conta para anexos de e-mail.</li>
+        </ul>
+      </section>
+
+      <!-- 4. Password Encryption -->
+      <section id="password-encryption" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Definir uma Senha (Criptografia)</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Caso esteja trabalhando com dados sigilosos, você pode proteger seu arquivo com uma senha forte antes de gerá-lo. No painel de opções, basta digitar a senha no campo de proteção.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          A ferramenta adota padrões seguros de criptografia AES para travar o arquivo ZIP. Fundamentalmente, como a operação é totalmente local, sua senha nunca passa pela rede e seus dados confidenciais nunca chegam a servidores. O destinatário precisará apenas de um descompactador padrão (ou do nosso <a href="/pt" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Extrair ZIP Online</a>) e da senha correta para abrir o conteúdo.
+        </p>
+      </section>
+
+      <!-- 5. Generating -->
+      <section id="generating" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Gerar e Baixar</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Com os arquivos reunidos e as opções ajustadas, basta clicar no botão "Gerar ZIP". Uma barra informativa indicará o progresso do empacotamento em tempo real.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Ao término do processamento, o navegador iniciará o download automático do arquivo <code class="font-mono text-body-md bg-canvas-elevated px-1.5 py-0.5 rounded">.zip</code> diretamente na sua pasta de Downloads. Você também pode personalizar o nome do arquivo gerado para mantê-lo organizado desde o início.
+        </p>
+      </section>
+
+      <!-- 6. Interface Glossary -->
+      <section id="interface-glossary" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Glossário da Interface</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Um resumo dos elementos essenciais da ferramenta de Criar ZIP.
+        </p>
+
+        <dl class="space-y-5 pt-2">
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Área de Seleção / Zona de Soltura</dt>
+            <dd class="text-body-md text-mute mt-1">O espaço central onde os arquivos são adicionados. Após a inclusão, exibe a relação detalhada dos itens prontos para compressão.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Painel de Configurações</dt>
+            <dd class="text-body-md text-mute mt-1">A seção de ajustes onde você escolhe o nível de compressão desejado, personaliza o nome do arquivo ZIP e ativa a senha de proteção.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Botão Gerar ZIP</dt>
+            <dd class="text-body-md text-mute mt-1">O botão de ação principal que inicia o motor de empacotamento no navegador, com indicador dinâmico de progresso.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- 7. Use Cases -->
+      <section id="use-cases" class="scroll-mt-24 space-y-6 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Casos de Uso Comuns</h2>
+
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Respeitar limites de anexos de e-mail</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Serviços de e-mail populares impõem limites de 20 a 25 MB para anexos. Ao utilizar nossa ferramenta na taxa máxima de compressão, relatórios em PDF e planilhas volumosas costumam encolher o suficiente para caber no limite, sem depender de links de nuvem de terceiros.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Proteger entregas para clientes</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Profissionais autônomos e empresas rotineiramente enviam relatórios confidenciais, materiais inéditos ou códigos proprietários. Agrupar esses itens em um ZIP com criptografia AES assegura que, mesmo se o e-mail for interceptado, o conteúdo permanecerá inacessível a invasores.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Organizar múltiplos arquivos de projetos</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Em vez de transferir 50 fotos, fontes e textos soltos, basta soltar a pasta com toda a sua organização na ferramenta. A hierarquia interna de pastas é mantida perfeitamente dentro de um único pacote <code class="font-mono text-body-md bg-canvas-elevated px-1.5 py-0.5 rounded">.zip</code> limpo e profissional.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Privacy -->
+      <section id="privacy" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Arquitetura de Privacidade e Segurança</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Nossa ferramenta baseia-se no conceito de privacidade de conhecimento zero. Muitas vezes supõe-se que uma "Ferramenta Online" faça upload de dados, mas usamos a web exclusivamente para carregar a interface no seu dispositivo. O processamento real dos arquivos acontece no seu próprio hardware.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Não mantemos servidores para guardar arquivos de usuários. Dessa maneira, não existe possibilidade de vazamento de dados corporativos ou acessos não autorizados por terceiros. Seus arquivos pertencem apenas a você. Veja nossa <a href="/pt/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Política de Privacidade</a> para conferir mais informações.
+        </p>
+      </section>
+
+      <!-- 9. UX Patterns -->
+      <section id="ux-patterns" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Padrões de UX e Facilidade de Descoberta</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          A aplicação foi pensada para funcionar com a fluidez de um programa nativo:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Sem limitações artificiais</strong> — Sem consumo de banda nos nossos servidores, você não encontra limites arbitrários no número de arquivos. O limite é apenas a capacidade de memória do seu aparelho.</li>
+          <li><strong class="text-ink font-medium">Perfeito para smartphones</strong> — A interface adapta-se suavemente a telas pequenas. Você pode escolher diversas fotos da galeria do seu iPhone ou Android e transformá-las em um arquivo ZIP sem sair do navegador.</li>
+          <li><strong class="text-ink font-medium">Navegação sem travamentos</strong> — Durante a compactação mais intensa, a página continua fluida e responsiva para rolagem e leitura.</li>
+        </ul>
+      </section>
+
+      <!-- 10. Troubleshooting -->
+      <section id="troubleshooting" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Solução de Problemas</h2>
+
+        <div class="space-y-5 pt-2">
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">A aba do navegador reinicia durante o processamento</h3>
+            <p class="text-body-md text-mute">Pode ocorrer ao tentar compactar muitos gigabytes em celulares ou aparelhos com pouca RAM livre. Feche abas secundárias ou escolha o nível "Sem compressão" para diminuir o consumo de memória.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">O tamanho dos arquivos não diminuiu muito</h3>
+            <p class="text-body-md text-mute">Formatos como MP4, JPEG e MP3 já possuem alta compressão interna. Reunir esses arquivos em um ZIP os organiza em um único pacote, mas não reduz fisicamente seu tamanho.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">A estrutura de pastas sumiu no arquivo</h3>
+            <p class="text-body-md text-mute">Certifique-se de arrastar a pasta em si para a janela, em vez de abri-la e arrastar os arquivos soltos. Arrastar a pasta preserva toda a árvore de subdiretórios.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20">
+      <p class="text-body-md text-mute">
+        Quer descompactar arquivos em vez de criar? Consulte o guia de <a href="/pt/docs/extract-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Extrair ZIP Online</a>. Em caso de dúvidas, visite nossa página de <a href="/pt/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Contato</a>.
+      </p>
+    </footer>
+
+  </article>
+</Layout>

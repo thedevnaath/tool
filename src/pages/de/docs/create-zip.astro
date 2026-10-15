@@ -1,0 +1,237 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCreateZipHowToSchema } from '../../../lib/howto-schema';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Dokumentation",
+      "item": new URL('/de/docs/', Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "ZIP Erstellen",
+      "item": Astro.url.href
+    }
+  ]
+};
+
+const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'de');
+---
+
+<Layout 
+  title="So Erstellen Sie ZIP-Dateien Online — Dokumentation" 
+  description="Schritt-für-Schritt-Dokumentation zum Erstellen von ZIP-Dateien online. Behandelt Dateiauswahl, Komprimierungsstufen, AES-Passwortverschlüsselung und lokale Datenschutzarchitektur."
+>
+  <article class="mx-auto max-w-2xl px-4 sm:px-6 pt-16 pb-24">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
+      <a href="/de/docs" class="underline underline-offset-4 hover:text-ink transition-colors">Dokumentation</a>
+      <span class="text-faint">/</span>
+      <span class="text-ink">ZIP Erstellen</span>
+    </nav>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(howToSchema)} />
+
+    <!-- Page Header -->
+    <header class="space-y-5 mb-[100px]">
+      <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">Dokumentation</p>
+      <h1 class="text-heading-lg font-semibold text-ink tracking-tight">ZIP-Dateien Online Erstellen</h1>
+      <p class="text-body-lg text-body leading-relaxed">
+        Diese Seite dokumentiert den Workflow zur Archiv-Erstellung für <a href="/de/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Erstellen</a> — ein browserbasiertes Komprimierungstool, das Ihre Dateien vollständig auf Ihrem Gerät bündelt. Genau wie bei unserem Extraktions-Tool werden niemals Daten auf einen Server hochgeladen. Nachfolgend finden Sie Anleitungen zum Hinzufügen von Dateien, zur Konfiguration der Komprimierung, zum Einrichten von Passwörtern und zu unserer Datenschutzarchitektur.
+      </p>
+    </header>
+
+    <!-- Table of Contents -->
+    <nav class="mb-[100px] py-6 border-y border-hairline">
+      <p class="text-heading-sm font-semibold text-ink mb-4">Inhalt</p>
+      <ol class="space-y-2 text-body-md text-body list-decimal list-inside">
+        <li><a href="#how-it-works" class="underline underline-offset-4 hover:text-ink transition-colors">Wie es Funktioniert</a></li>
+        <li><a href="#adding-files" class="underline underline-offset-4 hover:text-ink transition-colors">Dateien und Ordner Hinzufügen</a></li>
+        <li><a href="#compression-levels" class="underline underline-offset-4 hover:text-ink transition-colors">Komprimierungsstufen Konfigurieren</a></li>
+        <li><a href="#password-encryption" class="underline underline-offset-4 hover:text-ink transition-colors">Passwort Festlegen (Verschlüsselung)</a></li>
+        <li><a href="#generating" class="underline underline-offset-4 hover:text-ink transition-colors">Generieren und Herunterladen</a></li>
+        <li><a href="#interface-glossary" class="underline underline-offset-4 hover:text-ink transition-colors">Glossar der Benutzeroberfläche</a></li>
+        <li><a href="#use-cases" class="underline underline-offset-4 hover:text-ink transition-colors">Typische Anwendungsfälle</a></li>
+        <li><a href="#privacy" class="underline underline-offset-4 hover:text-ink transition-colors">Datenschutz- & Sicherheitsarchitektur</a></li>
+        <li><a href="#ux-patterns" class="underline underline-offset-4 hover:text-ink transition-colors">UX-Muster & Bedienbarkeit</a></li>
+        <li><a href="#troubleshooting" class="underline underline-offset-4 hover:text-ink transition-colors">Fehlerbehebung</a></li>
+      </ol>
+    </nav>
+
+    <!-- Sections -->
+    <div class="space-y-[48px]">
+
+      <!-- 1. How It Works -->
+      <section id="how-it-works" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Wie es Funktioniert</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Wenn Sie Dateien zum Tool „ZIP Erstellen“ hinzufügen, liest Ihr Browser diese direkt von Ihrem lokalen Datenträger. Statt die Dateien über das Netzwerk an einen entfernten Server zu senden, nutzt unsere Anwendung <strong class="text-ink font-medium">WebAssembly</strong> und JavaScript, um die Dateien direkt in Ihrem Browser-Tab zu komprimieren und zusammenzufassen.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Dieser lokale Ansatz bietet drei wesentliche Vorteile: Er ist deutlich schneller, da keine Wartezeiten für Up- und Downloads anfallen; er wahrt vollständig Ihre Privatsphäre, da Ihre Daten Ihr Gerät nie verlassen; und er ist extrem zuverlässig, da er nach dem Laden der Seite selbst bei instabilen Netzwerkverbindungen einwandfrei funktioniert.
+        </p>
+      </section>
+
+      <!-- 2. Adding Files -->
+      <section id="adding-files" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Dateien und Ordner Hinzufügen</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Das Tool verarbeitet jede beliebige Kombination aus Einzeldateien und verschachtelten Ordnern. Es gibt mehrere Möglichkeiten, Dateien für die Komprimierung bereitzustellen:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Drag-and-Drop</strong> — Markieren Sie mehrere Dateien oder ganze Ordner auf Ihrem Computer und ziehen Sie sie direkt in das Anwendungsfenster. Der Ablagebereich erfasst sie sofort.</li>
+          <li><strong class="text-ink font-medium">System-Dateiauswahldialog</strong> — Klicken Sie auf den Bereich „Dateien auswählen“, um den Auswahldialog Ihres Betriebssystems zu öffnen. Halten Sie <kbd class="font-mono text-body-sm bg-canvas-elevated px-1 py-0.5 rounded border border-hairline">Strg</kbd> oder <kbd class="font-mono text-body-sm bg-canvas-elevated px-1 py-0.5 rounded border border-hairline">Cmd</kbd> gedrückt, um mehrere Dateien gleichzeitig auszuwählen.</li>
+        </ul>
+        <p class="text-body-lg text-body leading-relaxed">
+          Nach dem Hinzufügen erscheinen Ihre Dateien in einer Bereitstellungsliste, in der Sie diese überprüfen können. Sollten Sie versehentlich eine unerwünschte Datei hinzugefügt haben, können Sie diese vor Beginn der Komprimierung einzeln entfernen.
+        </p>
+      </section>
+
+      <!-- 3. Compression Levels -->
+      <section id="compression-levels" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Komprimierungsstufen Konfigurieren</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Mit unserer Engine können Sie die Balance zwischen Verarbeitungsgeschwindigkeit und Dateigröße feinjustieren. ZIP-Dateien nutzen eine verlustfreie Komprimierung (lossless), sodass unabhängig von der gewählten Einstellung niemals Daten oder Qualität verloren gehen.
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Keine Komprimierung (Store)</strong> — Schnellste Verarbeitungszeit. Dateien werden unverändert in einem einzigen Archiv gebündelt, ohne sie zu verkleinern. Ideal für Formate, die bereits stark komprimiert sind, wie MP4-Videos oder JPEG-Bilder.</li>
+          <li><strong class="text-ink font-medium">Standard-Komprimierung (Standard)</strong> — Die ausgewogene Standardeinstellung. Bietet eine solide Reduzierung der Dateigröße bei flotter Verarbeitung. Optimal für gemischte Ordner mit Dokumenten, Code und Bildern.</li>
+          <li><strong class="text-ink font-medium">Maximale Komprimierung (Maximum)</strong> — Längere Verarbeitungszeit, erzielt jedoch die kleinstmögliche Dateigröße. Empfohlen für umfangreiche Textdokumente oder unkomprimierte Formate (wie WAV-Audiodateien oder Rohdaten), wenn die Archivgröße für E-Mail-Anhänge minimiert werden muss.</li>
+        </ul>
+      </section>
+
+      <!-- 4. Password Encryption -->
+      <section id="password-encryption" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Passwort Festlegen (Verschlüsselung)</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Wenn Sie sensible Daten verarbeiten, können Sie Ihr Archiv vor dem Generieren mit einem Passwort schützen. Aktivieren Sie im Einstellungsbereich einfach den Passwortschutz und geben Sie eine sichere Passphrase ein.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Das Tool nutzt robuste AES-Verschlüsselungsstandards zur Sicherung des Archivs. Entscheidend: Da alle Prozesse lokal ablaufen, wird Ihr Passwort niemals über das Netzwerk gesendet, und die unverschlüsselten Dateien verlassen zu keinem Zeitpunkt Ihren Computer. Der Empfänger benötigt lediglich ein Standardprogramm (oder unser Tool <a href="/de" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Online Entpacken</a>) und das korrekte Passwort, um die Inhalte zu öffnen.
+        </p>
+      </section>
+
+      <!-- 5. Generating -->
+      <section id="generating" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Generieren und Herunterladen</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Sobald alle Dateien bereitstehen und Ihre Einstellungen konfiguriert sind, klicken Sie auf die Schaltfläche „ZIP Generieren“. Ein Fortschrittsbalken visualisiert den aktuellen Komprimierungsstatus in Echtzeit.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Nach Abschluss startet der Browser automatisch den Download der fertigen <code class="font-mono text-body-md bg-canvas-elevated px-1.5 py-0.5 rounded">.zip</code>-Datei in Ihren regulären Download-Ordner. Sie können vorab auch einen individuellen Namen für das Archiv vergeben, um es später nicht manuell umbenennen zu müssen.
+        </p>
+      </section>
+
+      <!-- 6. Interface Glossary -->
+      <section id="interface-glossary" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Glossar der Benutzeroberfläche</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Ein kompakter Überblick über die zentralen Bereiche der ZIP-Erstellungsoberfläche.
+        </p>
+
+        <dl class="space-y-5 pt-2">
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Bereitstellungsbereich / Dropzone</dt>
+            <dd class="text-body-md text-mute mt-1">Das Hauptfeld zur Dateiablage. Sobald Dateien abgelegt wurden, verwandelt es sich in eine Liste der wartenden Elemente.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Einstellungsbereich</dt>
+            <dd class="text-body-md text-mute mt-1">Die Seitenleiste zur Definition des Archivnamens, zur Auswahl der Komprimierungsstufe und zur Aktivierung der Passwortverschlüsselung.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Generieren-Schaltfläche</dt>
+            <dd class="text-body-md text-mute mt-1">Die primäre Aktionsschaltfläche, die den lokalen Komprimierungsprozess anstößt und während der Verarbeitung den Status anzeigt.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- 7. Use Cases -->
+      <section id="use-cases" class="scroll-mt-24 space-y-6 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Typische Anwendungsfälle</h2>
+
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">E-Mail-Dateigrößenlimits umgehen</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Die meisten E-Mail-Dienste begrenzen Dateianhänge auf 25 MB. Mit der Stufe „Maximale Komprimierung“ können Sie große PDFs, Präsentationen oder Berichte häufig so weit verkleinern, dass sie problemlos unter dieser Grenze liegen – ganz ohne vorherigen Cloud-Upload.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Kundendaten sicher übertragen</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Dienstleister und Agenturen versenden regelmäßig vertrauliche Dokumente wie Finanzberichte oder proprietären Quellcode. Durch das Bündeln in einer AES-verschlüsselten ZIP-Datei bleiben die Inhalte selbst dann geschützt, wenn eine E-Mail versehentlich abgefangen wird.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Verstreute Projektdateien ordnen</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Statt einen unübersichtlichen Ordner mit Dutzenden Einzeldateien zu versenden, ziehen Sie die gesamte Ordnerstruktur in unser Tool. Die Verzeichnishierarchie bleibt vollständig gewahrt und Sie erhalten ein sauberes, professionelles `.zip`-Paket.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Privacy -->
+      <section id="privacy" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Datenschutz- & Sicherheitsarchitektur</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Unser Tool zur ZIP-Erstellung basiert auf einer strikten Zero-Knowledge-Architektur. Der Begriff „Online-ZIP-Tool“ suggeriert oft eine Cloud-Verarbeitung, wir nutzen das Web jedoch ausschließlich zur Bereitstellung der Oberfläche. Die gesamte rechenintensive Arbeit geschieht isoliert im Arbeitsspeicher Ihres Endgeräts.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Wir betreiben, besitzen oder mieten keinerlei Server zur Dateispeicherung. Dementsprechend besteht keinerlei Risiko für Datenpannen, versehentliche Leaks oder unbefugten Zugriff durch Dritte. Ihre Daten gehören ausschließlich Ihnen. Lesen Sie unsere <a href="/de/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Datenschutzerklärung</a> für weitere Informationen.
+        </p>
+      </section>
+
+      <!-- 9. UX Patterns -->
+      <section id="ux-patterns" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">UX-Muster & Bedienbarkeit</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Wir haben das Tool so konzipiert, dass es sich wie native Software anfühlt:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Keine künstlichen Beschränkungen</strong> — Da keine Server-Bandbreite verbraucht wird, gibt es keine willkürlichen Limits bei Dateigröße oder Dateianzahl. Einzig der Arbeitsspeicher Ihres Geräts setzt die Grenze.</li>
+          <li><strong class="text-ink font-medium">Volle Mobilkompatibilität</strong> — Die Benutzeroberfläche skaliert hervorragend auf Smartphones. Sie können Bilder aus Ihrer Galerie auf dem iPhone oder Android-Gerät auswählen und direkt im mobilen Browser zu einer Datei komprimieren.</li>
+          <li><strong class="text-ink font-medium">Nicht-blockierende Oberfläche</strong> — Selbst bei anspruchsvollen Komprimierungsaufgaben bleibt die Seite reaktionsfähig und friert nicht ein.</li>
+        </ul>
+      </section>
+
+      <!-- 10. Troubleshooting -->
+      <section id="troubleshooting" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Fehlerbehebung</h2>
+
+        <div class="space-y-5 pt-2">
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">Browser stürzt während der Erstellung ab</h3>
+            <p class="text-body-md text-mute">Dies tritt typischerweise auf, wenn Dateien von mehreren Gigabyte auf Geräten mit geringem RAM komprimiert werden. Schließen Sie andere speicherintensive Tabs oder wählen Sie die Stufe „Keine Komprimierung (Store)“, um Speicher zu sparen.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">Dateien werden nicht kleiner</h3>
+            <p class="text-body-md text-mute">Einige Formate wie MP4, JPEG und MP3 sind bereits hochgradig vorkomprimiert. Sie können in einem ZIP zusammengefasst werden, lassen sich aber physikalisch kaum weiter verkleinern.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">Ordnerstruktur fehlt im Archiv</h3>
+            <p class="text-body-md text-mute">Stellen Sie sicher, dass Sie den übergeordneten Ordner selbst in das Tool ziehen, anstatt den Ordner zu öffnen und nur die einzelnen Dateien hineinzuziehen.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20">
+      <p class="text-body-md text-mute">
+        Müssen Sie stattdessen Dateien entpacken? Lesen Sie die Dokumentation zu <a href="/de/docs/extract-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Entpacken</a>. Bei weiteren Fragen kontaktieren Sie uns über die <a href="/de/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Kontaktseite</a>.
+      </p>
+    </footer>
+
+  </article>
+</Layout>

@@ -1,0 +1,15 @@
+---
+import { useTranslations } from '../../i18n/utils';
+import { languages } from '../../i18n/ui';
+
+const currentLocale = Astro.currentLocale || 'en';
+const t = useTranslations(currentLocale as keyof typeof languages);
+---
+<section class="mx-auto max-w-2xl space-y-5 pt-16 pb-12">
+  <p class="text-mono-eyebrow font-mono text-cyan uppercase tracking-[0.18em]">{t('contact.eyebrow')}</p>
+  <h1 class="text-heading-lg font-semibold text-ink">{t('contact.heading')}</h1>
+  <div class="space-y-4 text-body-lg text-body">
+    <p>{t('contact.p1')}</p>
+    <p>{t('contact.p2')}<a href="mailto:hello@unzipfilesonline.com" class="text-cyan hover:underline">hello@unzipfilesonline.com</a></p>
+  </div>
+</section>

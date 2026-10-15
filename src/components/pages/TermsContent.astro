@@ -1,0 +1,23 @@
+---
+import { useTranslations } from '../../i18n/utils';
+import { languages } from '../../i18n/ui';
+
+const currentLocale = Astro.currentLocale || 'en';
+const t = useTranslations(currentLocale as keyof typeof languages);
+---
+<section class="mx-auto max-w-2xl space-y-5 pt-16 pb-12">
+  <p class="text-mono-eyebrow font-mono text-cyan uppercase tracking-[0.18em]">{t('terms.eyebrow')}</p>
+  <h1 class="text-heading-lg font-semibold text-ink">{t('terms.heading')}</h1>
+  <div class="space-y-4 text-body-lg text-body">
+    <p>{t('terms.p1')}</p>
+    
+    <h2 class="text-xl font-semibold text-ink mt-6">{t('terms.h2_1')}</h2>
+    <p>{t('terms.p2')}</p>
+    
+    <h2 class="text-xl font-semibold text-ink mt-6">{t('terms.h2_2')}</h2>
+    <p>{t('terms.p3')}</p>
+    
+    <h2 class="text-xl font-semibold text-ink mt-6">{t('terms.h2_3')}</h2>
+    <p>{t('terms.p4')}</p>
+  </div>
+</section>

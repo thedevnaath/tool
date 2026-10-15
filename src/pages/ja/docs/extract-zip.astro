@@ -1,0 +1,314 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getExtractZipHowToSchema } from '../../../lib/howto-schema';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ドキュメント",
+      "item": new URL('/ja/docs/', Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "ZIPを解凍",
+      "item": Astro.url.href
+    }
+  ]
+};
+
+const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'ja');
+---
+
+<Layout 
+  title="オンラインでZIPファイルを解凍する方法 — ドキュメント" 
+  description="オンラインでZIPファイルを解凍するためのステップバイステップドキュメント。ドラッグ＆ドロップによる読み込み、ファイルプレビュー、個別解凍、プライバシーアーキテクチャ、対応フォーマットについて解説します。"
+>
+  <article class="mx-auto max-w-2xl px-4 sm:px-6 pt-16 pb-24">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
+      <a href="/ja/docs" class="underline underline-offset-4 hover:text-ink transition-colors">ドキュメント</a>
+      <span class="text-faint">/</span>
+      <span class="text-ink">ZIPを解凍</span>
+    </nav>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(howToSchema)} />
+
+    <!-- Page Header -->
+    <header class="space-y-5 mb-[100px]">
+      <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">ドキュメント</p>
+      <h1 class="text-heading-lg font-semibold text-ink tracking-tight">オンラインでZIPファイルを解凍</h1>
+      <p class="text-body-lg text-body leading-relaxed">
+        このページでは、<a href="/ja" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">オンラインでZIPを解凍</a> の解凍ワークフローについて説明します。これはお使いのデバイス上でローカルにアーカイブを処理するブラウザベースのZIP解凍ツールです。ファイルがサーバーにアップロードされることは一切ありません。以下では、機能の詳細、インターフェース用語、対応フォーマット、実際のユースケース、ツールを最大限に活用するためのヒントを紹介します。
+      </p>
+    </header>
+
+    <!-- Table of Contents -->
+    <nav class="mb-[100px] py-6 border-y border-hairline">
+      <p class="text-heading-sm font-semibold text-ink mb-4">目次</p>
+      <ol class="space-y-2 text-body-md text-body list-decimal list-inside">
+        <li><a href="#how-it-works" class="underline underline-offset-4 hover:text-ink transition-colors">動作の仕組み</a></li>
+        <li><a href="#loading-a-file" class="underline underline-offset-4 hover:text-ink transition-colors">ZIPファイルの読み込み</a></li>
+        <li><a href="#file-tree" class="underline underline-offset-4 hover:text-ink transition-colors">ファイルツリーのナビゲーション</a></li>
+        <li><a href="#previewing-files" class="underline underline-offset-4 hover:text-ink transition-colors">ダウンロード前のファイルプレビュー</a></li>
+        <li><a href="#selective-extraction" class="underline underline-offset-4 hover:text-ink transition-colors">選択的解凍（個別抽出）</a></li>
+        <li><a href="#password-protected" class="underline underline-offset-4 hover:text-ink transition-colors">パスワード保護されたアーカイブ</a></li>
+        <li><a href="#supported-formats" class="underline underline-offset-4 hover:text-ink transition-colors">対応プレビューフォーマット</a></li>
+        <li><a href="#interface-glossary" class="underline underline-offset-4 hover:text-ink transition-colors">インターフェース用語集</a></li>
+        <li><a href="#use-cases" class="underline underline-offset-4 hover:text-ink transition-colors">主な活用事例</a></li>
+        <li><a href="#privacy" class="underline underline-offset-4 hover:text-ink transition-colors">プライバシーとセキュリティアーキテクチャ</a></li>
+        <li><a href="#ux-patterns" class="underline underline-offset-4 hover:text-ink transition-colors">UXパターンと使いやすさ</a></li>
+        <li><a href="#troubleshooting" class="underline underline-offset-4 hover:text-ink transition-colors">トラブルシューティング</a></li>
+      </ol>
+    </nav>
+
+    <!-- Sections -->
+    <div class="space-y-[48px]">
+
+      <!-- 1. How It Works -->
+      <section id="how-it-works" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">動作の仕組み</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          アプリケーションにZIPファイルを選択またはドロップすると、ブラウザは <strong class="text-ink font-medium">File API</strong> を使用してローカルディスクからファイルを直接読み込みます。アーカイブが外部にアップロードされることは一切なく、バイナリ全体がブラウザのメモリ内だけで保持されます。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          次に、解凍エンジンはZIPの中心的なディレクトリ構造（ファイル名とバイト位置をマッピングする内部インデックス）を解析します。この段階ではデータ全体ではなくメタデータのみを読み取るため、処理は瞬時に完了します。そのインデックスをもとに、ツールはサイドバーに操作可能なファイルツリーを構築します。個々のファイルは、プレビューやダウンロードを選択したときにのみ、オンデマンドで解凍されます。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          すべての処理がデバイス上で完結するため、サーバー側によるファイルサイズの制限はありません。実質的な上限は、お使いの端末で利用可能なRAM容量のみです。最新のマシンであれば、数ギガバイトに及ぶ大容量アーカイブも何の問題もなくスムーズに動作します。
+        </p>
+      </section>
+
+      <!-- 2. Loading a File -->
+      <section id="loading-a-file" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">ZIPファイルの読み込み</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          ファイルを読み込むには2つの方法があります:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">ドラッグ＆ドロップ</strong> — OSのファイルマネージャーから <code class="font-mono text-body-md bg-canvas-elevated px-1.5 py-0.5 rounded">.zip</code> ファイルをブラウザウィンドウに直接ドラッグします。ドロップゾーンはビューポート全体をカバーしているため、正確に狙う必要はありません。</li>
+          <li><strong class="text-ink font-medium">クリックして参照</strong> — ページ中央の選択エリアをクリックして、OS標準のファイルピッカーを開きます。アーカイブを選択すると、すぐに読み込みが開始されます。</li>
+        </ul>
+        <p class="text-body-lg text-body leading-relaxed">
+          どちらの方法でも同じ処理パイプラインが実行されます。ファイルがローカルで読み込まれ、ディレクトリ構造が解析され、わずか数ミリ秒でワークスペースの左側にファイルツリーが表示されます。
+        </p>
+      </section>
+
+      <!-- 3. File Tree -->
+      <section id="file-tree" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">ファイルツリーのナビゲーション</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          読み込み完了後、左側のサイドバーにアーカイブの内部構造が表示されます。フォルダは折りたたみ可能で、クリックすると展開されます。ファイルは親ディレクトリの下にグループ化され、アーカイブ作成者が意図した通りの正確な階層構造が維持されます。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          ツリー内の各アイテムには、ファイル名と圧縮後のサイズが表示されます。ファイルをクリックすると選択され、対応フォーマットであればメインパネルにプレビューが表示されます。フォルダをクリックすると展開または折りたたみが切り替わります。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          深くネストされた構造の場合、プレビューエリアの上部にパンくずリスト（階層ナビゲーション）が表示されます。パンくずリストの各セグメントはクリック可能で、ツリーを手動でスクロールすることなく、上位の親ディレクトリへ直接移動できます。
+        </p>
+      </section>
+
+      <!-- 4. Previewing Files -->
+      <section id="previewing-files" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">ダウンロード前のファイルプレビュー</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          プレビューエンジンはアプリケーションの中央パネルに配置されています。ツリー内で対応ファイルをクリックすると、ツールはそのファイルに必要なバイト範囲のみを解凍し、ブラウザ上で直接描画します。これにより、ダウンロードを実行する前に内容を確認できます。特に提供元が不明なアーカイブを確認する際に非常に便利です。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          画像プレビュー（PNG、JPEG、WebP、GIF、SVG、BMP、ICO）は、ズームおよびパン操作に対応したフル解像度で描画されます。PDFドキュメントはページ送りやスクロールが可能です。コードやテキストファイルは、可読性を高めるシンタックスハイライト付きで表示されます。さらにAdobe PhotoshopのPSDファイルも、Photoshopをインストールすることなくブラウザ内でレイヤー単位で描画・プレビューできます。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          プレビューツールバーには、個別ファイルのダウンロード、全画面表示の切り替え、矢印ボタンによるファイル間移動などの操作コントロールが用意されています。
+        </p>
+      </section>
+
+      <!-- 5. Selective Extraction -->
+      <section id="selective-extraction" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">選択的解凍（個別抽出）</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          アーカイブ全体を丸ごとダウンロードする必要はありません。ツリー内の各ファイルやフォルダには、それぞれダウンロード操作が用意されています。単一のファイルをダウンロードする場合、その特定のエントリのみが解凍されてデバイスに保存されます。フォルダをダウンロードする場合は、含まれるすべてのファイルが解凍され、新しいアーカイブとして自動的にまとめられます。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          これは大容量のプロジェクトファイルを扱う際に特に実用的です。例えば3GBのゲームアセットアーカイブに数百種類のテクスチャが含まれている場合でも、特定の1枚のスプライトシートだけが必要であれば、ファイルツリーから見つけ、プレビューで目視確認した上でそのファイルだけをダウンロードできます。ストレージ容量と時間を大幅に節約できます。
+        </p>
+      </section>
+
+      <!-- 6. Password Protected -->
+      <section id="password-protected" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">パスワード保護されたアーカイブ</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          ツールが暗号化されたZIPファイルを検出すると、解凍前にパスワード入力プロンプトが表示されます。標準ZIP暗号化と強固なAES-256暗号化の両方に対応しています。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          復号化処理は完全にブラウザのメモリ内で行われます。入力したパスワードがネットワーク経由で送信されることはなく、セッション終了後に保存されることもありません。正しいパスワードが入力されると、ファイルツリーが通常通り展開され、すべてのプレビューおよびダウンロード機能が利用可能になります。
+        </p>
+      </section>
+
+      <!-- 7. Supported Formats -->
+      <section id="supported-formats" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">対応プレビューフォーマット</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          プレビューエンジンは、ブラウザネイティブで幅広いファイル形式に対応しています。プレビュー非対応のファイル形式であっても、通常通りダウンロードは可能です（プレビューは確認用の付加機能であり、ダウンロードを制限するものではありません）。
+        </p>
+
+        <div class="space-y-5 pt-2">
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">画像</h3>
+            <p class="text-body-md text-mute">PNG, JPEG, WebP, GIF（アニメーション対応）, SVG, BMP, ICO, Adobe PSD</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">ドキュメント</h3>
+            <p class="text-body-md text-mute">PDF（複数ページ、スクロール対応）</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">コード・テキスト</h3>
+            <p class="text-body-md text-mute">JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, YAML, XML, プレーンテキスト、その他50以上の言語でのシンタックスハイライト</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">メディア</h3>
+            <p class="text-body-md text-mute">MP4, WebM, MP3, WAV, OGG（ブラウザネイティブ再生）</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Interface Glossary -->
+      <section id="interface-glossary" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">インターフェース用語集</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          アプリケーション画面の各エリアと要素に関するクイックリファレンスです。
+        </p>
+
+        <dl class="space-y-5 pt-2">
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">ドロップゾーン (Dropzone)</dt>
+            <dd class="text-body-md text-mute mt-1">ドラッグ＆ドロップによるファイル入力を受け付ける、画面全体に広がるランディングエリア。クリックしてファイルを参照するボタンも含まれます。</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">ファイルツリー (File Tree)</dt>
+            <dd class="text-body-md text-mute mt-1">アーカイブ内に含まれるすべてのファイルとディレクトリを階層表示する折りたたみ可能なサイドバー。デスクトップのファイルエクスプローラーと同様の操作感です。</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">プレビューキャンバス (Preview Canvas)</dt>
+            <dd class="text-body-md text-mute mt-1">現在選択されているファイルを描画するメインコンテンツエリア。ファイルの種類（画像ビューアー、PDFレンダラー、コードエディタなど）に応じて表示が最適化されます。</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">プレビューツールバー (Preview Toolbar)</dt>
+            <dd class="text-body-md text-mute mt-1">プレビューキャンバスの上に配置された操作ボタン群。ダウンロード、全画面切り替え、移動矢印、ファイルメタデータなどが含まれます。</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">パンくずリスト (Breadcrumbs)</dt>
+            <dd class="text-body-md text-mute mt-1">現在表示しているファイルのディレクトリ階層を示す、クリック可能なパス表示。深い階層から親フォルダへ簡単に戻ることができます。</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- 9. Use Cases -->
+      <section id="use-cases" class="scroll-mt-24 space-y-6 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">主な活用事例</h2>
+
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">信頼できないソースからのコードの検証</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              開発者やセキュリティ研究者は、内容が未確認のコードが含まれるZIPアーカイブを受け取ることがよくあります。ディスク上に直接解凍すると、悪意のあるスクリプトを誤って実行してしまう危険があります。まずブラウザでアーカイブを開くことで、サンドボックス環境の中でシンタックスハイライト付きで安全にソースファイルを閲覧し、不審な記述がないか確認した上で、検証済みのファイルのみを抽出できます。
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">デザインパッケージからの特定アセットの抽出</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              デザイナーは日常的に数ギガバイトに及ぶ大容量プロジェクトを共有します。全体をダウンロードしてローカルで解凍するには、時間もストレージ容量もかかります。当社のツールを使用すれば、アーカイブを読み込んでプレビューパネルで画像を目視確認し、必要なアセット（特定のアイコン、ロゴの別パターン、単一のPSDレイヤーなど）だけを選んでダウンロードできます。
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">共有PCや管理された端末での作業</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              企業の管理端末、学校や図書館のパソコン、Chromebookなどでは、解凍ソフトの新規インストールが制限されている場合が多くあります。ブラウザベースのツールであれば、そうした制約を完全に回避できます。ページを開いてファイルをドロップするだけで解凍でき、インストール作業や管理者権限は一切不要です。
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">コンプライアンスが重視されるファイル管理</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              医療、法務、金融分野の専門家は、機密ファイルをサードパーティのサーバーにアップロードすることを禁じる厳格な規制（HIPAA、GDPRなど）に直面しています。当社のツールはすべての処理をローカルで実行し、外部へ一切データを送信しないため、最も厳格なデータ管理ポリシーにも完全に適合します。詳細は当社の <a href="/ja/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">プライバシーポリシー</a> をご確認ください。
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">iPhoneやAndroidでのモバイル解凍</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              スマートフォンの標準機能によるZIPファイルの操作は制限されていることがあります。当社のツールは完全レスポンシブ対応で、モバイル版Safari、Chrome、Firefoxで快適に動作します。スマートフォンのストレージからファイルをタップして選択するだけで、ファイルツリー、プレビュー、個別ダウンロードを備えた高機能な解凍インターフェースがそのまま利用できます。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. Privacy -->
+      <section id="privacy" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">プライバシーとセキュリティアーキテクチャ</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          このツールのセキュリティモデルは非常に明快です: ファイルはお使いのデバイス内に留まります。アップロードも、サーバーサイドでの処理も、一時的なクラウドストレージへの保管も一切ありません。Webブラウザ自体が解凍エンジンとして機能します。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          技術的には、ブラウザのFile APIを使用してローカルファイルを読み込み、zip.js（ZIP仕様のJavaScript実装）でエントリを解析・解凍し、ブラウザ標準のAPI（Canvas、PDF.js、Web Audio）でプレビューを描画しています。アプリケーションがファイルデータを含むネットワークリクエストを送信することは絶対にありません。
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          ツールの利用動向を把握するために基本的なアクセス解析（ページビュー、機能の利用状況など）を行っていますが、解析データにファイルの内容、ファイル名、アーカイブ内の情報が含まれることは決してありません。詳細は <a href="/ja/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">プライバシーポリシー</a> および <a href="/ja/terms" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">利用規約</a> をご覧ください。
+        </p>
+      </section>
+
+      <!-- 11. UX Patterns -->
+      <section id="ux-patterns" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">UXパターンと使いやすさ</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          快適でストレスのない操作感を実現するため、インターフェースには工夫が凝らされています:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">ホバーアクション</strong> — ツリー内のファイルにカーソルを合わせると、インラインでダウンロードおよびプレビューボタンが表示されます。右クリックや別メニューを開く手間が省けます。</li>
+          <li><strong class="text-ink font-medium">テーマ切り替え</strong> — ダークモードとライトモードに対応しています。OSの設定が自動適用されるほか、上部ナビゲーションバーのボタンから手動で切り替えることも可能です。ダークテーマは純粋な黒と白ではなく、目に優しい低コントラストな色調を採用しています。</li>
+          <li><strong class="text-ink font-medium">レスポンシブレイアウト</strong> — 小型画面ではファイルツリーが折りたたみ式パネルになり、プレビューキャンバスが全幅で表示されます。タッチ操作による画像のピンチズームやパンにも対応しています。</li>
+          <li><strong class="text-ink font-medium">プログレッシブローディング</strong> — 大容量アーカイブは段階的に解析されます。バックグラウンドで深層のエントリを読み込み続けながら、ファイルツリーの初期表示を即座に行うため、解析の完了を待たずにすぐに作業を開始できます。</li>
+        </ul>
+      </section>
+
+      <!-- 12. Troubleshooting -->
+      <section id="troubleshooting" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">トラブルシューティング</h2>
+
+        <div class="space-y-5 pt-2">
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">読み込み後にファイルツリーが空のまま表示される</h3>
+            <p class="text-body-md text-mute">アーカイブが破損しているか、非対応の圧縮方式が使用されている可能性があります。デスクトップの解凍ツールで開いてファイルが正常かご確認ください。</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">ファイルのプレビューが読み込まれない</h3>
+            <p class="text-body-md text-mute">そのファイル形式がブラウザ内プレビューに対応していない可能性があります。プレビューは任意機能ですので、通常通りファイルをダウンロードしてご利用いただけます。</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">非常に大きなアーカイブでブラウザの動作が遅くなる</h3>
+            <p class="text-body-md text-mute">2〜4GBを超える大容量アーカイブは、RAM容量が限られた端末でブラウザのメモリを圧迫する場合があります。他のタブを閉じてメモリを解放するか、十分なメモリを備えたPCでお試しください。</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">パスワード入力プロンプトが表示されない</h3>
+            <p class="text-body-md text-mute">アーカイブが非標準の暗号化形式を使用している可能性があります。当ツールは標準ZIP暗号化およびAES-256暗号化に対応しています。</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20">
+      <p class="text-body-md text-mute">
+        ファイルの圧縮が必要ですか？ <a href="/ja/docs/create-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP作成ガイド</a> をご覧ください。ここに記載されていないご質問がある場合は、<a href="/ja/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">お問い合わせ</a> ページからお気軽にご連絡ください。
+      </p>
+    </footer>
+
+  </article>
+</Layout>

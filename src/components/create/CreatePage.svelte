@@ -5,6 +5,11 @@
   import CreateProgress from './CreateProgress.svelte';
   import { downloadUrl } from '../../lib/download';
   import FileCard from '../extract/FileCard.svelte';
+  import { useTranslations } from '../../i18n/utils';
+  import { ui } from '../../i18n/ui';
+
+  export let lang = 'en';
+  $: t = useTranslations(lang as keyof typeof ui);
 
   let files: File[] = [];
   let archiveName = 'Archive';
@@ -16,8 +21,13 @@
   let downloadUrl_: string | null = null;
   let toastId = 0;
   let zipPassword = '';
+  let showPassword = false;
   let selectedFileIndex: number | null = null;
   const currentMode = 'create';
+
+  export let title = "Create a ZIP archive";
+  export let subtitle = "Drop files or folders and compress them into a ZIP — entirely in your browser.";
+  export let eyebrow = "Browser-native · Zero uploads · Instant";
 
   function showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
     const id = ++toastId;
@@ -141,10 +151,6 @@
   $: progressPct = createProgress.total > 0 ? Math.round((createProgress.loaded / createProgress.total) * 100) : 0;
 </script>
 
-<svelte:head>
-  <title>Create ZIP - Unzip Files Online</title>
-</svelte:head>
-
 <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-6">
 
   <!-- HERO + MODE TABS -->
@@ -152,7 +158,7 @@
     <div class="flex items-center justify-center">
       <div class="flex items-center gap-1 p-1 bg-hairline-soft rounded-xl border border-hairline" role="tablist" aria-label="Tool mode">
         <a
-          href="/"
+          href={lang && lang !== 'en' ? `/${lang}` : '/'}
           role="tab"
           aria-selected={false}
           class="flex items-center gap-2 px-5 py-2 rounded-lg text-button-md font-medium transition-all duration-fast text-mute hover:text-ink"
@@ -160,10 +166,10 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
           </svg>
-          Extract ZIP
+          {t('extract.tab')}
         </a>
         <a
-          href="/create"
+          href={lang && lang !== 'en' ? `/${lang}/create` : '/create'}
           role="tab"
           aria-selected={true}
           class="flex items-center gap-2 px-5 py-2 rounded-lg text-button-md font-medium transition-all duration-fast bg-canvas-elevated text-ink shadow-whisper border border-hairline"
@@ -171,16 +177,16 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          Create ZIP
+          {t('create.tab')}
         </a>
       </div>
     </div>
 
     <div class="text-center space-y-3 pb-2">
-      <p class="font-mono text-mono-eyebrow text-mute uppercase tracking-widest">Browser-native · Zero uploads · Instant</p>
-      <h1 class="text-display-xl font-semibold text-ink tracking-tight">Create a ZIP archive</h1>
+      <p class="font-mono text-mono-eyebrow text-mute uppercase tracking-widest">{eyebrow}</p>
+      <h1 class="text-display-xl font-semibold text-ink tracking-tight">{title}</h1>
       <p class="text-body-lg text-mute max-w-md mx-auto">
-        Drop files or folders and compress them into a ZIP — entirely in your browser.
+        {subtitle}
       </p>
     </div>
   </div>
@@ -189,6 +195,7 @@
   <FileCollector
     onAddFiles={handleAddFiles}
     disabled={isCreating}
+    {t}
   />
 
   <!-- Archive config + create button -->
@@ -196,7 +203,7 @@
     <div class="space-y-4 animate-slide-up">
       <!-- File List Header -->
       <div class="flex items-center justify-between">
-        <h3 class="text-heading-md font-semibold text-ink">{files.length} file{files.length !== 1 ? 's' : ''} ready</h3>
+        <h3 class="text-heading-md font-semibold text-ink">{files.length} {files.length !== 1 ? t('ui.files') : t('ui.file')} {t('ui.ready')}</h3>
         <button
           class="btn-ghost text-body-sm"
           on:click={handleClearAll}
@@ -206,7 +213,7 @@
           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          Clear all
+          {t('ui.clear_all')}
         </button>
       </div>
 
@@ -229,23 +236,45 @@
           <svg class="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
           </svg>
-          <span class="text-body-md text-ink font-medium">Protect ZIP with password</span>
+          <span class="text-body-md text-ink font-medium">{t('ui.protect_zip_password')}</span>
         </div>
-        <input 
-          type="password" 
-          bind:value={zipPassword} 
-          placeholder="Optional password..." 
-          class="input font-mono w-full max-w-sm"
-          disabled={isCreating}
-        />
+        <div class="relative w-full max-w-sm">
+          <input 
+            type={showPassword ? 'text' : 'password'} 
+            value={zipPassword} 
+            on:input={(e) => zipPassword = e.currentTarget.value}
+            placeholder={t('ui.optional_password')} 
+            class="input font-mono w-full pr-10"
+            disabled={isCreating}
+          />
+          <button
+            type="button"
+            class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-mute hover:text-ink transition-colors rounded focus:outline-none focus:ring-2 focus:ring-link flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            on:click={() => showPassword = !showPassword}
+            disabled={isCreating}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            title={showPassword ? 'Hide password' : 'Show password'}
+          >
+            {#if showPassword}
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              </svg>
+            {:else}
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            {/if}
+          </button>
+        </div>
       </div>
 
-      <ArchiveConfig bind:archiveName bind:compressionLevel disabled={isCreating} />
+      <ArchiveConfig bind:archiveName bind:compressionLevel disabled={isCreating} {t} />
 
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
         <p class="text-body-sm text-mute">
-          <span class="text-ink font-medium">{files.length}</span> files,
-          <span class="text-ink font-medium">{(totalSize / (1024 * 1024)).toFixed(1)} MB</span> total
+          <span class="text-ink font-medium">{files.length}</span> {t('ui.files')},
+          <span class="text-ink font-medium">{(totalSize / (1024 * 1024)).toFixed(1)} MB</span> {t('ui.total')}
         </p>
         
         <div class="flex items-center w-full sm:w-auto min-w-[300px] max-w-sm rounded-lg border border-hairline overflow-hidden focus-within:border-link bg-canvas shadow-sm transition-colors">
@@ -264,12 +293,12 @@
             class="btn-primary !rounded-none self-stretch px-5 py-2.5 flex items-center gap-2 border-l border-hairline whitespace-nowrap hover:bg-link-soft hover:text-link transition-colors"
             on:click={handleCreateZip}
             disabled={isCreating}
-            aria-label="Download ZIP archive"
+            aria-label="{t('ui.download_zip')} archive"
           >
             <svg class="w-4 h-4 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            Download
+            {t('ui.download_zip').split(' ')[0]}
           </button>
         </div>
       </div>
@@ -278,7 +307,7 @@
 
   <!-- Progress -->
   {#if isCreating}
-    <CreateProgress progress={createProgress} />
+    <CreateProgress progress={createProgress} {t} />
   {/if}
 
   <!-- Download ready -->
@@ -288,11 +317,11 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
       </svg>
       <div class="flex-1">
-        <p class="text-body-md text-ink font-medium">Archive ready!</p>
-        <p class="text-body-sm text-mute">Download started automatically.</p>
+        <p class="text-body-md text-ink font-medium">{t('ui.archive_ready') || 'Archive ready!'}</p>
+        <p class="text-body-sm text-mute">{t('ui.download_started') || 'Download started automatically.'}</p>
       </div>
       <a href={downloadUrl_} download={archiveName} class="btn-square text-button-sm flex-shrink-0">
-        Download again
+        {t('ui.download_again') || 'Download again'}
       </a>
     </div>
   {/if}

@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   export let onAddFiles: (files: File[]) => void = () => {};
   export let disabled: boolean = false;
+  export let t: (key: any) => string = (k: any) => k;
 
   let isDragOver = false;
   let fileInput: HTMLInputElement | null = null;
@@ -216,21 +217,21 @@
       </div>
 
       <div class="space-y-2">
-        <h3 class="text-heading-md font-semibold text-ink">Drop files and folders here</h3>
-        <p class="text-body-md text-body">or click to browse</p>
+        <h3 class="text-heading-md font-semibold text-ink">{t('ui.drop_files_here')}</h3>
+        <p class="text-body-md text-body">{t('ui.or')} {t('ui.click_add_files')}</p>
       </div>
 
       <p class="text-body-sm text-mute flex items-center justify-center gap-1.5 mt-4">
         <kbd class="px-2 py-0.5 bg-hairline-soft rounded-sm text-body-sm font-mono text-body">{isMac ? '⌘' : 'Ctrl'}</kbd>
         <span>+</span>
         <kbd class="px-2 py-0.5 bg-hairline-soft rounded-sm text-body-sm font-mono text-body">V</kbd>
-        <span>to paste from clipboard</span>
+        <span>{t('ui.paste_mac').includes('pegar') || t('ui.paste_win').includes('pegar') ? 'para pegar' : 'to paste from clipboard'}</span>
       </p>
 
       <div class="flex items-center justify-center gap-4 text-body-sm text-mute mt-4 pt-4 border-t border-hairline">
-        <span class="flex items-center gap-1.5">Any file type</span>
-        <span class="flex items-center gap-1.5">Folders supported</span>
-        <span class="flex items-center gap-1.5">No size limit</span>
+        <span class="flex items-center gap-1.5">{t('ui.any_files')}</span>
+        <span class="flex items-center gap-1.5">{t('ui.preserve_folders')}</span>
+        <span class="flex items-center gap-1.5">{t('ui.no_size_limit')}</span>
       </div>
     </div>
 </div>

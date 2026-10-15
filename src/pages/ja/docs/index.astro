@@ -1,0 +1,62 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout 
+  title="ドキュメント | オンラインでZIPを解凍" 
+  description="オンラインでZIPを解凍の技術ドキュメントとガイド。ブラウザ内で完結してZIPアーカイブを解凍および作成する方法を学びます。"
+>
+  <article class="mx-auto max-w-2xl px-4 sm:px-6 pt-16 pb-24">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
+      <span class="text-ink">ドキュメント</span>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="space-y-5 mb-[100px]">
+      <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">ドキュメント</p>
+      <h1 class="text-heading-lg font-semibold text-ink tracking-tight">技術ガイドとリファレンス</h1>
+      <p class="text-body-lg text-body leading-relaxed">
+        安全なブラウザ内ローカル処理エンジンを活用して、ファイル操作のワークフローを最大化する方法を解説します。主要機能の使い方、インターフェース用語、ファイルの圧縮および解凍におけるベストプラクティスをご確認ください。
+      </p>
+    </header>
+
+    <!-- Guides List -->
+    <div class="space-y-[48px]">
+      
+      <section class="border border-hairline rounded-lg p-6 sm:p-8 space-y-4">
+        <h2 class="text-heading-md font-semibold text-ink">
+          <a href="/ja/docs/extract-zip" class="underline underline-offset-4 hover:text-mute transition-colors">ZIPファイルを解凍する方法</a>
+        </h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          安全にファイルを解凍する方法、解凍前のファイル内容プレビュー、パスワード保護されたアーカイブの復号、ブラウザ内での個別ファイル選択ダウンロードに関する完全ガイドです。
+        </p>
+        <div class="pt-2">
+          <a href="/ja/docs/extract-zip" class="text-body-sm font-mono text-ink underline underline-offset-4 hover:text-mute transition-colors">解凍ガイドを読む &rarr;</a>
+        </div>
+      </section>
+
+      <section class="border border-hairline rounded-lg p-6 sm:p-8 space-y-4">
+        <h2 class="text-heading-md font-semibold text-ink">
+          <a href="/ja/docs/create-zip" class="underline underline-offset-4 hover:text-mute transition-colors">ZIPファイルを作成する方法</a>
+        </h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          オンラインでZIPファイルを生成するためのステップバイステップガイドです。ドラッグ＆ドロップによるファイル選択、圧縮レベルの調整、AESパスワード暗号化、ゼロ知識プライバシー設計を網羅しています。
+        </p>
+        <div class="pt-2">
+          <a href="/ja/docs/create-zip" class="text-body-sm font-mono text-ink underline underline-offset-4 hover:text-mute transition-colors">作成ガイドを読む &rarr;</a>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20">
+      <p class="text-body-md text-mute">
+        さらにサポートが必要ですか？<a href="/ja/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">お問い合わせ</a>ページからご連絡ください。
+      </p>
+    </footer>
+
+  </article>
+</Layout>

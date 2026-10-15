@@ -1,0 +1,314 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getExtractZipHowToSchema } from '../../../lib/howto-schema';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "문서",
+      "item": new URL('/ko/docs/', Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "ZIP 압축 해제",
+      "item": Astro.url.href
+    }
+  ]
+};
+
+const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'ko');
+---
+
+<Layout 
+  title="온라인으로 ZIP 파일 압축 푸는 방법 — 문서" 
+  description="온라인으로 ZIP 파일을 압축 해제하기 위한 단계별 안내 문서입니다. 드래그 앤 드롭 로딩, 파일 미리보기, 선택적 추출, 개인정보 보호 아키텍처 및 지원 형식을 다룹니다."
+>
+  <article class="mx-auto max-w-2xl px-4 sm:px-6 pt-16 pb-24">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
+      <a href="/ko/docs" class="underline underline-offset-4 hover:text-ink transition-colors">문서</a>
+      <span class="text-faint">/</span>
+      <span class="text-ink">ZIP 압축 해제</span>
+    </nav>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(howToSchema)} />
+
+    <!-- Page Header -->
+    <header class="space-y-5 mb-[100px]">
+      <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">문서</p>
+      <h1 class="text-heading-lg font-semibold text-ink tracking-tight">온라인으로 ZIP 파일 압축 풀기</h1>
+      <p class="text-body-lg text-body leading-relaxed">
+        이 문서는 기기 내에서 로컬로 아카이브를 처리하는 브라우저 기반 ZIP 추출 도구인 <a href="/ko" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Unzip Files Online</a>의 압축 해제 워크플로우를 안내합니다. 어떠한 파일도 서버로 전송되지 않습니다. 아래에서 기능 설명, 인터페이스 용어, 지원 형식, 실무 활용 사례 및 활용 팁을 확인하실 수 있습니다.
+      </p>
+    </header>
+
+    <!-- Table of Contents -->
+    <nav class="mb-[100px] py-6 border-y border-hairline">
+      <p class="text-heading-sm font-semibold text-ink mb-4">목차</p>
+      <ol class="space-y-2 text-body-md text-body list-decimal list-inside">
+        <li><a href="#how-it-works" class="underline underline-offset-4 hover:text-ink transition-colors">작동 원리</a></li>
+        <li><a href="#loading-a-file" class="underline underline-offset-4 hover:text-ink transition-colors">ZIP 파일 불러오기</a></li>
+        <li><a href="#file-tree" class="underline underline-offset-4 hover:text-ink transition-colors">파일 트리 탐색</a></li>
+        <li><a href="#previewing-files" class="underline underline-offset-4 hover:text-ink transition-colors">다운로드 전 파일 미리보기</a></li>
+        <li><a href="#selective-extraction" class="underline underline-offset-4 hover:text-ink transition-colors">선택적 추출</a></li>
+        <li><a href="#password-protected" class="underline underline-offset-4 hover:text-ink transition-colors">비밀번호로 보호된 아카이브</a></li>
+        <li><a href="#supported-formats" class="underline underline-offset-4 hover:text-ink transition-colors">지원되는 미리보기 형식</a></li>
+        <li><a href="#interface-glossary" class="underline underline-offset-4 hover:text-ink transition-colors">인터페이스 용어 사전</a></li>
+        <li><a href="#use-cases" class="underline underline-offset-4 hover:text-ink transition-colors">주요 활용 사례</a></li>
+        <li><a href="#privacy" class="underline underline-offset-4 hover:text-ink transition-colors">프라이버시 및 보안 아키텍처</a></li>
+        <li><a href="#ux-patterns" class="underline underline-offset-4 hover:text-ink transition-colors">UX 패턴 및 사용 편의성</a></li>
+        <li><a href="#troubleshooting" class="underline underline-offset-4 hover:text-ink transition-colors">문제 해결</a></li>
+      </ol>
+    </nav>
+
+    <!-- Sections -->
+    <div class="space-y-[48px]">
+
+      <!-- 1. How It Works -->
+      <section id="how-it-works" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">작동 원리</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          웹 애플리케이션에서 ZIP 파일을 선택하거나 드롭하면 브라우저가 <strong class="text-ink font-medium">File API</strong>를 사용하여 로컬 디스크에서 파일을 직접 읽어옵니다. 아카이브 파일은 어디에도 업로드되지 않으며, 바이너리 전체가 브라우저 메모리에만 유지됩니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          그런 다음 추출 엔진은 파일 이름과 바이트 위치를 매핑하는 내부 색인인 ZIP 중앙 디렉터리(Central Directory)를 파싱합니다. 이 과정은 전체 데이터가 아닌 메타데이터만 읽기 때문에 극도로 빠릅니다. 색인을 바탕으로 사이드바에 탐색 가능한 파일 트리가 구성되며, 개별 파일은 사용자가 미리 보거나 다운로드할 때 온디맨드로 압축 해제됩니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          모든 연산이 사용자 기기 내부에서 이루어지므로 서버 측 파일 용량 제한이 존재하지 않습니다. 실질적인 한계는 기기의 가용 RAM뿐이며, 최신 컴퓨터에서는 수 기가바이트 크기의 대용량 아카이브도 원활하게 처리됩니다.
+        </p>
+      </section>
+
+      <!-- 2. Loading a File -->
+      <section id="loading-a-file" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">ZIP 파일 불러오기</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          파일을 불러오는 방법은 두 가지가 있습니다:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">드래그 앤 드롭</strong> — 운영체제의 파일 탐색기에서 브라우저 창으로 <code class="font-mono text-body-md bg-canvas-elevated px-1.5 py-0.5 rounded">.zip</code> 파일을 직접 끌어다 놓습니다. 드롭 영역이 화면 전체를 덮으므로 정밀하게 조준할 필요가 없습니다.</li>
+          <li><strong class="text-ink font-medium">클릭하여 파일 찾기</strong> — 화면 중앙의 선택 영역을 클릭하여 운영체제의 기본 파일 선택 창을 엽니다. 아카이브 파일을 선택하면 즉시 로드됩니다.</li>
+        </ul>
+        <p class="text-body-lg text-body leading-relaxed">
+          두 방법 모두 동일한 로컬 처리 파이프라인을 작동시킵니다. 파일이 즉시 읽히고 디렉터리 구조가 분석되어 수 밀리초 만에 작업 공간 왼쪽에 파일 트리가 나타납니다.
+        </p>
+      </section>
+
+      <!-- 3. File Tree -->
+      <section id="file-tree" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">파일 트리 탐색</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          파일이 로드되면 왼쪽 사이드바에 압축 파일 내부의 디렉터리 구조가 표시됩니다. 폴더는 클릭하여 접거나 펼칠 수 있으며, 생성자가 의도한 계층 구조 그대로 보존됩니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          트리의 각 항목에는 파일 이름과 압축된 크기가 표시됩니다. 파일을 클릭하면 선택되어 지원되는 형식인 경우 중앙 패널에 미리보기가 로드됩니다. 폴더를 클릭하면 하위 디렉터리가 토글됩니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          계층이 깊은 디렉터리의 경우 미리보기 영역 상단에 경로 탐색 바(Breadcrumb)가 표시됩니다. 각 경로 세그먼트를 클릭하면 스크롤 없이 상위 디렉터리로 즉시 이동할 수 있습니다.
+        </p>
+      </section>
+
+      <!-- 4. Previewing Files -->
+      <section id="previewing-files" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">다운로드 전 파일 미리보기</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          미리보기 엔진은 본 애플리케이션의 핵심 영역입니다. 파일 트리에서 지원 형식을 클릭하면 해당 파일의 바이트 범위만 즉시 압축 해제되어 브라우저에서 바로 렌더링됩니다. 이를 통해 출처를 알 수 없는 파일이나 불필요한 파일을 다운로드하기 전에 안전하게 내용을 검증할 수 있습니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          이미지(PNG, JPEG, WebP, GIF, SVG, BMP, ICO)는 확대/축소 및 이동 제어가 가능한 원본 해상도로 렌더링됩니다. PDF 문서는 페이지 단위 스크롤이 지원됩니다. 코드와 텍스트 파일은 가독성을 위한 구문 강조가 적용됩니다. 심지어 Adobe Photoshop의 PSD 파일도 포토샵 프로그램 없이 브라우저에서 레이어별로 직접 미리 볼 수 있습니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          미리보기 툴바에서는 개별 파일 다운로드, 전체 화면 전환, 화살표 버튼을 이용한 이전/다음 파일 이동을 제공합니다.
+        </p>
+      </section>
+
+      <!-- 5. Selective Extraction -->
+      <section id="selective-extraction" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">선택적 추출</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          아카이브 전체를 불필요하게 다운로드할 필요가 없습니다. 파일 트리의 각 파일과 폴더에는 개별 다운로드 옵션이 제공됩니다. 단일 파일을 다운로드하면 해당 항목만 압축 해제되어 저장됩니다. 폴더를 다운로드하면 해당 폴더 내부의 모든 파일이 압축 해제되어 새로운 깔끔한 아카이브로 묶여 다운로드됩니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          이는 수 기가바이트 규모의 대형 프로젝트를 다룰 때 매우 실용적입니다. 예를 들어 수백 개의 텍스처가 담긴 3GB 게임 리소스 아카이브에서 특정 스프라이트 하나만 필요한 경우, 파일 트리에서 찾고 미리보기로 확인한 뒤 해당 파일만 다운로드하여 저장 공간과 시간을 아낄 수 있습니다.
+        </p>
+      </section>
+
+      <!-- 6. Password Protected -->
+      <section id="password-protected" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">비밀번호로 보호된 아카이브</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          암호화된 ZIP 파일이 감지되면 압축 해제 전에 비밀번호 입력 대화상자가 자동으로 나타납니다. 기존 표준 ZIP 암호화와 강력한 AES-256 암호화를 모두 지원합니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          모든 복호화 연산은 브라우저 메모리 내에서 100% 로컬로 수행됩니다. 입력한 비밀번호는 네트워크를 통해 절대 전송되지 않으며 세션이 종료되면 파기됩니다. 올바른 비밀번호를 입력하면 파일 트리가 정상적으로 생성되며 모든 미리보기와 다운로드 기능이 원활하게 작동합니다.
+        </p>
+      </section>
+
+      <!-- 7. Supported Formats -->
+      <section id="supported-formats" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">지원되는 미리보기 형식</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          미리보기 엔진은 브라우저 네이티브 기술을 활용하여 다양한 파일 형식을 지원합니다. 미리보기를 지원하지 않는 형식도 다운로드는 완벽하게 가능하며, 미리보기 기능은 편의성을 위한 부가 기능입니다.
+        </p>
+
+        <div class="space-y-5 pt-2">
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">이미지</h3>
+            <p class="text-body-md text-mute">PNG, JPEG, WebP, GIF (애니메이션), SVG, BMP, ICO, Adobe PSD</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">문서</h3>
+            <p class="text-body-md text-mute">PDF (다중 페이지 스크롤 지원)</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">코드 및 텍스트</h3>
+            <p class="text-body-md text-mute">JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, YAML, XML, 일반 텍스트 및 50개 이상의 프로그래밍 언어 구문 강조</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">미디어</h3>
+            <p class="text-body-md text-mute">MP4, WebM, MP3, WAV, OGG (브라우저 네이티브 재생)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Interface Glossary -->
+      <section id="interface-glossary" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">인터페이스 용어 사전</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          애플리케이션 인터페이스의 주요 영역에 대한 간략한 용어 설명입니다.
+        </p>
+
+        <dl class="space-y-5 pt-2">
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">드롭 영역 (Dropzone)</dt>
+            <dd class="text-body-md text-mute mt-1">파일 드래그 앤 드롭을 수신하는 전체 화면 영역입니다. 수동 탐색을 위한 파일 찾기 버튼도 포함되어 있습니다.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">파일 트리 (File Tree)</dt>
+            <dd class="text-body-md text-mute mt-1">아카이브 내의 모든 파일과 폴더를 계층적으로 나열하는 왼쪽 사이드바입니다. 데스크톱 파일 탐색기와 유사하게 동작합니다.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">미리보기 캔버스 (Preview Canvas)</dt>
+            <dd class="text-body-md text-mute mt-1">선택한 파일의 내용을 렌더링하는 중앙 영역입니다. 파일 형식(이미지, PDF, 코드 에디터 등)에 맞춰 렌더러가 자동으로 전환됩니다.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">미리보기 툴바 (Preview Toolbar)</dt>
+            <dd class="text-body-md text-mute mt-1">미리보기 상단에 위치한 작업 버튼 모음입니다. 다운로드, 전체 화면 토글, 탐색 화살표 및 파일 메타데이터를 표시합니다.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">경로 표시줄 (Breadcrumbs)</dt>
+            <dd class="text-body-md text-mute mt-1">현재 파일의 디렉터리 경로를 나타내는 클릭 가능한 상단 표시줄입니다. 상위 폴더로 빠르게 복귀할 수 있습니다.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- 9. Use Cases -->
+      <section id="use-cases" class="scroll-mt-24 space-y-6 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">주요 활용 사례</h2>
+
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">출처가 불분명한 소스 코드 사전 점검</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              개발자와 보안 전문가는 검증되지 않은 코드가 담긴 ZIP 파일을 자주 전달받습니다. 이를 로컬 디스크에 바로 풀면 악성 스크립트가 실행될 위험이 있습니다. 브라우저 샌드박스 내부에서 먼저 열어 구문 강조로 코드를 확인하고 검증된 파일만 안전하게 추출할 수 있습니다.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">무거운 디자인 패키지에서 특정 에셋만 추출</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              디자이너는 기가바이트 단위의 무거운 프로젝트 패키지를 자주 공유합니다. 전체를 다운로드하고 압축을 푸는 것은 용량과 시간을 낭비합니다. 본 도구를 통해 아카이브를 열고 미리보기로 이미지를 확인한 뒤 필요한 아이콘이나 특정 PSD 레이어만 선택 추출할 수 있습니다.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">소프트웨어 설치가 제한된 공용/기업 환경</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              회사 관리 PC, 도서관 컴퓨터, 크롬북에서는 압축 해제 소프트웨어 설치가 금지되는 경우가 많습니다. 웹 브라우저 기반 도구는 관리자 권한이나 별도 설치 없이 사이트에 접속하여 파일을 드롭하는 것만으로 작업을 완벽히 해결합니다.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">엄격한 데이터 컴플라이언스 준수</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              의료, 법률, 금융 분야의 전문가는 기밀 파일의 외부 서버 업로드를 엄격히 금지하는 규정(개인정보 보호법 등)을 준수해야 합니다. 본 도구는 모든 작업을 로컬에서 처리하며 어떠한 데이터도 외부로 송신하지 않으므로 가장 엄격한 데이터 보호 정책에도 완벽히 부합합니다. 자세한 내용은 <a href="/ko/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">개인정보처리방침</a>을 확인하세요.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">스마트폰(iPhone 및 Android)에서의 간편 추출</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              모바일 기기 기본 기능으로는 ZIP 처리가 까다로울 수 있습니다. 본 사이트는 모바일 사파리, 크롬, 파이어폭스에 최적화된 반응형 인터페이스를 제공하여 스마트폰 파일 앱에서 바로 아카이브를 열고 미리보기 및 개별 파일 저장을 자유롭게 진행할 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. Privacy -->
+      <section id="privacy" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">프라이버시 및 보안 아키텍처</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          보안 모델의 원칙은 단순합니다: 파일은 항상 사용자의 기기에 머뭅니다. 서버 업로드, 클라우드 임시 저장, 원격 처리가 전혀 없습니다. 브라우저 자체가 온전한 압축 해제 엔진으로 작동합니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          기술적으로 브라우저의 File API를 통해 파일을 읽고, 자바스크립트 기반의 zip.js를 통해 아카이브를 파싱하며, 브라우저 표준 기술(Canvas, PDF.js, Web Audio)을 활용하여 미리보기를 구현합니다. 애플리케이션 작동 중 사용자 파일 데이터가 담긴 네트워크 요청은 0건입니다.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          서비스 개선을 위해 페이지 조회수 등 익명의 기본 분석 정보만 집계합니다. 분석 데이터에는 파일 이름, 경로, 파일 내용이 절대 포함되지 않습니다. 자세한 내용은 <a href="/ko/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">개인정보처리방침</a> 및 <a href="/ko/terms" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">이용약관</a>에 명시되어 있습니다.
+        </p>
+      </section>
+
+      <!-- 11. UX Patterns -->
+      <section id="ux-patterns" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">UX 패턴 및 사용 편의성</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          사용자가 더욱 쾌적하게 작업할 수 있도록 다음과 같은 디테일을 적용했습니다:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">호버 액션</strong> — 파일 트리 항목에 마우스를 올리면 인라인 다운로드 및 미리보기 버튼이 즉시 나타나 우클릭 없이 빠르게 조작할 수 있습니다.</li>
+          <li><strong class="text-ink font-medium">다크/라이트 테마</strong> — 눈의 피로를 최소화하는 테마를 제공합니다. 시스템 설정을 자동으로 반영하며 상단 내비게이션 바에서 수동 전환할 수 있습니다. 다크 모드는 눈부심이 적은 차분한 톤을 적용했습니다.</li>
+          <li><strong class="text-ink font-medium">반응형 디자인</strong> — 모바일 기기에서는 파일 트리가 깔끔하게 접히며 미리보기 영역이 화면 전체를 채워 터치 제스처로 편리하게 탐색할 수 있습니다.</li>
+          <li><strong class="text-ink font-medium">점진적 로딩</strong> — 대용량 파일의 경우 백그라운드에서 전체 구조를 읽는 동안 즉시 트리가 렌더링되기 시작하여 긴 대기 시간 없이 즉시 작업을 시작할 수 있습니다.</li>
+        </ul>
+      </section>
+
+      <!-- 12. Troubleshooting -->
+      <section id="troubleshooting" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">문제 해결</h2>
+
+        <div class="space-y-5 pt-2">
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">로드 후 파일 트리가 비어 있는 경우</h3>
+            <p class="text-body-md text-mute">아카이브가 손상되었거나 지원되지 않는 압축 방식을 사용했을 수 있습니다. 데스크톱 압축 프로그램으로 열어 파일의 정상 여부를 확인해 보세요.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">특정 파일의 미리보기가 작동하지 않는 경우</h3>
+            <p class="text-body-md text-mute">브라우저에서 직접 렌더링을 지원하지 않는 특수 포맷일 수 있습니다. 미리보기와 상관없이 파일 다운로드는 정상적으로 가능합니다.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">초대용량 파일에서 브라우저가 느려지는 경우</h3>
+            <p class="text-body-md text-mute">2~4GB 이상의 아카이브는 기기의 RAM 용량에 영향을 받을 수 있습니다. 다른 불필요한 브라우저 탭을 닫아 메모리를 확보하거나 메모리가 넉넉한 PC를 사용해 보세요.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">비밀번호 입력창이 나타나지 않는 경우</h3>
+            <p class="text-body-md text-mute">비표준 독자 암호화 방식이 적용된 아카이브일 수 있습니다. 본 도구는 표준 ZIP 암호화 및 AES-256 암호화를 공식 지원합니다.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20">
+      <p class="text-body-md text-mute">
+        파일을 압축하셔야 하나요? <a href="/ko/docs/create-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 파일 만들기 문서</a>를 확인해 보세요. 추가 문의사항은 <a href="/ko/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">문의하기</a> 페이지에서 남기실 수 있습니다.
+      </p>
+    </footer>
+
+  </article>
+</Layout>

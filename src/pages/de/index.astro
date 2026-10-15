@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import IndexContent from '../../components/pages/IndexContent.astro';
+import { useTranslations } from '../../i18n/utils';
+
+const t = useTranslations('de');
+---
+<Layout title={t('index.title')} description={t('index.desc')}>
+  <IndexContent />
+</Layout>

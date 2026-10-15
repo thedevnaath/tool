@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import type { FileTreeNode } from '../../lib/file-utils';
   import FileTreeNode from './FileTreeNode.svelte';
 
@@ -7,6 +7,7 @@
   export let showHiddenFiles: boolean = false;
   export let onselect: (index: number) => void = () => {};
   export let onToggleHidden: (value: boolean) => void = () => {};
+  export let t: (key: any) => string = (k: any) => k;
 
   let searchQuery = '';
 

@@ -1,0 +1,314 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getExtractZipHowToSchema } from '../../../lib/howto-schema';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Documentação",
+      "item": new URL('/pt/docs/', Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Extrair ZIP",
+      "item": Astro.url.href
+    }
+  ]
+};
+
+const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'pt');
+---
+
+<Layout 
+  title="Como Extrair Arquivos ZIP Online — Documentação" 
+  description="Documentação passo a passo para extrair arquivos ZIP online. Abrange carregamento por arrastar e soltar, pré-visualização de arquivos, extração seletiva, arquitetura de privacidade e formatos compatíveis."
+>
+  <article class="mx-auto max-w-2xl px-4 sm:px-6 pt-16 pb-24">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
+      <a href="/pt/docs" class="underline underline-offset-4 hover:text-ink transition-colors">Documentação</a>
+      <span class="text-faint">/</span>
+      <span class="text-ink">Extrair ZIP</span>
+    </nav>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(howToSchema)} />
+
+    <!-- Page Header -->
+    <header class="space-y-5 mb-[100px]">
+      <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">Documentação</p>
+      <h1 class="text-heading-lg font-semibold text-ink tracking-tight">Extrair Arquivos ZIP Online</h1>
+      <p class="text-body-lg text-body leading-relaxed">
+        Esta página documenta o fluxo de trabalho de extração do <a href="/pt" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Extrair ZIP Online</a> — um extrator ZIP baseado em navegador que processa arquivos localmente no seu dispositivo. Nenhum arquivo é enviado para servidores. Abaixo você encontrará descrições de recursos, terminologia da interface, formatos suportados, fluxos de trabalho reais e dicas para aproveitar a ferramenta ao máximo.
+      </p>
+    </header>
+
+    <!-- Table of Contents -->
+    <nav class="mb-[100px] py-6 border-y border-hairline">
+      <p class="text-heading-sm font-semibold text-ink mb-4">Conteúdo</p>
+      <ol class="space-y-2 text-body-md text-body list-decimal list-inside">
+        <li><a href="#how-it-works" class="underline underline-offset-4 hover:text-ink transition-colors">Como Funciona</a></li>
+        <li><a href="#loading-a-file" class="underline underline-offset-4 hover:text-ink transition-colors">Carregar um Arquivo ZIP</a></li>
+        <li><a href="#file-tree" class="underline underline-offset-4 hover:text-ink transition-colors">Navegar pela Estrutura de Arquivos</a></li>
+        <li><a href="#previewing-files" class="underline underline-offset-4 hover:text-ink transition-colors">Pré-visualizar Arquivos Antes do Download</a></li>
+        <li><a href="#selective-extraction" class="underline underline-offset-4 hover:text-ink transition-colors">Extração Seletiva</a></li>
+        <li><a href="#password-protected" class="underline underline-offset-4 hover:text-ink transition-colors">Arquivos Protegidos por Senha</a></li>
+        <li><a href="#supported-formats" class="underline underline-offset-4 hover:text-ink transition-colors">Formatos de Pré-visualização Suportados</a></li>
+        <li><a href="#interface-glossary" class="underline underline-offset-4 hover:text-ink transition-colors">Glossário da Interface</a></li>
+        <li><a href="#use-cases" class="underline underline-offset-4 hover:text-ink transition-colors">Casos de Uso Comuns</a></li>
+        <li><a href="#privacy" class="underline underline-offset-4 hover:text-ink transition-colors">Arquitetura de Privacidade e Segurança</a></li>
+        <li><a href="#ux-patterns" class="underline underline-offset-4 hover:text-ink transition-colors">Padrões de UX e Facilidade de Descoberta</a></li>
+        <li><a href="#troubleshooting" class="underline underline-offset-4 hover:text-ink transition-colors">Solução de Problemas</a></li>
+      </ol>
+    </nav>
+
+    <!-- Sections -->
+    <div class="space-y-[48px]">
+
+      <!-- 1. How It Works -->
+      <section id="how-it-works" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Como Funciona</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Quando você seleciona ou solta um arquivo ZIP na aplicação, o navegador lê o arquivo diretamente do seu armazenamento local utilizando a <strong class="text-ink font-medium">File API</strong>. O arquivo compactado nunca é enviado para a rede — todo o conteúdo binário é mantido na memória do navegador.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          O mecanismo de extração analisa o diretório central do ZIP — o índice interno que mapeia nomes de arquivos e posições de bytes. Esta etapa é extremamente rápida porque lê apenas metadados, e não os arquivos completos. A partir desse índice, a ferramenta constrói uma árvore de arquivos navegável na barra lateral. Arquivos individuais são descompactados sob demanda, apenas quando você decide visualizá-los ou baixá-los.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Como todo o processamento permanece no seu dispositivo, não há limites de tamanho impostos por servidores. A única restrição prática é a memória RAM disponível no seu aparelho. Arquivos de vários gigabytes funcionam sem problemas em máquinas modernas.
+        </p>
+      </section>
+
+      <!-- 2. Loading a File -->
+      <section id="loading-a-file" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Carregar um Arquivo ZIP</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Existem duas maneiras práticas de carregar um arquivo:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Arrastar e Soltar</strong> — Arraste um arquivo <code class="font-mono text-body-md bg-canvas-elevated px-1.5 py-0.5 rounded">.zip</code> do gerenciador de arquivos do seu computador diretamente para a janela do navegador. A área de soltura cobre toda a tela, facilitando a ação.</li>
+          <li><strong class="text-ink font-medium">Clique para Procurar</strong> — Clique na área de seleção no centro da página para abrir a janela de seleção de arquivos do seu sistema operacional. Escolha o arquivo compactado e ele será carregado imediatamente.</li>
+        </ul>
+        <p class="text-body-lg text-body leading-relaxed">
+          Ambos os métodos acionam o mesmo pipeline de processamento instantâneo. O arquivo é lido localmente, a estrutura de diretórios é analisada e a árvore de arquivos surge no lado esquerdo do espaço de trabalho em milissegundos.
+        </p>
+      </section>
+
+      <!-- 3. File Tree -->
+      <section id="file-tree" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Navegar pela Estrutura de Arquivos</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Após o carregamento, a barra lateral esquerda exibe a estrutura interna do arquivo compactado. As pastas podem ser expandidas ou recolhidas com um clique. Os arquivos são agrupados em suas respectivas pastas, preservando a hierarquia exata definida pelo criador do arquivo.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Cada item na árvore exibe o nome do arquivo e seu tamanho compactado. Clicar em um arquivo o seleciona e carrega uma pré-visualização (se o formato for compatível) no painel central. Clicar em uma pasta expande ou recolhe seu conteúdo.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Para diretórios com muitos níveis, uma linha de navegação (breadcrumbs) é exibida acima da área de pré-visualização. Cada segmento é clicável, permitindo voltar diretamente a qualquer pasta anterior sem precisar rolar manualmente pela árvore.
+        </p>
+      </section>
+
+      <!-- 4. Previewing Files -->
+      <section id="previewing-files" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Pré-visualizar Arquivos Antes do Download</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          O mecanismo de pré-visualização é o painel central da aplicação. Quando você clica em um arquivo compatível na árvore, a ferramenta descompacta apenas o intervalo de bytes desse arquivo específico e o renderiza diretamente no navegador. Isso permite verificar o conteúdo antes de fazer o download — muito útil ao inspecionar arquivos de origens desconhecidas.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Imagens (PNG, JPEG, WebP, GIF, SVG, BMP, ICO) são exibidas em resolução completa com controles de zoom e panorâmica. Documentos PDF são paginados e podem ser rolados normalmente. Códigos e arquivos de texto contam com destaque de sintaxe para facilitar a leitura. Até arquivos PSD do Adobe Photoshop podem ser pré-visualizados camada por camada no navegador, sem precisar do Photoshop instalado.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          A barra de ferramentas de pré-visualização oferece botões rápidos para baixar o arquivo individual, alternar para o modo tela cheia e navegar entre itens adjacentes usando setas.
+        </p>
+      </section>
+
+      <!-- 5. Selective Extraction -->
+      <section id="selective-extraction" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Extração Seletiva</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Você não precisa baixar o arquivo ZIP inteiro. Cada arquivo e pasta na árvore possui uma opção de download individual. Ao baixar um único arquivo, somente aquele item é descompactado e salvo no seu aparelho. Ao baixar uma pasta, a ferramenta descompacta todos os arquivos contidos nela e gera um novo arquivo compacto específico para você.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Isso é muito conveniente ao lidar com grandes pacotes de projetos. Por exemplo, um arquivo de recursos de jogos de 3 GB pode conter centenas de texturas, mas se você precisar apenas de um sprite específico, poderá localizá-lo na árvore, confirmar na pré-visualização e baixar apenas aquele arquivo — economizando tempo e espaço de armazenamento.
+        </p>
+      </section>
+
+      <!-- 6. Password Protected -->
+      <section id="password-protected" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Arquivos Protegidos por Senha</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Quando a ferramenta detecta um arquivo ZIP criptografado, ela exibe uma solicitação de senha antes de prosseguir com a extração. Há suporte para a criptografia tradicional ZIPCrypto e para o padrão moderno AES-256.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          A descriptografia acontece 100% na memória do seu navegador. Sua senha nunca viaja pela rede e não é salva após o encerramento da sessão. Assim que você digita a senha correta, a árvore de arquivos é gerada normalmente e todas as funções de pré-visualização e download ficam ativas.
+        </p>
+      </section>
+
+      <!-- 7. Supported Formats -->
+      <section id="supported-formats" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Formatos de Pré-visualização Suportados</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          O mecanismo de pré-visualização suporta uma ampla variedade de tipos de arquivo de forma nativa no navegador. Formatos que não possuem pré-visualização integrada ainda podem ser baixados normalmente — a visualização é uma conveniência, nunca uma restrição.
+        </p>
+
+        <div class="space-y-5 pt-2">
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">Imagens</h3>
+            <p class="text-body-md text-mute">PNG, JPEG, WebP, GIF (animado), SVG, BMP, ICO, Adobe PSD</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">Documentos</h3>
+            <p class="text-body-md text-mute">PDF (múltiplas páginas, rolagem contínua)</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">Código e Texto</h3>
+            <p class="text-body-md text-mute">JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, YAML, XML, texto puro e mais de 50 linguagens com destaque de sintaxe</p>
+          </div>
+          <div>
+            <h3 class="text-heading-sm font-semibold text-ink mb-1">Mídia</h3>
+            <p class="text-body-md text-mute">MP4, WebM, MP3, WAV, OGG (reprodução nativa no navegador)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Interface Glossary -->
+      <section id="interface-glossary" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Glossário da Interface</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          Uma referência rápida para os elementos e áreas nomeadas da aplicação.
+        </p>
+
+        <dl class="space-y-5 pt-2">
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Zona de Soltura (Dropzone)</dt>
+            <dd class="text-body-md text-mute mt-1">A área de tela cheia que recebe arquivos arrastados. Também contém o botão para procurar arquivos manualmente.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Árvore de Arquivos (File Tree)</dt>
+            <dd class="text-body-md text-mute mt-1">A barra lateral expansível que lista todos os arquivos e diretórios do arquivo compactado, simulando um gerenciador de arquivos nativo.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Painel de Pré-visualização</dt>
+            <dd class="text-body-md text-mute mt-1">A área principal onde o arquivo selecionado é renderizado. Ela adapta o visualizador de acordo com o tipo de mídia (imagem, PDF, código, etc.).</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Barra de Ações da Visualização</dt>
+            <dd class="text-body-md text-mute mt-1">Barra superior com ferramentas rápidas: baixar arquivo, alternar tela cheia, navegar entre itens e visualizar metadados.</dd>
+          </div>
+          <div>
+            <dt class="text-heading-sm font-semibold text-ink">Linha de Navegação (Breadcrumbs)</dt>
+            <dd class="text-body-md text-mute mt-1">Caminho clicável exibido acima da pré-visualização que indica a pasta atual. Permite subir na estrutura de pastas rapidamente.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- 9. Use Cases -->
+      <section id="use-cases" class="scroll-mt-24 space-y-6 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Casos de Uso Comuns</h2>
+
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Inspecionar códigos de fontes desconhecidas</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Programadores e especialistas em segurança com frequência recebem arquivos ZIP com códigos que nunca viram antes. Descompactar direto no sistema operacional pode acidentalmente disparar scripts indesejados. Abrir o arquivo no navegador primeiro permite ler o código com realce de sintaxe em um ambiente seguro e isolado (sandbox), extraindo apenas o que foi verificado.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Extrair recursos específicos de pacotes pesados de design</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Designers compartilham projetos volumosos com vários gigabytes. Baixar e descompactar tudo ocupa espaço e leva tempo. Com nossa ferramenta, você pode abrir o pacote, conferir as imagens no visualizador e baixar somente o ícone ou composição PSD necessária.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Trabalhar em computadores compartilhados ou corporativos</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Em computadores de empresas, escolas ou Chromebooks, a instalação de novos softwares geralmente é bloqueada. Uma solução no navegador resolve isso com perfeição. Basta abrir o site, soltar o arquivo e extrair — sem privilégios de administrador ou instalações.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Processar arquivos sob normas de privacidade e conformidade</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              Profissionais da área médica, jurídica e contábil estão sujeitos a legislações rigorosas (como LGPD e GDPR) que proíbem o envio de dados confidenciais para servidores terceiros. Como nossa ferramenta faz todo o processamento localmente sem transmitir nada, ela cumpre até os requisitos de dados mais restritivos. Leia nossa <a href="/pt/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Política de Privacidade</a> para saber mais.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-heading-sm font-semibold text-ink">Extração rápida no iPhone e Android</h3>
+            <p class="text-body-lg text-body leading-relaxed">
+              O gerenciamento de arquivos ZIP no celular pode ser limitado. Nossa ferramenta é responsiva e roda com fluidez no Safari, Chrome e Firefox para smartphones. Basta tocar para escolher o arquivo no armazenamento do aparelho e usar os recursos completos de pré-visualização e download.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. Privacy -->
+      <section id="privacy" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Arquitetura de Privacidade e Segurança</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          O modelo de segurança da ferramenta é claro: seus arquivos não saem do seu computador ou celular. Não há upload, nem servidores intermediários, nem armazenamento temporário na nuvem. O navegador funciona como o próprio motor de descompactação.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Sob o capô, a aplicação utiliza a File API nativa para ler o arquivo local, a biblioteca zip.js em JavaScript para analisar e extrair as entradas, e tecnologias web modernas (Canvas, PDF.js, Web Audio) para as pré-visualizações. Em momento algum ocorre qualquer requisição de rede enviando dados dos seus arquivos.
+        </p>
+        <p class="text-body-lg text-body leading-relaxed">
+          Coletamos apenas dados analíticos de uso anônimos (visitas na página, ferramentas acessadas) para entender como o serviço é utilizado e orientar melhorias. Nenhuma informação analítica inclui nomes de arquivos ou o conteúdo dos seus documentos. Detalhes completos podem ser consultados em nossa <a href="/pt/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Política de Privacidade</a> e <a href="/pt/terms" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Termos de Uso</a>.
+        </p>
+      </section>
+
+      <!-- 11. UX Patterns -->
+      <section id="ux-patterns" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Padrões de UX e Facilidade de Descoberta</h2>
+        <p class="text-body-lg text-body leading-relaxed">
+          A interface foi projetada com detalhes atenciosos para tornar sua experiência agradável e rápida:
+        </p>
+        <ul class="space-y-3 text-body-lg text-body leading-relaxed list-disc list-outside pl-5">
+          <li><strong class="text-ink font-medium">Ações ao passar o mouse</strong> — Ao posicionar o cursor sobre itens da árvore, botões de download e pré-visualização rápida aparecem imediatamente, sem exigir cliques com o botão direito.</li>
+          <li><strong class="text-ink font-medium">Modo Escuro e Claro</strong> — A plataforma inclui temas escuro e claro balanceados. Ela respeita automaticamente as preferências do seu sistema operacional e pode ser ajustada pelo botão na barra de topo. O tema escuro usa contrastes suaves que evitam o cansaço visual.</li>
+          <li><strong class="text-ink font-medium">Interface Adaptável</strong> — Em telas de celular ou tablets, a árvore de pastas se recolhe em um menu compacto para dar espaço total ao conteúdo visualizado, com gestos de toque suportados.</li>
+          <li><strong class="text-ink font-medium">Carregamento Inteligente</strong> — Arquivos volumosos são processados gradualmente. A árvore de pastas começa a ser desenhada de imediato enquanto os detalhes mais profundos são lidos em segundo plano.</li>
+        </ul>
+      </section>
+
+      <!-- 12. Troubleshooting -->
+      <section id="troubleshooting" class="scroll-mt-24 space-y-4 border border-hairline rounded-lg p-6 sm:p-8">
+        <h2 class="text-heading-md font-semibold text-ink">Solução de Problemas</h2>
+
+        <div class="space-y-5 pt-2">
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">A árvore de arquivos está vazia após o carregamento</h3>
+            <p class="text-body-md text-mute">O arquivo ZIP pode estar corrompido ou utilizar um método de compressão não suportado. Tente abri-lo com um descompactador no computador para verificar sua integridade.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">A pré-visualização não abre para determinado arquivo</h3>
+            <p class="text-body-md text-mute">É provável que o formato desse arquivo não possua visualizador compatível no navegador. Você ainda pode baixá-lo normalmente — a pré-visualização é apenas opcional.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">O navegador fica lento com arquivos muito volumosos</h3>
+            <p class="text-body-md text-mute">Arquivos acima de 2 a 4 GB podem demandar bastante memória RAM em dispositivos mais modestos. Feche abas desnecessárias no navegador ou utilize um computador com mais memória.</p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-heading-sm font-semibold text-ink">A janela de solicitação de senha não aparece</h3>
+            <p class="text-body-md text-mute">O arquivo pode estar criptografado com um formato proprietário não convencional. A ferramenta suporta criptografia ZIP padrão e o padrão seguro AES-256.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <footer class="mt-20">
+      <p class="text-body-md text-mute">
+        Quer compactar arquivos em vez de extrair? Acesse a documentação de <a href="/pt/docs/create-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Criar Arquivo ZIP</a>. Para dúvidas adicionais, fale conosco na página de <a href="/pt/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Contato</a>.
+      </p>
+    </footer>
+
+  </article>
+</Layout>
