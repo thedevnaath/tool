@@ -8,7 +8,7 @@
   export let isFullscreen: boolean = false;
 </script>
 
-<div class="flex items-center justify-between px-4 py-2 border-b border-hairline bg-canvas-elevated">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 px-4 py-2 border-b border-hairline bg-canvas-elevated">
   <div class="flex items-center gap-2">
     <button
       class="btn-ghost {viewMode === 'preview' ? 'bg-hairline-soft text-ink' : 'text-mute hover:text-ink'}"

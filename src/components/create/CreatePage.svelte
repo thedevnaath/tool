@@ -69,20 +69,33 @@
     if (files.length === 0) { showToast('Add files first', 'error'); return; }
     initWorker();
     isCreating = true;
-    downloadUrl_ = null;
+    if (downloadUrl_) {
+      URL.revokeObjectURL(downloadUrl_);
+      downloadUrl_ = null;
+    }
     createProgress = { loaded: 0, total: 0, currentFile: '', fileIndex: 0, totalFiles: files.length };
     const finalName = archiveName.trim() === '' ? 'Archive.zip' : (archiveName.trim().endsWith('.zip') ? archiveName.trim() : `${archiveName.trim()}.zip`);
     worker!.postMessage({ type: 'create', data: { files, archiveName: finalName, compressionLevel, password: zipPassword } });
   }
 
   function handleAddFiles(newFiles: File[]) { 
+    if (newFiles.length > 0 && downloadUrl_) {
+      URL.revokeObjectURL(downloadUrl_);
+      downloadUrl_ = null;
+    }
     files = [...files, ...newFiles]; 
     if (newFiles.length > 0) {
       showToast(`Added ${newFiles.length} file${newFiles.length !== 1 ? 's' : ''}`, 'success');
     }
   }
   function handleRemoveFile(index: number) { files = files.filter((_, i) => i !== index); }
-  function handleClearAll() { files = []; }
+  function handleClearAll() { 
+    if (downloadUrl_) {
+      URL.revokeObjectURL(downloadUrl_);
+      downloadUrl_ = null;
+    }
+    files = []; 
+  }
 
   function toFileEntry(file: File, index: number): any {
     const filename = (file as any).webkitRelativePath || file.name;
@@ -145,7 +158,10 @@
     };
   });
 
-  onDestroy(() => { if (worker) { worker.terminate(); worker = null; } });
+  onDestroy(() => { 
+    if (worker) { worker.terminate(); worker = null; } 
+    if (downloadUrl_) { URL.revokeObjectURL(downloadUrl_); downloadUrl_ = null; }
+  });
 
   $: totalSize = files.reduce((sum, f) => sum + f.size, 0);
   $: progressPct = createProgress.total > 0 ? Math.round((createProgress.loaded / createProgress.total) * 100) : 0;

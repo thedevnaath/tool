@@ -3,11 +3,6 @@
   export let compressionLevel: number = 6;
   export let disabled: boolean = false;
   export let t: (key: any) => string = (k: any) => k;
-
-  $: levelLabel = compressionLevel === 0 ? t('ui.level_no')
-    : compressionLevel <= 3 ? t('ui.level_fast')
-    : compressionLevel <= 6 ? t('ui.level_balanced')
-    : t('ui.level_best');
 </script>
 
 <div class="card p-5 space-y-5">
@@ -26,7 +21,7 @@
     <div>
       <div class="flex items-center justify-between mb-1.5">
         <label for="compression-level" class="text-body-sm font-medium text-body">{t('ui.compression')}</label>
-        <span class="text-body-sm text-mute font-mono">{t('ui.level')} {compressionLevel} — {levelLabel}</span>
+        <span class="text-body-sm text-mute font-mono">{t('ui.level')} {compressionLevel}</span>
       </div>
       <input
         bind:value={compressionLevel}
