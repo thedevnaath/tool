@@ -2,25 +2,6 @@ import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-function copySitemapIndex() {
-  return {
-    name: 'copy-sitemap-index',
-    hooks: {
-      'astro:build:done': async ({ dir }) => {
-        const destDir = fileURLToPath(dir);
-        const indexFile = path.join(destDir, 'sitemap-index.xml');
-        const sitemapFile = path.join(destDir, 'sitemap.xml');
-        if (fs.existsSync(indexFile)) {
-          fs.copyFileSync(indexFile, sitemapFile);
-        }
-      },
-    },
-  };
-}
 
 export default defineConfig({
   i18n: {
@@ -83,7 +64,6 @@ export default defineConfig({
         return item;
       },
     }),
-    copySitemapIndex(),
   ],
   site: 'https://unzipfilesonline.com',
   prefetch: true,
