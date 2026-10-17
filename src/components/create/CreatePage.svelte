@@ -149,12 +149,18 @@
       }
     };
     const handleRenameRequest = (e: Event) => handleFileRename(e);
+    const handleToastRequest = (e: Event) => {
+      const { message, type } = (e as CustomEvent).detail || {};
+      if (message) showToast(message, type || 'success');
+    };
     
     window.addEventListener('request-file-content', handleContentRequest);
     window.addEventListener('rename-file', handleRenameRequest);
+    window.addEventListener('show-toast', handleToastRequest);
     return () => {
       window.removeEventListener('request-file-content', handleContentRequest);
       window.removeEventListener('rename-file', handleRenameRequest);
+      window.removeEventListener('show-toast', handleToastRequest);
     };
   });
 
@@ -344,7 +350,7 @@
 </div>
 
 <!-- Toasts -->
-<div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite" aria-atomic="false">
+<div class="fixed bottom-5 inset-x-4 sm:inset-x-auto sm:left-auto sm:right-5 z-50 flex flex-col items-center sm:items-end gap-2 pointer-events-none" aria-live="polite" aria-atomic="false">
   {#each toasts as toast (toast.id)}
     <div class="{toastClass(toast.type)} pointer-events-auto max-w-sm" role="alert">
       <div class="flex items-start gap-3">

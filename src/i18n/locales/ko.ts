@@ -175,6 +175,7 @@ export const ko = {
   'ui.generate_zip': 'ZIP 생성',
   'ui.generating': '생성 중...',
   'ui.download_zip': 'ZIP 다운로드',
+  'ui.download_all': '모두 다운로드',
   'ui.creating_zip': 'ZIP 아카이브 생성 중...',
   'ui.drop_files_here': '여기에 파일 또는 폴더를 드롭하세요',
   'ui.or': '또는',

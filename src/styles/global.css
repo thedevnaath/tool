@@ -212,18 +212,34 @@
 
   .toast {
     @apply card-elevated flex items-start gap-3 p-4 min-w-[300px] max-w-sm animate-slide-up;
+    background-color: var(--color-bg-elevated);
+    background-color: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .toast-success {
-    @apply card flex items-start gap-3 p-4 border-l-4 border-l-success bg-success-soft animate-slide-up;
+    @apply card flex items-start gap-3 p-4 border-l-4 border-l-success animate-slide-up shadow-floating;
+    background-color: var(--color-bg-elevated);
+    background-color: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .toast-error {
-    @apply card flex items-start gap-3 p-4 border-l-4 border-l-error bg-error-soft animate-slide-up;
+    @apply card flex items-start gap-3 p-4 border-l-4 border-l-error animate-slide-up shadow-floating;
+    background-color: var(--color-bg-elevated);
+    background-color: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .toast-info {
-    @apply card flex items-start gap-3 p-4 border-l-4 border-l-link bg-link-soft animate-slide-up;
+    @apply card flex items-start gap-3 p-4 border-l-4 border-l-link animate-slide-up shadow-floating;
+    background-color: var(--color-bg-elevated);
+    background-color: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   /* === PROGRESS BAR === */

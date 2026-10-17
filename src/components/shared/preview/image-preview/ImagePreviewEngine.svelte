@@ -79,12 +79,14 @@
   }
 
   async function handleCopy() {
+    let success = false;
     try {
       if (isNative && previewObjectUrl) {
         const response = await fetch(previewObjectUrl);
         const blob = await response.blob();
         try {
           await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+          success = true;
         } catch (err) {
           // Fallback for unsupported types: draw to canvas and copy as png
           const img = new Image();
@@ -95,24 +97,52 @@
           canvas.height = img.naturalHeight;
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0);
-          canvas.toBlob(async (pngBlob) => {
-            if (pngBlob) {
-              await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
-            }
-          }, 'image/png');
+          await new Promise<void>((resolve, reject) => {
+            canvas.toBlob(async (pngBlob) => {
+              if (pngBlob) {
+                try {
+                  await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+                  success = true;
+                  resolve();
+                } catch (e) {
+                  reject(e);
+                }
+              } else {
+                reject(new Error('Canvas to blob failed'));
+              }
+            }, 'image/png');
+          });
         }
       } else if (isPsd && viewerComponent && typeof viewerComponent.getCanvas === 'function') {
         const canvas = viewerComponent.getCanvas();
         if (canvas) {
-          canvas.toBlob(async (blob) => {
-            if (blob) {
-              await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-            }
-          }, 'image/png');
+          await new Promise<void>((resolve, reject) => {
+            canvas.toBlob(async (blob) => {
+              if (blob) {
+                try {
+                  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                  success = true;
+                  resolve();
+                } catch (e) {
+                  reject(e);
+                }
+              } else {
+                reject(new Error('Canvas to blob failed'));
+              }
+            }, 'image/png');
+          });
         }
+      }
+      if (success) {
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: 'Copied to clipboard', type: 'success' }
+        }));
       }
     } catch (err) {
       console.error('Copy failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: 'Failed to copy', type: 'error' }
+      }));
     }
   }
 

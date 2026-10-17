@@ -175,6 +175,7 @@ export const pt = {
   'ui.generate_zip': 'Gerar ZIP',
   'ui.generating': 'Gerando...',
   'ui.download_zip': 'Baixar ZIP',
+  'ui.download_all': 'Baixar tudo',
   'ui.creating_zip': 'Criando arquivo ZIP...',
   'ui.drop_files_here': 'Solte arquivos ou pastas aqui',
   'ui.or': 'ou',

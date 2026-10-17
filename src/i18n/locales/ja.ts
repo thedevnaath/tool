@@ -175,6 +175,7 @@ export const ja = {
   'ui.generate_zip': 'ZIPを生成',
   'ui.generating': '生成中...',
   'ui.download_zip': 'ZIPをダウンロード',
+  'ui.download_all': 'すべてダウンロード',
   'ui.creating_zip': 'ZIPアーカイブを作成中...',
   'ui.drop_files_here': 'ここにファイルまたはフォルダをドロップ',
   'ui.or': 'または',

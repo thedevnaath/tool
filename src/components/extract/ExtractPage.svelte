@@ -175,13 +175,19 @@
     };
     const handleDownloadRequest = (e: Event) => handleFileDownload((e as CustomEvent).detail.fileIndex);
     const handleRenameRequest = (e: Event) => handleFileRename(e);
+    const handleToastRequest = (e: Event) => {
+      const { message, type } = (e as CustomEvent).detail || {};
+      if (message) showToast(message, type || 'success');
+    };
     window.addEventListener('request-file-content', handleContentRequest);
     window.addEventListener('request-download', handleDownloadRequest);
     window.addEventListener('rename-file', handleRenameRequest);
+    window.addEventListener('show-toast', handleToastRequest);
     return () => {
       window.removeEventListener('request-file-content', handleContentRequest);
       window.removeEventListener('request-download', handleDownloadRequest);
       window.removeEventListener('rename-file', handleRenameRequest);
+      window.removeEventListener('show-toast', handleToastRequest);
     };
   });
 
@@ -230,7 +236,7 @@
     <!-- Hero text -->
     <div class="text-center space-y-3 pb-2">
       <p class="font-mono text-mono-eyebrow text-mute uppercase tracking-widest">{eyebrow}</p>
-      <h1 class="text-display-xl font-semibold text-ink tracking-tight">
+      <h1 class="text-[clamp(1.75rem,8vw,3rem)] leading-[1.1] sm:text-display-xl sm:leading-none font-semibold text-ink tracking-tight">
         {title}
       </h1>
       <p class="text-body-lg text-mute max-w-md mx-auto">
@@ -305,8 +311,16 @@
   {#if files.length > 0}
     <div class="space-y-4 animate-fade-in">
 
+      <!-- Mobile: File info badges on top of file structure box -->
+      <div class="flex items-center gap-2 sm:hidden px-0.5">
+        {#if currentFile}
+          <span class="font-mono text-body-sm text-mute bg-hairline-soft px-2 py-0.5 rounded-md truncate max-w-[calc(100%-90px)]" title={currentFile.name}>{currentFile.name}</span>
+        {/if}
+        <span class="font-mono text-body-sm text-mute bg-hairline-soft px-2 py-0.5 rounded-md shrink-0">{files.length} {t('ui.items')}</span>
+      </div>
+
       <!-- File Tree -->
-      <div class="card overflow-hidden">
+      <div class="card overflow-hidden sm:!mt-0">
         <button
           class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-hairline-soft transition-colors duration-fast"
           on:click={() => treeCollapsed = !treeCollapsed}
@@ -319,9 +333,9 @@
             </svg>
             <span class="text-body-md font-medium text-ink shrink-0">{t('ui.file_structure')}</span>
             {#if currentFile}
-              <span class="font-mono text-body-sm text-mute bg-hairline-soft px-2 py-0.5 rounded-md truncate max-w-[160px] sm:max-w-xs md:max-w-sm" title={currentFile.name}>{currentFile.name}</span>
+              <span class="font-mono text-body-sm text-mute bg-hairline-soft px-2 py-0.5 rounded-md truncate max-w-[160px] sm:max-w-xs md:max-w-sm hidden sm:inline-block" title={currentFile.name}>{currentFile.name}</span>
             {/if}
-            <span class="font-mono text-body-sm text-mute bg-hairline-soft px-2 py-0.5 rounded-md shrink-0">{files.length} {t('ui.items')}</span>
+            <span class="font-mono text-body-sm text-mute bg-hairline-soft px-2 py-0.5 rounded-md shrink-0 hidden sm:inline-block">{files.length} {t('ui.items')}</span>
           </div>
           <svg
             class="w-4 h-4 text-mute shrink-0 transition-transform duration-fast {treeCollapsed ? '' : 'rotate-180'}"
@@ -336,7 +350,7 @@
             <FileTree
               tree={fileTree}
               selectedIndex={selectedFileIndex}
-              onselect={handleFileSelect}
+              onSelect={handleFileSelect}
               showHiddenFiles={showHiddenFiles}
               onToggleHidden={(v) => { showHiddenFiles = v; }}
               {t}
@@ -346,13 +360,26 @@
       </div>
 
       <!-- Download All + stats bar -->
-      <div class="flex items-center justify-between gap-4 py-1">
-        <p class="text-body-sm text-mute">
-          <span class="text-ink font-medium">{fileCount}</span> {t('ui.ready_download')}
-        </p>
-        <div class="flex items-center gap-2">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 py-1">
+        <div class="flex items-center justify-between sm:justify-start gap-4">
+          <p class="text-body-sm text-mute">
+            <span class="text-ink font-medium">{fileCount}</span> {t('ui.ready_download')}
+          </p>
           <button
-            class="btn-ghost text-error hover:bg-error-soft text-body-sm"
+            class="btn-ghost text-error hover:bg-error-soft text-body-sm sm:hidden"
+            on:click={handleClear}
+            aria-label="Clear and start over"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            {t('ui.clear')}
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button
+            class="btn-ghost text-error hover:bg-error-soft text-body-sm hidden sm:inline-flex"
             on:click={handleClear}
             aria-label="Clear and start over"
           >
@@ -377,7 +404,7 @@
 </div>
 
 <!-- Toast Notifications -->
-<div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite" aria-atomic="false">
+<div class="fixed bottom-5 inset-x-4 sm:inset-x-auto sm:left-auto sm:right-5 z-50 flex flex-col items-center sm:items-end gap-2 pointer-events-none" aria-live="polite" aria-atomic="false">
   {#each toasts as toast (toast.id)}
     <div class="{toastClass(toast.type)} pointer-events-auto max-w-sm" role="alert">
       <div class="flex items-start gap-3">

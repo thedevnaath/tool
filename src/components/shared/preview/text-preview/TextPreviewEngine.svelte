@@ -60,8 +60,14 @@
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(content);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: 'Copied to clipboard', type: 'success' }
+      }));
     } catch (err) {
       console.error('Copy failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: 'Failed to copy', type: 'error' }
+      }));
     }
   }
 

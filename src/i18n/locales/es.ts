@@ -175,6 +175,7 @@ export const es = {
   'ui.generate_zip': 'Generar ZIP',
   'ui.generating': 'Generando...',
   'ui.download_zip': 'Descargar ZIP',
+  'ui.download_all': 'Descargar todo',
   'ui.creating_zip': 'Creando archivo ZIP...',
   'ui.drop_files_here': 'Suelta tus archivos o carpetas aquí',
   'ui.or': 'o',
