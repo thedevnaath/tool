@@ -32,7 +32,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'ko');
 
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
-      <a href="/ko/docs" class="underline underline-offset-4 hover:text-ink transition-colors">문서</a>
+      <a href="/ko/docs/" class="underline underline-offset-4 hover:text-ink transition-colors">문서</a>
       <span class="text-faint">/</span>
       <span class="text-ink">ZIP 압축 해제</span>
     </nav>
@@ -44,7 +44,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'ko');
       <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">문서</p>
       <h1 class="text-heading-lg font-semibold text-ink tracking-tight">온라인으로 ZIP 파일 압축 풀기</h1>
       <p class="text-body-lg text-body leading-relaxed">
-        이 문서는 기기 내에서 로컬로 아카이브를 처리하는 브라우저 기반 ZIP 추출 도구인 <a href="/ko" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Unzip Files Online</a>의 압축 해제 워크플로우를 안내합니다. 어떠한 파일도 서버로 전송되지 않습니다. 아래에서 기능 설명, 인터페이스 용어, 지원 형식, 실무 활용 사례 및 활용 팁을 확인하실 수 있습니다.
+        이 문서는 기기 내에서 로컬로 아카이브를 처리하는 브라우저 기반 ZIP 추출 도구인 <a href="/ko/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Unzip Files Online</a>의 압축 해제 워크플로우를 안내합니다. 어떠한 파일도 서버로 전송되지 않습니다. 아래에서 기능 설명, 인터페이스 용어, 지원 형식, 실무 활용 사례 및 활용 팁을 확인하실 수 있습니다.
       </p>
     </header>
 
@@ -236,7 +236,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'ko');
           <div class="space-y-2">
             <h3 class="text-heading-sm font-semibold text-ink">엄격한 데이터 컴플라이언스 준수</h3>
             <p class="text-body-lg text-body leading-relaxed">
-              의료, 법률, 금융 분야의 전문가는 기밀 파일의 외부 서버 업로드를 엄격히 금지하는 규정(개인정보 보호법 등)을 준수해야 합니다. 본 도구는 모든 작업을 로컬에서 처리하며 어떠한 데이터도 외부로 송신하지 않으므로 가장 엄격한 데이터 보호 정책에도 완벽히 부합합니다. 자세한 내용은 <a href="/ko/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">개인정보처리방침</a>을 확인하세요.
+              의료, 법률, 금융 분야의 전문가는 기밀 파일의 외부 서버 업로드를 엄격히 금지하는 규정(개인정보 보호법 등)을 준수해야 합니다. 본 도구는 모든 작업을 로컬에서 처리하며 어떠한 데이터도 외부로 송신하지 않으므로 가장 엄격한 데이터 보호 정책에도 완벽히 부합합니다. 자세한 내용은 <a href="/ko/privacy/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">개인정보처리방침</a>을 확인하세요.
             </p>
           </div>
 
@@ -259,7 +259,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'ko');
           기술적으로 브라우저의 File API를 통해 파일을 읽고, 자바스크립트 기반의 zip.js를 통해 아카이브를 파싱하며, 브라우저 표준 기술(Canvas, PDF.js, Web Audio)을 활용하여 미리보기를 구현합니다. 애플리케이션 작동 중 사용자 파일 데이터가 담긴 네트워크 요청은 0건입니다.
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          서비스 개선을 위해 페이지 조회수 등 익명의 기본 분석 정보만 집계합니다. 분석 데이터에는 파일 이름, 경로, 파일 내용이 절대 포함되지 않습니다. 자세한 내용은 <a href="/ko/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">개인정보처리방침</a> 및 <a href="/ko/terms" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">이용약관</a>에 명시되어 있습니다.
+          서비스 개선을 위해 페이지 조회수 등 익명의 기본 분석 정보만 집계합니다. 분석 데이터에는 파일 이름, 경로, 파일 내용이 절대 포함되지 않습니다. 자세한 내용은 <a href="/ko/privacy/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">개인정보처리방침</a> 및 <a href="/ko/terms/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">이용약관</a>에 명시되어 있습니다.
         </p>
       </section>
 
@@ -306,7 +306,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'ko');
     <!-- Footer Navigation -->
     <footer class="mt-20">
       <p class="text-body-md text-mute">
-        파일을 압축하셔야 하나요? <a href="/ko/docs/create-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 파일 만들기 문서</a>를 확인해 보세요. 추가 문의사항은 <a href="/ko/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">문의하기</a> 페이지에서 남기실 수 있습니다.
+        파일을 압축하셔야 하나요? <a href="/ko/docs/create-zip/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 파일 만들기 문서</a>를 확인해 보세요. 추가 문의사항은 <a href="/ko/contact/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">문의하기</a> 페이지에서 남기실 수 있습니다.
       </p>
     </footer>
 

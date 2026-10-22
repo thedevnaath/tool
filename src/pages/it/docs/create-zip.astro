@@ -32,7 +32,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'it');
 
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
-      <a href="/it/docs" class="underline underline-offset-4 hover:text-ink transition-colors">Documentazione</a>
+      <a href="/it/docs/" class="underline underline-offset-4 hover:text-ink transition-colors">Documentazione</a>
       <span class="text-faint">/</span>
       <span class="text-ink">Crea ZIP</span>
     </nav>
@@ -44,7 +44,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'it');
       <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">Documentazione</p>
       <h1 class="text-heading-lg font-semibold text-ink tracking-tight">Creare File ZIP Online</h1>
       <p class="text-body-lg text-body leading-relaxed">
-        Questa pagina documenta il flusso di lavoro di compressione per <a href="/it/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Crea File ZIP</a> — uno strumento basato su browser che impacchetta i tuoi file interamente sul tuo dispositivo. Esattamente come per il nostro strumento di estrazione, nessun dato viene mai caricato su server. Di seguito trovi tutte le istruzioni per aggiungere file, regolare i livelli di compressione, impostare password e comprendere la nostra architettura di privacy.
+        Questa pagina documenta il flusso di lavoro di compressione per <a href="/it/create/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Crea File ZIP</a> — uno strumento basato su browser che impacchetta i tuoi file interamente sul tuo dispositivo. Esattamente come per il nostro strumento di estrazione, nessun dato viene mai caricato su server. Di seguito trovi tutte le istruzioni per aggiungere file, regolare i livelli di compressione, impostare password e comprendere la nostra architettura di privacy.
       </p>
     </header>
 
@@ -114,7 +114,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'it');
           Se gestisci dati riservati, puoi proteggere il tuo archivio prima di generarlo. Nel pannello delle impostazioni, ti basta inserire una password sicura nel campo di crittografia.
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          Lo strumento applica solidi standard di crittografia AES per blindare l'archivio compresso. Cosa fondamentale: poiché tutta l'elaborazione avviene localmente, né i tuoi file né la tua password transitano mai attraverso la rete Internet. Il destinatario avrà bisogno soltanto di una normale utility di estrazione (o del nostro strumento <a href="/it" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Estrai ZIP Online</a>) e della password corretta per aprire il contenuto.
+          Lo strumento applica solidi standard di crittografia AES per blindare l'archivio compresso. Cosa fondamentale: poiché tutta l'elaborazione avviene localmente, né i tuoi file né la tua password transitano mai attraverso la rete Internet. Il destinatario avrà bisogno soltanto di una normale utility di estrazione (o del nostro strumento <a href="/it/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Estrai ZIP Online</a>) e della password corretta per aprire il contenuto.
         </p>
       </section>
 
@@ -187,7 +187,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'it');
           Lo strumento Crea ZIP si fonda su un'architettura zero-knowledge. Spesso l'espressione "Strumento Online" evoca elaborazioni su server remoti, ma noi usiamo il web esclusivamente come veicolo di distribuzione dell'interfaccia. L'effettivo lavoro di elaborazione avviene nella memoria del tuo hardware.
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          Non gestiamo, non possediamo e non affittiamo server dedicati all'archiviazione dei file. Di conseguenza, non vi è alcun rischio di violazioni di dati, fughe accidentali o accessi non autorizzati ai tuoi file da parte di terzi. I tuoi file sono solo ed esclusivamente tuoi. Consulta la nostra <a href="/it/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Politica sulla Privacy</a> per ulteriori chiarimenti.
+          Non gestiamo, non possediamo e non affittiamo server dedicati all'archiviazione dei file. Di conseguenza, non vi è alcun rischio di violazioni di dati, fughe accidentali o accessi non autorizzati ai tuoi file da parte di terzi. I tuoi file sono solo ed esclusivamente tuoi. Consulta la nostra <a href="/it/privacy/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Politica sulla Privacy</a> per ulteriori chiarimenti.
         </p>
       </section>
 
@@ -229,7 +229,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'it');
     <!-- Footer Navigation -->
     <footer class="mt-20">
       <p class="text-body-md text-mute">
-        Hai invece bisogno di decomprimere file? Leggi la documentazione su <a href="/it/docs/extract-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Estrai ZIP Online</a>. Per altre domande, contattaci tramite la nostra pagina <a href="/it/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Contatti</a>.
+        Hai invece bisogno di decomprimere file? Leggi la documentazione su <a href="/it/docs/extract-zip/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Estrai ZIP Online</a>. Per altre domande, contattaci tramite la nostra pagina <a href="/it/contact/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Contatti</a>.
       </p>
     </footer>
 

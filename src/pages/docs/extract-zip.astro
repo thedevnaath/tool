@@ -32,7 +32,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'en');
 
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
-      <a href="/docs" class="underline underline-offset-4 hover:text-ink transition-colors">Docs</a>
+      <a href="/docs/" class="underline underline-offset-4 hover:text-ink transition-colors">Docs</a>
       <span class="text-faint">/</span>
       <span class="text-ink">Extract ZIP</span>
     </nav>
@@ -236,7 +236,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'en');
           <div class="space-y-2">
             <h3 class="text-heading-sm font-semibold text-ink">Compliance-sensitive file handling</h3>
             <p class="text-body-lg text-body leading-relaxed">
-              Professionals in healthcare, legal, and financial sectors face strict regulations (HIPAA, GDPR) that prohibit uploading sensitive files to third-party servers. Since our tool performs all processing locally and transmits nothing, it fits within even the most restrictive data handling policies. Review our <a href="/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Privacy Policy</a> for full details.
+              Professionals in healthcare, legal, and financial sectors face strict regulations (HIPAA, GDPR) that prohibit uploading sensitive files to third-party servers. Since our tool performs all processing locally and transmits nothing, it fits within even the most restrictive data handling policies. Review our <a href="/privacy/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Privacy Policy</a> for full details.
             </p>
           </div>
 
@@ -259,7 +259,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'en');
           Technically, the application uses the browser's File API to read your local file, zip.js (a JavaScript implementation of the ZIP spec) to parse and decompress entries, and native browser APIs (Canvas, PDF.js, Web Audio) for rendering previews. At no point does the application make a network request containing your file data.
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          We use basic analytics (page views, feature usage) to understand how the tool is used. Analytics never include file contents, filenames, or any data from your archives. Full details are in our <a href="/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Privacy Policy</a> and <a href="/terms" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Terms of Service</a>.
+          We use basic analytics (page views, feature usage) to understand how the tool is used. Analytics never include file contents, filenames, or any data from your archives. Full details are in our <a href="/privacy/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Privacy Policy</a> and <a href="/terms/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Terms of Service</a>.
         </p>
       </section>
 
@@ -306,7 +306,7 @@ const howToSchema = getExtractZipHowToSchema(Astro.url.href, 'en');
     <!-- Footer Navigation -->
     <footer class="mt-20">
       <p class="text-body-md text-mute">
-        Need to compress files instead? Read the <a href="/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Create ZIP Archive</a> documentation. For questions not covered here, reach out via our <a href="/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Contact</a> page.
+        Need to compress files instead? Read the <a href="/create/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Create ZIP Archive</a> documentation. For questions not covered here, reach out via our <a href="/contact/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Contact</a> page.
       </p>
     </footer>
 

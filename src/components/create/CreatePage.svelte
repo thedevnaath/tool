@@ -197,7 +197,7 @@
     <div class="flex items-center justify-center">
       <div class="flex items-center gap-1 p-1 bg-hairline-soft rounded-xl border border-hairline" role="tablist" aria-label="Tool mode">
         <a
-          href={lang && lang !== 'en' ? `/${lang}` : '/'}
+          href={lang && lang !== 'en' ? `/${lang}/` : '/'}
           role="tab"
           aria-selected={false}
           class="flex items-center gap-2 px-5 py-2 rounded-lg text-button-md font-medium transition-all duration-fast text-mute hover:text-ink"
@@ -208,7 +208,7 @@
           {t('extract.tab')}
         </a>
         <a
-          href={lang && lang !== 'en' ? `/${lang}/create` : '/create'}
+          href={lang && lang !== 'en' ? `/${lang}/create/` : '/create/'}
           role="tab"
           aria-selected={true}
           class="flex items-center gap-2 px-5 py-2 rounded-lg text-button-md font-medium transition-all duration-fast bg-canvas-elevated text-ink shadow-whisper border border-hairline"

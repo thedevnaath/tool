@@ -32,7 +32,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'de');
 
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
-      <a href="/de/docs" class="underline underline-offset-4 hover:text-ink transition-colors">Dokumentation</a>
+      <a href="/de/docs/" class="underline underline-offset-4 hover:text-ink transition-colors">Dokumentation</a>
       <span class="text-faint">/</span>
       <span class="text-ink">ZIP Erstellen</span>
     </nav>
@@ -44,7 +44,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'de');
       <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">Dokumentation</p>
       <h1 class="text-heading-lg font-semibold text-ink tracking-tight">ZIP-Dateien Online Erstellen</h1>
       <p class="text-body-lg text-body leading-relaxed">
-        Diese Seite dokumentiert den Workflow zur Archiv-Erstellung für <a href="/de/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Erstellen</a> — ein browserbasiertes Komprimierungstool, das Ihre Dateien vollständig auf Ihrem Gerät bündelt. Genau wie bei unserem Extraktions-Tool werden niemals Daten auf einen Server hochgeladen. Nachfolgend finden Sie Anleitungen zum Hinzufügen von Dateien, zur Konfiguration der Komprimierung, zum Einrichten von Passwörtern und zu unserer Datenschutzarchitektur.
+        Diese Seite dokumentiert den Workflow zur Archiv-Erstellung für <a href="/de/create/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Erstellen</a> — ein browserbasiertes Komprimierungstool, das Ihre Dateien vollständig auf Ihrem Gerät bündelt. Genau wie bei unserem Extraktions-Tool werden niemals Daten auf einen Server hochgeladen. Nachfolgend finden Sie Anleitungen zum Hinzufügen von Dateien, zur Konfiguration der Komprimierung, zum Einrichten von Passwörtern und zu unserer Datenschutzarchitektur.
       </p>
     </header>
 
@@ -114,7 +114,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'de');
           Wenn Sie sensible Daten verarbeiten, können Sie Ihr Archiv vor dem Generieren mit einem Passwort schützen. Aktivieren Sie im Einstellungsbereich einfach den Passwortschutz und geben Sie eine sichere Passphrase ein.
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          Das Tool nutzt robuste AES-Verschlüsselungsstandards zur Sicherung des Archivs. Entscheidend: Da alle Prozesse lokal ablaufen, wird Ihr Passwort niemals über das Netzwerk gesendet, und die unverschlüsselten Dateien verlassen zu keinem Zeitpunkt Ihren Computer. Der Empfänger benötigt lediglich ein Standardprogramm (oder unser Tool <a href="/de" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Online Entpacken</a>) und das korrekte Passwort, um die Inhalte zu öffnen.
+          Das Tool nutzt robuste AES-Verschlüsselungsstandards zur Sicherung des Archivs. Entscheidend: Da alle Prozesse lokal ablaufen, wird Ihr Passwort niemals über das Netzwerk gesendet, und die unverschlüsselten Dateien verlassen zu keinem Zeitpunkt Ihren Computer. Der Empfänger benötigt lediglich ein Standardprogramm (oder unser Tool <a href="/de/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Online Entpacken</a>) und das korrekte Passwort, um die Inhalte zu öffnen.
         </p>
       </section>
 
@@ -187,7 +187,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'de');
           Unser Tool zur ZIP-Erstellung basiert auf einer strikten Zero-Knowledge-Architektur. Der Begriff „Online-ZIP-Tool“ suggeriert oft eine Cloud-Verarbeitung, wir nutzen das Web jedoch ausschließlich zur Bereitstellung der Oberfläche. Die gesamte rechenintensive Arbeit geschieht isoliert im Arbeitsspeicher Ihres Endgeräts.
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          Wir betreiben, besitzen oder mieten keinerlei Server zur Dateispeicherung. Dementsprechend besteht keinerlei Risiko für Datenpannen, versehentliche Leaks oder unbefugten Zugriff durch Dritte. Ihre Daten gehören ausschließlich Ihnen. Lesen Sie unsere <a href="/de/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Datenschutzerklärung</a> für weitere Informationen.
+          Wir betreiben, besitzen oder mieten keinerlei Server zur Dateispeicherung. Dementsprechend besteht keinerlei Risiko für Datenpannen, versehentliche Leaks oder unbefugten Zugriff durch Dritte. Ihre Daten gehören ausschließlich Ihnen. Lesen Sie unsere <a href="/de/privacy/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Datenschutzerklärung</a> für weitere Informationen.
         </p>
       </section>
 
@@ -229,7 +229,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'de');
     <!-- Footer Navigation -->
     <footer class="mt-20">
       <p class="text-body-md text-mute">
-        Müssen Sie stattdessen Dateien entpacken? Lesen Sie die Dokumentation zu <a href="/de/docs/extract-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Entpacken</a>. Bei weiteren Fragen kontaktieren Sie uns über die <a href="/de/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Kontaktseite</a>.
+        Müssen Sie stattdessen Dateien entpacken? Lesen Sie die Dokumentation zu <a href="/de/docs/extract-zip/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP Entpacken</a>. Bei weiteren Fragen kontaktieren Sie uns über die <a href="/de/contact/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">Kontaktseite</a>.
       </p>
     </footer>
 

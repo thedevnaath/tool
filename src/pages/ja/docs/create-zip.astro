@@ -32,7 +32,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ja');
 
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
-      <a href="/ja/docs" class="underline underline-offset-4 hover:text-ink transition-colors">ドキュメント</a>
+      <a href="/ja/docs/" class="underline underline-offset-4 hover:text-ink transition-colors">ドキュメント</a>
       <span class="text-faint">/</span>
       <span class="text-ink">ZIPを作成</span>
     </nav>
@@ -44,7 +44,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ja');
       <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">ドキュメント</p>
       <h1 class="text-heading-lg font-semibold text-ink tracking-tight">オンラインでZIPファイルを作成</h1>
       <p class="text-body-lg text-body leading-relaxed">
-        このページでは、<a href="/ja/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIPを作成</a> のアーカイブ生成ワークフローについて説明します。これはお使いのデバイス上で完全にファイルを圧縮・パッケージ化するブラウザベースの圧縮ツールです。解凍ツールと同様に、データがサーバーにアップロードされることは一切ありません。以下では、ファイルの追加、圧縮設定、パスワード設定、プライバシーアーキテクチャの解説を掲載しています。
+        このページでは、<a href="/ja/create/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIPを作成</a> のアーカイブ生成ワークフローについて説明します。これはお使いのデバイス上で完全にファイルを圧縮・パッケージ化するブラウザベースの圧縮ツールです。解凍ツールと同様に、データがサーバーにアップロードされることは一切ありません。以下では、ファイルの追加、圧縮設定、パスワード設定、プライバシーアーキテクチャの解説を掲載しています。
       </p>
     </header>
 
@@ -114,7 +114,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ja');
           機密データを扱う場合、アーカイブを生成する前にパスワードを設定して安全にロックできます。設定パネルでパスワード保護をオンにし、強力なパスフレーズを入力するだけです。
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          本ツールは強固なAES暗号化標準を使用してアーカイブを保護します。重要なのは、すべての処理がローカルで行われるため、パスワードがネットワーク経由で送信されることはなく、暗号化前の平文ファイルがお使いのマシンから離れることもないという点です。受け取り手は標準的な解凍ユーティリティ（または当社の <a href="/ja" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">オンラインでZIPを解凍</a> ツール）と正しいパスワードを使用することで中身を展開できます。
+          本ツールは強固なAES暗号化標準を使用してアーカイブを保護します。重要なのは、すべての処理がローカルで行われるため、パスワードがネットワーク経由で送信されることはなく、暗号化前の平文ファイルがお使いのマシンから離れることもないという点です。受け取り手は標準的な解凍ユーティリティ（または当社の <a href="/ja/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">オンラインでZIPを解凍</a> ツール）と正しいパスワードを使用することで中身を展開できます。
         </p>
       </section>
 
@@ -187,7 +187,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ja');
           当社のZIP作成ツールはゼロ知識アーキテクチャに基づいて構築されています。「オンラインZIPツール」という言葉はクラウドでの処理を連想させがちですが、本サイトはインターフェースを提供する手段としてWebを利用しているにすぎません。実際の重い計算処理はすべてお使いのデバイスのメモリ内だけで行われます。
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          当社はファイル保管用のサーバーを一切所有・運用・レンタルしていません。そのため、データ漏洩、誤送信、当社スタッフや第三者による不正アクセスのリスクは原理的にゼロです。ファイルはあなただけのものです。詳細は <a href="/ja/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">プライバシーポリシー</a> をご覧ください。
+          当社はファイル保管用のサーバーを一切所有・運用・レンタルしていません。そのため、データ漏洩、誤送信、当社スタッフや第三者による不正アクセスのリスクは原理的にゼロです。ファイルはあなただけのものです。詳細は <a href="/ja/privacy/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">プライバシーポリシー</a> をご覧ください。
         </p>
       </section>
 
@@ -229,7 +229,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ja');
     <!-- Footer Navigation -->
     <footer class="mt-20">
       <p class="text-body-md text-mute">
-        ファイルの解凍が必要ですか？ <a href="/ja/docs/extract-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP解凍ガイド</a> をご覧ください。ここに記載されていないご質問がある場合は、<a href="/ja/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">お問い合わせ</a> ページからお気軽にご連絡ください。
+        ファイルの解凍が必要ですか？ <a href="/ja/docs/extract-zip/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP解凍ガイド</a> をご覧ください。ここに記載されていないご質問がある場合は、<a href="/ja/contact/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">お問い合わせ</a> ページからお気軽にご連絡ください。
       </p>
     </footer>
 

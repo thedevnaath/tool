@@ -32,7 +32,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ko');
 
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-body-sm font-mono text-mute mb-10">
-      <a href="/ko/docs" class="underline underline-offset-4 hover:text-ink transition-colors">문서</a>
+      <a href="/ko/docs/" class="underline underline-offset-4 hover:text-ink transition-colors">문서</a>
       <span class="text-faint">/</span>
       <span class="text-ink">ZIP 만들기</span>
     </nav>
@@ -44,7 +44,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ko');
       <p class="text-mono-eyebrow font-mono text-ink uppercase tracking-[0.18em]">문서</p>
       <h1 class="text-heading-lg font-semibold text-ink tracking-tight">온라인으로 ZIP 파일 만들기</h1>
       <p class="text-body-lg text-body leading-relaxed">
-        이 문서는 기기 내에서 로컬로 파일을 안전하게 패키징하는 브라우저 기반 압축 도구인 <a href="/ko/create" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 만들기</a>의 아카이브 생성 워크플로우를 안내합니다. 압축 해제 도구와 마찬가지로 어떠한 데이터도 원격 서버로 업로드되지 않습니다. 아래에서 파일 추가, 압축 수준 설정, 암호화 구성 및 보안 모델을 살펴보실 수 있습니다.
+        이 문서는 기기 내에서 로컬로 파일을 안전하게 패키징하는 브라우저 기반 압축 도구인 <a href="/ko/create/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 만들기</a>의 아카이브 생성 워크플로우를 안내합니다. 압축 해제 도구와 마찬가지로 어떠한 데이터도 원격 서버로 업로드되지 않습니다. 아래에서 파일 추가, 압축 수준 설정, 암호화 구성 및 보안 모델을 살펴보실 수 있습니다.
       </p>
     </header>
 
@@ -114,7 +114,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ko');
           기밀 데이터를 다루는 경우 아카이브를 생성하기 전에 비밀번호로 보호할 수 있습니다. 설정 패널의 비밀번호 입력란에 원하는 비밀번호를 입력하기만 하면 됩니다.
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          본 도구는 안전한 업계 표준 AES 암호화를 적용하여 ZIP 파일을 잠급니다. 중요한 점은 모든 연산이 브라우저 로컬에서 이루어지므로 비밀번호와 원본 파일이 네트워크로 절대 전송되지 않는다는 사실입니다. 수신자는 일반 압축 프로그램(또는 당사의 <a href="/ko" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 압축 풀기</a> 도구)과 올바른 비밀번호를 통해 파일에 안전하게 접근할 수 있습니다.
+          본 도구는 안전한 업계 표준 AES 암호화를 적용하여 ZIP 파일을 잠급니다. 중요한 점은 모든 연산이 브라우저 로컬에서 이루어지므로 비밀번호와 원본 파일이 네트워크로 절대 전송되지 않는다는 사실입니다. 수신자는 일반 압축 프로그램(또는 당사의 <a href="/ko/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 압축 풀기</a> 도구)과 올바른 비밀번호를 통해 파일에 안전하게 접근할 수 있습니다.
         </p>
       </section>
 
@@ -187,7 +187,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ko');
           ZIP 만들기 도구는 제로놀리지(Zero-Knowledge) 아키텍처를 기반으로 설계되었습니다. 통상적인 '온라인 도구'라는 명칭과 달리, 저희는 웹을 사용자 인터페이스 전달 수단으로만 사용하며 실제 모든 압축 및 암호화 연산은 사용자 기기의 메모리 내부에서 완료됩니다.
         </p>
         <p class="text-body-lg text-body leading-relaxed">
-          저희는 사용자 파일을 저장하기 위한 별도의 저장 서버를 운영하거나 임대하지 않습니다. 따라서 데이터 침해, 우발적인 정보 유출, 제3자의 무단 접근 위험이 기술적으로 존재하지 않습니다. 자세한 내용은 <a href="/ko/privacy" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">개인정보처리방침</a>을 참조하세요.
+          저희는 사용자 파일을 저장하기 위한 별도의 저장 서버를 운영하거나 임대하지 않습니다. 따라서 데이터 침해, 우발적인 정보 유출, 제3자의 무단 접근 위험이 기술적으로 존재하지 않습니다. 자세한 내용은 <a href="/ko/privacy/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">개인정보처리방침</a>을 참조하세요.
         </p>
       </section>
 
@@ -229,7 +229,7 @@ const howToSchema = getCreateZipHowToSchema(Astro.url.href, 'ko');
     <!-- Footer Navigation -->
     <footer class="mt-20">
       <p class="text-body-md text-mute">
-        압축을 푸셔야 하나요? <a href="/ko/docs/extract-zip" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 압축 풀기 문서</a>를 확인해 보세요. 추가 문의사항은 <a href="/ko/contact" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">문의하기</a> 페이지에서 남기실 수 있습니다.
+        압축을 푸셔야 하나요? <a href="/ko/docs/extract-zip/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">ZIP 압축 풀기 문서</a>를 확인해 보세요. 추가 문의사항은 <a href="/ko/contact/" class="text-ink underline underline-offset-4 hover:text-mute transition-colors">문의하기</a> 페이지에서 남기실 수 있습니다.
       </p>
     </footer>
 
