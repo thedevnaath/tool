@@ -1,13 +1,13 @@
 ---
-import ModeToggle from '../components/ui/ModeToggle.svelte';
-import LanguagePicker from '../components/ui/LanguagePicker.svelte';
-import NavMenu from '../components/ui/NavMenu.svelte';
-import Logo from '../components/ui/Logo.svelte';
-import '../styles/global.css';
+import ModeToggle from "../components/ui/ModeToggle.svelte";
+import LanguagePicker from "../components/ui/LanguagePicker.svelte";
+import NavMenu from "../components/ui/NavMenu.svelte";
+import Logo from "../components/ui/Logo.svelte";
+import "../styles/global.css";
 
-import { getRelativeLocaleUrl, getAbsoluteLocaleUrl } from 'astro:i18n';
-import { languages } from '../i18n/ui';
-import { useTranslations } from '../i18n/utils';
+import { getRelativeLocaleUrl, getAbsoluteLocaleUrl } from "astro:i18n";
+import { languages } from "../i18n/ui";
+import { useTranslations } from "../i18n/utils";
 
 export interface Props {
   title?: string;
@@ -18,25 +18,27 @@ export interface Props {
   noindex?: boolean;
 }
 
-const currentLocale = Astro.currentLocale || 'en';
+const currentLocale = Astro.currentLocale || "en";
 const t = useTranslations(currentLocale as keyof typeof languages);
-const siteUrl = Astro.site ? Astro.site.origin : 'https://unzipfilesonline.com';
+const siteUrl = Astro.site ? Astro.site.origin : "https://unzipfilesonline.com";
 
 const {
-  title = t('index.title'),
-  description = t('index.desc'),
+  title = t("index.title"),
+  description = t("index.desc"),
   ogTitle = title,
   ogDescription = description,
   ogImage = `${siteUrl}/og-image.png`,
-  noindex = false
+  noindex = false,
 } = Astro.props;
 
 // Determine base path for hreflang
-const [, firstPathSegment] = Astro.url.pathname.split('/');
+const [, firstPathSegment] = Astro.url.pathname.split("/");
 const isLocale = Object.keys(languages).includes(firstPathSegment);
-let basePath = isLocale ? Astro.url.pathname.replace(`/${firstPathSegment}`, '') : Astro.url.pathname;
-if (basePath === '') basePath = '/';
-if (basePath.startsWith('//')) basePath = basePath.substring(1); // just in case
+let basePath = isLocale
+  ? Astro.url.pathname.replace(`/${firstPathSegment}`, "")
+  : Astro.url.pathname;
+if (basePath === "") basePath = "/";
+if (basePath.startsWith("//")) basePath = basePath.substring(1); // just in case
 
 // Generate absolute and relative URLs for each language
 const alternateLinks = Object.keys(languages).map((lang) => {
@@ -44,10 +46,10 @@ const alternateLinks = Object.keys(languages).map((lang) => {
     lang,
     label: languages[lang as keyof typeof languages],
     href: getAbsoluteLocaleUrl(lang, basePath), // Used for SEO tags
-    relativeHref: getRelativeLocaleUrl(lang, basePath) // Used for navigation
+    relativeHref: getRelativeLocaleUrl(lang, basePath), // Used for navigation
   };
 });
-const xDefaultHref = getAbsoluteLocaleUrl('en', basePath);
+const xDefaultHref = getAbsoluteLocaleUrl("en", basePath);
 
 // Generate canonical URL
 const canonicalURL = getAbsoluteLocaleUrl(currentLocale, basePath);
@@ -58,34 +60,61 @@ const siteSchema = {
     {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
-      "name": "Unzip Files Online",
-      "url": `${siteUrl}/`,
-      "logo": `${siteUrl}/logo.svg`
+      name: "Unzip Files Online",
+      url: `${siteUrl}/`,
+      logo: `${siteUrl}/logo.svg`,
     },
     {
       "@type": "WebSite",
       "@id": `${siteUrl}/#website`,
-      "name": "Unzip Files Online",
-      "url": `${siteUrl}/`,
-      "description": t('index.desc'),
-      "publisher": {
-        "@id": `${siteUrl}/#organization`
+      name: "Unzip Files Online",
+      url: `${siteUrl}/`,
+      description: t("index.desc"),
+      publisher: {
+        "@id": `${siteUrl}/#organization`,
       },
-      "inLanguage": currentLocale
-    }
-  ]
+      inLanguage: currentLocale,
+    },
+  ],
 };
 
 const navMenuItems = [
-  { label: t('extract.tab'), href: getRelativeLocaleUrl(currentLocale, '/'), isActive: basePath === '/' },
-  { label: t('create.tab'), href: getRelativeLocaleUrl(currentLocale, '/create'), isActive: basePath.startsWith('/create') },
-  { label: t('nav.docs'), href: getRelativeLocaleUrl(currentLocale, '/docs'), isActive: basePath.startsWith('/docs') },
-  { label: t('nav.privacy'), href: getRelativeLocaleUrl(currentLocale, '/privacy'), isActive: basePath.startsWith('/privacy') },
-  { label: t('nav.about'), href: getRelativeLocaleUrl(currentLocale, '/about'), isActive: basePath.startsWith('/about') },
-  { label: t('nav.terms'), href: getRelativeLocaleUrl(currentLocale, '/terms'), isActive: basePath.startsWith('/terms') },
-  { label: t('nav.contact'), href: getRelativeLocaleUrl(currentLocale, '/contact'), isActive: basePath.startsWith('/contact') },
+  {
+    label: t("extract.tab"),
+    href: getRelativeLocaleUrl(currentLocale, "/"),
+    isActive: basePath === "/",
+  },
+  {
+    label: t("create.tab"),
+    href: getRelativeLocaleUrl(currentLocale, "/create"),
+    isActive: basePath.startsWith("/create"),
+  },
+  {
+    label: t("nav.docs"),
+    href: getRelativeLocaleUrl(currentLocale, "/docs"),
+    isActive: basePath.startsWith("/docs"),
+  },
+  {
+    label: t("nav.privacy"),
+    href: getRelativeLocaleUrl(currentLocale, "/privacy"),
+    isActive: basePath.startsWith("/privacy"),
+  },
+  {
+    label: t("nav.about"),
+    href: getRelativeLocaleUrl(currentLocale, "/about"),
+    isActive: basePath.startsWith("/about"),
+  },
+  {
+    label: t("nav.terms"),
+    href: getRelativeLocaleUrl(currentLocale, "/terms"),
+    isActive: basePath.startsWith("/terms"),
+  },
+  {
+    label: t("nav.contact"),
+    href: getRelativeLocaleUrl(currentLocale, "/contact"),
+    isActive: basePath.startsWith("/contact"),
+  },
 ];
-
 ---
 
 <!doctype html>
@@ -95,15 +124,25 @@ const navMenuItems = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8BWLR6YW70" is:inline></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-8BWLR6YW70"
+      is:inline></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-      gtag('config', 'G-8BWLR6YW70');
+      gtag("config", "G-8BWLR6YW70");
     </script>
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicon-96x96.png"
+      sizes="540x540"
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -125,18 +164,27 @@ const navMenuItems = [
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={ogTitle} />
     <link rel="canonical" href={canonicalURL} />
-    
-    {alternateLinks.map(({ lang, href }) => (
-      <link rel="alternate" hreflang={lang} href={href} />
-    ))}
+
+    {
+      alternateLinks.map(({ lang, href }) => (
+        <link rel="alternate" hreflang={lang} href={href} />
+      ))
+    }
     <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
 
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(siteSchema)} />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(siteSchema)}
+    />
 
     <script is:inline>
-      const saved = localStorage.getItem('theme');
-      if (saved === 'light') { document.documentElement.classList.remove('dark'); }
-      else { document.documentElement.classList.add('dark'); }
+      const saved = localStorage.getItem("theme");
+      if (saved === "light") {
+        document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.add("dark");
+      }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -159,20 +207,39 @@ const navMenuItems = [
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
       as="style"
     />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="preconnect" href="https://cdn.umami.is" />
-    <script defer src="https://cdn.umami.is/script.js" data-website-id={import.meta.env.PUBLIC_UMAMI_WEBSITE_ID || ''}></script>
+    <script
+      defer
+      src="https://cdn.umami.is/script.js"
+      data-website-id={import.meta.env.PUBLIC_UMAMI_WEBSITE_ID || ""}></script>
   </head>
   <body class="min-h-screen flex flex-col">
-    <header class="sticky top-0 z-50 border-b border-hairline bg-canvas/80 backdrop-blur-xl">
+    <header
+      class="sticky top-0 z-50 border-b border-hairline bg-canvas/80 backdrop-blur-xl"
+    >
       <nav class="max-w-5xl mx-auto px-4 sm:px-6" aria-label="Main navigation">
         <div class="flex items-center justify-between h-14">
-          <a href={getRelativeLocaleUrl(currentLocale, '/')} class="flex items-center gap-2.5 group" aria-label={t('nav.home')}>
+          <a
+            href={getRelativeLocaleUrl(currentLocale, "/")}
+            class="flex items-center gap-2.5 group"
+            aria-label={t("nav.home")}
+          >
             <Logo />
-            <span class="font-sans font-semibold text-heading-sm text-ink tracking-tight hidden sm:block">{t('nav.home')}</span>
+            <span
+              class="font-sans font-semibold text-heading-sm text-ink tracking-tight hidden sm:block"
+              >{t("nav.home")}</span
+            >
           </a>
           <div class="flex items-center gap-3">
-            <LanguagePicker client:load currentLocale={currentLocale} links={alternateLinks} />
+            <LanguagePicker
+              client:load
+              currentLocale={currentLocale}
+              links={alternateLinks}
+            />
             <ModeToggle client:only="svelte" />
             <NavMenu client:load items={navMenuItems} />
           </div>
@@ -185,17 +252,35 @@ const navMenuItems = [
     <footer class="border-t border-hairline mt-16">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
         <div class="flex flex-col gap-4">
-          <p class="text-body-sm text-mute">{t('footer.desc')}</p>
-          <nav class="flex flex-col items-start gap-2 text-body-sm text-mute" aria-label="Footer">
-            <a href={getRelativeLocaleUrl(currentLocale, '/docs')} class="hover:text-ink transition-colors">{t('nav.docs')}</a>
-            <a href={getRelativeLocaleUrl(currentLocale, '/privacy')} class="hover:text-ink transition-colors">{t('nav.privacy')}</a>
-            <a href={getRelativeLocaleUrl(currentLocale, '/about')} class="hover:text-ink transition-colors">{t('nav.about')}</a>
-            <a href={getRelativeLocaleUrl(currentLocale, '/terms')} class="hover:text-ink transition-colors">{t('nav.terms')}</a>
-            <a href={getRelativeLocaleUrl(currentLocale, '/contact')} class="hover:text-ink transition-colors">{t('nav.contact')}</a>
+          <p class="text-body-sm text-mute">{t("footer.desc")}</p>
+          <nav
+            class="flex flex-col items-start gap-2 text-body-sm text-mute"
+            aria-label="Footer"
+          >
+            <a
+              href={getRelativeLocaleUrl(currentLocale, "/docs")}
+              class="hover:text-ink transition-colors">{t("nav.docs")}</a
+            >
+            <a
+              href={getRelativeLocaleUrl(currentLocale, "/privacy")}
+              class="hover:text-ink transition-colors">{t("nav.privacy")}</a
+            >
+            <a
+              href={getRelativeLocaleUrl(currentLocale, "/about")}
+              class="hover:text-ink transition-colors">{t("nav.about")}</a
+            >
+            <a
+              href={getRelativeLocaleUrl(currentLocale, "/terms")}
+              class="hover:text-ink transition-colors">{t("nav.terms")}</a
+            >
+            <a
+              href={getRelativeLocaleUrl(currentLocale, "/contact")}
+              class="hover:text-ink transition-colors">{t("nav.contact")}</a
+            >
           </nav>
         </div>
         <div class="mt-6 pt-6 border-t border-hairline">
-          <p class="text-body-sm text-faint">{t('footer.copyright')}</p>
+          <p class="text-body-sm text-faint">{t("footer.copyright")}</p>
         </div>
       </div>
     </footer>
