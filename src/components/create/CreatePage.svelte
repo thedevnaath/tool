@@ -169,6 +169,23 @@
     if (downloadUrl_) { URL.revokeObjectURL(downloadUrl_); downloadUrl_ = null; }
   });
 
+  function formatSize(bytes: number): string {
+    if (!bytes || bytes <= 0) return '0 B';
+    if (bytes < 1024) return `${bytes} B`;
+    const units = ['KB', 'MB', 'GB', 'TB'];
+    let val = bytes / 1024;
+    let unitIdx = 0;
+    while (val >= 1024 && unitIdx < units.length - 1) {
+      val /= 1024;
+      unitIdx++;
+    }
+    if (val.toFixed(1) === '1024.0' && unitIdx < units.length - 1) {
+      val = 1;
+      unitIdx++;
+    }
+    return `${val.toFixed(1)} ${units[unitIdx]}`;
+  }
+
   $: totalSize = files.reduce((sum, f) => sum + f.size, 0);
   $: progressPct = createProgress.total > 0 ? Math.round((createProgress.loaded / createProgress.total) * 100) : 0;
 </script>
@@ -296,10 +313,10 @@
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
         <p class="text-body-sm text-mute">
           <span class="text-ink font-medium">{files.length}</span> {t('ui.files')},
-          <span class="text-ink font-medium">{(totalSize / (1024 * 1024)).toFixed(1)} MB</span> {t('ui.total')}
+          <span class="text-ink font-medium">{formatSize(totalSize)}</span> {t('ui.total')}
         </p>
         
-        <div class="flex items-center w-full sm:w-auto min-w-[300px] max-w-sm rounded-lg border border-hairline overflow-hidden focus-within:border-link bg-canvas shadow-sm transition-colors">
+        <div class="flex items-center w-full max-w-full min-w-0 sm:w-auto sm:min-w-[300px] sm:max-w-sm rounded-lg border border-hairline overflow-hidden focus-within:border-link bg-canvas shadow-sm transition-colors">
           <input
             bind:value={archiveName}
             type="text"
